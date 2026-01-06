@@ -11,7 +11,16 @@ import SwiftUI
 struct StopwatchApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            StopwatchScreen()
+                .frame(
+                    minWidth: 600,
+                    idealWidth: 600,
+                    maxWidth: CGFloat.infinity,
+                    minHeight: 610,
+                    idealHeight: 610,
+                    maxHeight: CGFloat.infinity
+                )
         }
+        .windowResizability(.contentSize)
     }
 }
