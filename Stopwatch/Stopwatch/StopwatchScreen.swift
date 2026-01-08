@@ -49,19 +49,6 @@ extension StopwatchScreen {
     }
 }
 
-extension StopwatchScreen._StopwatchScreen {
-    /// Stopwatch가 현재 포커스 되어있는지 여부 판단
-    func onFocus(_ action: @escaping (Bool) -> Void) -> some View {
-        self
-            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-                action(true)
-            }
-            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
-                action(false)
-            }
-    }
-}
-
 #Preview("Start") {
     StopwatchScreen._StopwatchScreen(laps: [], components: [], isActive: true)
         .frame(

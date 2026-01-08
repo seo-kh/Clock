@@ -17,19 +17,29 @@ final class Stopwatch {
     private(set) var components: [ActionComponent] = []
     private(set) var isActive: Bool = false
 
+    @ObservationIgnored
     private var timer = Timer.publish(every: 0.03, on: .current, in: .common)
     /// Timer 취소
+    @ObservationIgnored
     private var cancellable: Cancellable? = nil
     /// Activation 수신자
+    @ObservationIgnored
     private var cancellables: Set<AnyCancellable> = []
     /// Lap 데이터 영구 저장소
+    @ObservationIgnored
     private var context: ModelContext? = nil
     
+    @ObservationIgnored
+    private var userDefaults: UserDefaults? = nil
+    @ObservationIgnored
+    private static let defaultKey: String = "isRunning"
+
     init(configuration: Configuration = .debug) {
         self.configure(configuration)
         self.readLaps()
         self.setResetButtons()
         self.subsribeActiveNotification()
+        self.startWhenRunning()
     }
 }
 
@@ -43,16 +53,19 @@ private extension Stopwatch {
         configureLaps()
         startTimer()
         setStartButtons()
+        setRunning(true)
     }
     
     func stop() {
         stopTimer()
         setStopButtons()
+        setRunning(false)
     }
     
     func reset() {
         resetLaps()
         setResetButtons()
+        setRunning(false)
     }
 }
 
@@ -144,6 +157,19 @@ private extension Stopwatch {
     }
 }
 
+private extension Stopwatch {
+    func setRunning(_ value: Bool) {
+        self.userDefaults?.set(value, forKey: Self.defaultKey)
+    }
+    
+    func startWhenRunning() {
+        switch self.userDefaults?.bool(forKey: Self.defaultKey) {
+        case .some(true): start()
+        default: break
+        }
+    }
+}
+
 extension Stopwatch {
     enum Configuration {
         case debug
@@ -155,11 +181,14 @@ extension Stopwatch {
         switch configuration {
         case .debug:
             self.context = nil
+            self.userDefaults = nil
         case .release:
             let container = try! ModelContainer(for: Lap.self)
             self.context = ModelContext(container)
+            self.userDefaults = UserDefaults()
         case .custom(let modelContext):
             self.context = modelContext
+            self.userDefaults = UserDefaults()
         }
     }
 }
