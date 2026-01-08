@@ -5,7 +5,7 @@
 //  Created by alphacircle on 1/6/26.
 //
 
-import SwiftUI
+import Foundation
 
 struct Lap {
     private let _number: Int
@@ -37,6 +37,7 @@ extension Lap: Comparable {
 }
 
 extension Lap {
+    /// Lap의 기록을 현재 날짜 기준으로 재조정
     mutating func adjust() {
         let now: Date = Date.now
         let splitInterval: TimeInterval = progress - split
@@ -47,6 +48,10 @@ extension Lap {
         self.progress = now
     }
     
+    /// Lap의 기록을 기반으로 다음 Lap을 생성
+    ///
+    /// 전체 걸린 시간기록을 다음 Lap이 전달받는다.
+    /// 다음 Lap의 number는 현재 Lap에 +1을 한다.
     func next() -> Lap {
         // lap num
         let nextNumber: Int = self._number + 1
