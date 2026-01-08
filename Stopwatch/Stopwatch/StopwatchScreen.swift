@@ -10,11 +10,28 @@ import Foundation
 
 struct StopwatchScreen: View {
     @State
-    var stopwatch = Stopwatch()
+    private var stopwatch = Stopwatch()
+    
+    @State
+    private var isActive: Bool = true
     
     var body: some View {
-        _StopwatchScreen(laps: stopwatch.laps,
-                         buttons: stopwatch.buttons)
+        _StopwatchScreen(laps: stopwatch.laps, components: stopwatch.components, isActive: isActive)
+            .onFocus({ isActive in
+                self.isActive = isActive
+            })
+    }
+}
+
+extension StopwatchScreen._StopwatchScreen {
+    func onFocus(_ action: @escaping (Bool) -> Void) -> some View {
+        self
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                action(true)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+                action(false)
+            }
     }
 }
 
@@ -22,7 +39,8 @@ extension StopwatchScreen {
     /// Stateless Stopwatch UI Screen
     struct _StopwatchScreen: View {
         let laps: [Lap]
-        let buttons: [ActionButton]
+        let components: [ActionComponent]
+        let isActive: Bool
         
         private var currentLap: Lap {
             switch laps.first {
@@ -38,7 +56,7 @@ extension StopwatchScreen {
                 
                 LapList(laps: laps)
                 
-                ActionGroup(buttons: buttons)
+                ActionGroup(components: components, isActive: isActive)
                     .padding(.vertical, 40.0)
             }
             .frame(maxWidth: CGFloat.infinity, maxHeight: CGFloat.infinity)
@@ -48,7 +66,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Start") {
-    StopwatchScreen._StopwatchScreen(laps: [], buttons: [])
+    StopwatchScreen._StopwatchScreen(laps: [], components: [], isActive: true)
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -60,7 +78,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Empty") {
-    StopwatchScreen._StopwatchScreen(laps: [], buttons: [])
+    StopwatchScreen._StopwatchScreen(laps: [], components: [], isActive: true)
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -72,7 +90,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Stopwatch") {
-    StopwatchScreen._StopwatchScreen(laps: [], buttons: [])
+    StopwatchScreen._StopwatchScreen(laps: [], components: [], isActive: true)
         .frame(
             minWidth: 600,
             idealWidth: 600,
