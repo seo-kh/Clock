@@ -5,26 +5,59 @@
 //  Created by alphacircle on 1/6/26.
 //
 
-import Foundation
+import SwiftUI
 
-struct Lap: Identifiable {
-    let number: String
-    var split: String
-    var total: String
+struct Lap {
+    private let _number: Int
+    var number: String {
+        "Lap \(_number)"
+    }
+    var split: Date
+    var total: Date
+    var progress: Date
     
+    init(number: Int, split: Date, total: Date, progress: Date) {
+        self._number = number
+        self.split = split
+        self.total = total
+        self.progress = progress
+    }
+}
+
+extension Lap: Identifiable {
     var id: String { self.number }
 }
 
-// convenience logic
-extension Lap {
-    // dummy
-    static let dummy = Lap(number: "Lap 3", split: "00:10.00", total: "00:19.08")
+extension Lap: Comparable {
+    static func < (lhs: Lap, rhs: Lap) -> Bool {
+        let lhsSplitInterval: TimeInterval = lhs.progress - lhs.split
+        let rhsSplitInterval: TimeInterval = rhs.progress - rhs.split
+        return lhsSplitInterval < rhsSplitInterval
+    }
 }
 
-extension Array where Element == Lap {
-    // dummy
-    static let dummy: [Lap] = [
-        Lap(number: "Lap 2", split: "00:06.05", total: "00:09.08"),
-        Lap(number: "Lap 1", split: "00:03.03", total: "00:03.03"),
-    ]
+extension Lap {
+    mutating func adjust() {
+        let now: Date = Date.now
+        let splitInterval: TimeInterval = progress - split
+        let totalInterval: TimeInterval = progress - total
+        
+        self.split = now - splitInterval
+        self.total = now - totalInterval
+        self.progress = now
+    }
+    
+    func next() -> Lap {
+        // lap num
+        let nextNumber: Int = self._number + 1
+        // lap total
+        let totalInterval: TimeInterval = progress - total
+        let now: Date = Date.now
+        let newTotal: Date = now - totalInterval
+        // new lap
+        return Lap(number: nextNumber, split: now, total: newTotal, progress: now)
+    }
+    
+    static let empty: Lap = Lap(number: 0, split: Date.now, total: Date.now, progress: Date.now)
 }
+

@@ -9,21 +9,29 @@ import SwiftUI
 
 extension StopwatchScreen._StopwatchScreen.LapList {
     struct LapRow: View {
-        private let _number: String
-        private let _split: String
-        private let _total: String
+        private let _number: Text
+        private let _split: Text
+        private let _total: Text
         private let _font: Font
         private let _color: Color
         
         init(lap: Lap) {
-            self.init(number: lap.number, split: lap.split, total: lap.total)
+            self.init(number: Text(lap.number),
+                      split: Text(lap.progress, format: .stopwatch(startingAt: lap.split)),
+                      total: Text(lap.progress, format: .stopwatch(startingAt: lap.total)),
+                      font: nil,
+                      color: nil)
         }
         
         init(number: String, split: String, total: String) {
-            self.init(number: number, split: split, total: total, font: nil, color: nil)
+            self.init(number: Text(number),
+                      split: Text(split),
+                      total: Text(total),
+                      font: nil,
+                      color: nil)
         }
 
-        private init(number: String, split: String, total: String, font: Font?, color: Color?) {
+        private init(number: Text, split: Text, total: Text, font: Font?, color: Color?) {
             self._number = number
             self._split = split
             self._total = total
@@ -37,9 +45,9 @@ extension StopwatchScreen._StopwatchScreen.LapList {
         
         var body: some View {
             HStack(spacing: 0.0) {
-                Text(_number).frame(maxWidth: .infinity, alignment: .leading)
-                Text(_split).frame(maxWidth: .infinity)
-                Text(_total).frame(maxWidth: .infinity, alignment: .trailing)
+                _number.frame(maxWidth: .infinity, alignment: .leading)
+                _split.frame(maxWidth: .infinity)
+                _total.frame(maxWidth: .infinity, alignment: .trailing)
             }
             .font(_font)
             .foregroundStyle(_color)

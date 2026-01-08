@@ -13,12 +13,12 @@ extension StopwatchScreen._StopwatchScreen {
         
         private var worstLap: Lap? {
             guard laps.count > 2 else { return nil }
-            return laps.min(by: { $0.split > $1.split })
+            return laps.dropFirst().max()
         }
         
         private var bestLap: Lap? {
             guard laps.count > 2 else { return nil }
-            return laps.min(by: { $0.split < $1.split })
+            return laps.dropFirst().min()
         }
 
         private var header: some View {
@@ -74,7 +74,7 @@ extension StopwatchScreen._StopwatchScreen {
 
 #Preview {
     StopwatchScreen._StopwatchScreen.LapList(laps: [
-        Lap(number: "Lap 9", split: "00:02.23", total: "00:02.23")
+        Lap(number: 9, split: .now.addingTimeInterval(30), total: .now.addingTimeInterval(30), progress: .now.addingTimeInterval(90))
     ])
     .padding()
     .background(CKColor.background)

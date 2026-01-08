@@ -9,10 +9,21 @@ import SwiftUI
 
 extension StopwatchScreen._StopwatchScreen {
     struct TimeLabel: View {
-        let elapsedTime: String
+        let progress: Date
+        let startAt: Date
+        
+        init(progress: Date, startAt: Date) {
+            self.progress = progress
+            self.startAt = startAt
+        }
+        
+        init(lap: Lap) {
+            self.progress = lap.progress
+            self.startAt = lap.total
+        }
         
         var body: some View {
-            Text(elapsedTime)
+            Text(self.progress, format: .stopwatch(startingAt: self.startAt))
             .foregroundStyle(CKColor.label)
             .font(.system(size: 110, weight: .thin, design: .default))
             .tracking(3.0)
@@ -21,6 +32,6 @@ extension StopwatchScreen._StopwatchScreen {
 }
 
 #Preview {
-    StopwatchScreen._StopwatchScreen.TimeLabel(elapsedTime: "00.03:34")
+    StopwatchScreen._StopwatchScreen.TimeLabel(progress: .now.addingTimeInterval(30), startAt: .now)
         .background(CKColor.background)
 }

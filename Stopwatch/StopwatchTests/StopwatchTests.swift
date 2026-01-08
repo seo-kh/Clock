@@ -6,11 +6,19 @@
 //
 
 import Testing
+@testable import Stopwatch
 
 struct StopwatchTests {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    @Test
+    @MainActor
+    func example() async throws {
+        let sw = Stopwatch()
+        sw.start()
+        
+        #expect(sw.laps.count == 1)
+        try await Task.sleep(for: .seconds(5))
+        sw.stop()
     }
 
 }
