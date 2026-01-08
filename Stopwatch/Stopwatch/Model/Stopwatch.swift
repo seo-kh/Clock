@@ -8,17 +8,21 @@
 import Foundation
 import Observation
 import Combine
+import Cocoa
 
 @Observable
 final class Stopwatch {
     private(set) var laps: [Lap] = []
     private(set) var components: [ActionComponent] = []
-    
+    private(set) var isActive: Bool = false
+
     private var timer = Timer.publish(every: 0.03, on: .current, in: .common)
-    private var cancel: Cancellable? = nil
+    private var cancellable: Cancellable? = nil
+    private var cancellables: Set<AnyCancellable> = []
     
     init() {
         self.setResetButtons()
+        self.subsribeActiveNotification()
     }
 }
 
@@ -70,7 +74,7 @@ extension Stopwatch {
 /// Timer Control
 extension Stopwatch {
     private func startTimer() {
-        cancel = timer
+        cancellable = timer
             .autoconnect()
             .sink(receiveValue: { [weak self] date in
                 self?.laps[0].progress = date
@@ -78,8 +82,8 @@ extension Stopwatch {
     }
     
     private func stopTimer() {
-        cancel?.cancel()
-        cancel = nil
+        cancellable?.cancel()
+        cancellable = nil
     }
 }
 
@@ -101,5 +105,24 @@ extension Stopwatch {
         } else {
             laps[0].adjust()
         }
+    }
+}
+
+/// Focus Detection
+private extension Stopwatch {
+    func subsribeActiveNotification() {
+        NotificationCenter.default
+            .publisher(for: NSApplication.didBecomeActiveNotification)
+            .sink(receiveValue: { [weak self] _ in
+                self?.isActive = true
+            })
+            .store(in: &cancellables)
+        
+        NotificationCenter.default
+            .publisher(for: NSApplication.didResignActiveNotification)
+            .sink(receiveValue: { [weak self] _ in
+                self?.isActive = false
+            })
+            .store(in: &cancellables)
     }
 }

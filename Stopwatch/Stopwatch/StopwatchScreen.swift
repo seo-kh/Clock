@@ -12,26 +12,10 @@ struct StopwatchScreen: View {
     @State
     private var stopwatch = Stopwatch()
     
-    @State
-    private var isActive: Bool = true
-    
     var body: some View {
-        _StopwatchScreen(laps: stopwatch.laps, components: stopwatch.components, isActive: isActive)
-            .onFocus({ isActive in
-                self.isActive = isActive
-            })
-    }
-}
-
-extension StopwatchScreen._StopwatchScreen {
-    func onFocus(_ action: @escaping (Bool) -> Void) -> some View {
-        self
-            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-                action(true)
-            }
-            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
-                action(false)
-            }
+        _StopwatchScreen(laps: stopwatch.laps,
+                         components: stopwatch.components,
+                         isActive: stopwatch.isActive)
     }
 }
 
@@ -62,6 +46,19 @@ extension StopwatchScreen {
             .frame(maxWidth: CGFloat.infinity, maxHeight: CGFloat.infinity)
             .background(CKColor.background)
         }
+    }
+}
+
+extension StopwatchScreen._StopwatchScreen {
+    /// Stopwatch가 현재 포커스 되어있는지 여부 판단
+    func onFocus(_ action: @escaping (Bool) -> Void) -> some View {
+        self
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                action(true)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+                action(false)
+            }
     }
 }
 
