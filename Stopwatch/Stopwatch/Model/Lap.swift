@@ -6,26 +6,26 @@
 //
 
 import Foundation
+import SwiftData
 
-struct Lap {
-    private let _number: Int
+@Model
+final class Lap {
+    @Attribute(.unique)
+    var id: Int
+    
     var number: String {
-        "Lap \(_number)"
+        "Lap \(id)"
     }
     var split: Date
     var total: Date
     var progress: Date
     
     init(number: Int, split: Date, total: Date, progress: Date) {
-        self._number = number
+        self.id = number
         self.split = split
         self.total = total
         self.progress = progress
     }
-}
-
-extension Lap: Identifiable {
-    var id: String { self.number }
 }
 
 extension Lap: Comparable {
@@ -38,7 +38,7 @@ extension Lap: Comparable {
 
 extension Lap {
     /// Lap의 기록을 현재 날짜 기준으로 재조정
-    mutating func adjust() {
+    func adjust() {
         let now: Date = Date.now
         let splitInterval: TimeInterval = progress - split
         let totalInterval: TimeInterval = progress - total
@@ -54,13 +54,13 @@ extension Lap {
     /// 다음 Lap의 number는 현재 Lap에 +1을 한다.
     func next() -> Lap {
         // lap num
-        let nextNumber: Int = self._number + 1
+        let nextId: Int = self.id + 1
         // lap total
         let totalInterval: TimeInterval = progress - total
         let now: Date = Date.now
         let newTotal: Date = now - totalInterval
         // new lap
-        return Lap(number: nextNumber, split: now, total: newTotal, progress: now)
+        return Lap(number: nextId, split: now, total: newTotal, progress: now)
     }
     
     static let empty: Lap = Lap(number: 0, split: Date.now, total: Date.now, progress: Date.now)

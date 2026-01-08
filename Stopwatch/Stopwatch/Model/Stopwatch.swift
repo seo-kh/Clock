@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import Combine
 import Cocoa
+import SwiftData
 
 @Observable
 final class Stopwatch {
@@ -17,10 +18,16 @@ final class Stopwatch {
     private(set) var isActive: Bool = false
 
     private var timer = Timer.publish(every: 0.03, on: .current, in: .common)
+    /// Timer 취소
     private var cancellable: Cancellable? = nil
+    /// Activation 수신자
     private var cancellables: Set<AnyCancellable> = []
+    /// Lap 데이터 영구 저장소
+    private var context: ModelContext? = nil
     
-    init() {
+    init(configuration: Configuration = .debug) {
+        self.configure(configuration)
+        self.readLaps()
         self.setResetButtons()
         self.subsribeActiveNotification()
     }
@@ -92,19 +99,29 @@ extension Stopwatch {
     private func addLap() {
         let newLap: Lap = self.laps[0].next()
         self.laps.insert(newLap, at: 0)
+        self.context?.insert(newLap)
     }
     
     private func resetLaps() {
         self.laps.removeAll()
+        try? self.context?.delete(model: Lap.self)
     }
     
     private func configureLaps() {
         if laps.isEmpty {
             let now: Date = Date.now
-            laps.append(Lap(number: 1, split: now, total: now, progress: now))
+            let newLap = Lap(number: 1, split: now, total: now, progress: now)
+            laps.append(newLap)
+            context?.insert(newLap)
         } else {
             laps[0].adjust()
         }
+    }
+    
+    /// id를 기준으로 역방향으로 정렬해서 Lap 데이터 가져오기
+    private func readLaps() {
+        let descriptor = FetchDescriptor<Lap>(sortBy: [SortDescriptor(\.id, order: SortOrder.reverse)])
+        self.laps = (try? context?.fetch(descriptor)) ?? []
     }
 }
 
@@ -124,5 +141,25 @@ private extension Stopwatch {
                 self?.isActive = false
             })
             .store(in: &cancellables)
+    }
+}
+
+extension Stopwatch {
+    enum Configuration {
+        case debug
+        case release
+        case custom(ModelContext)
+    }
+    
+    private func configure(_ configuration: Configuration) {
+        switch configuration {
+        case .debug:
+            self.context = nil
+        case .release:
+            let container = try! ModelContainer(for: Lap.self)
+            self.context = ModelContext(container)
+        case .custom(let modelContext):
+            self.context = modelContext
+        }
     }
 }
