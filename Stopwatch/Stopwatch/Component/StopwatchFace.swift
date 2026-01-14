@@ -18,6 +18,9 @@ import SwiftUI
 ///
 /// 참고링크: [알아 두면 도움 되는 시계 용어](https://magazine.hankyung.com/money/article/202101206538c)
 struct StopwatchFace: View {
+    let total: TimeInterval
+    let split: TimeInterval
+    
     var body: some View {
         Canvas { context, size in
             context.drawLayer { scaleCtx in
@@ -28,16 +31,32 @@ struct StopwatchFace: View {
                 index(&indexCtx, size)
             }
             
+            context.drawLayer { minScaleCtx in
+                minScale(&minScaleCtx, size)
+            }
+            
+            context.drawLayer { minIndexCtx in
+                minIndex(&minIndexCtx, size)
+            }
+            
+            context.drawLayer { minHandCtx in
+                minHand(&minHandCtx, size, timeInterval: total, color: CKColor.orange)
+            }
+            
+            context.drawLayer { minCenterCtx in
+                minCenter(&minCenterCtx, size)
+            }
+
             context.drawLayer { timeWindowCtx in
-                timeWindow(&timeWindowCtx, size)
+                timeWindow(&timeWindowCtx, size, timeInterval: total)
             }
             
             context.drawLayer { splitHandCtx in
-                hand(&splitHandCtx, size, timeInterval: 100.0, color: CKColor.blue)
+                hand(&splitHandCtx, size, timeInterval: split, color: CKColor.blue)
             }
             
             context.drawLayer { totalHandCtx in
-                hand(&totalHandCtx, size, timeInterval: 200.0, color: CKColor.orange)
+                hand(&totalHandCtx, size, timeInterval: total, color: CKColor.orange)
             }
             
             context.drawLayer { centerCtx in
@@ -46,6 +65,16 @@ struct StopwatchFace: View {
         }
     }
     
+    private func minCenter(_ context: inout GraphicsContext, _ size: CGSize) {
+        let radius = min(size.height, size.width) / 2.0
+        
+        context.translateBy(x: radius, y: radius * 0.65)
+
+        let pivot: CGFloat = 12.0
+        let outer = CGRect(origin: CGPoint(x: -pivot / 2.0, y: -pivot / 2.0), size: CGSize(width: pivot, height: pivot))
+        context.fill(Circle().path(in: outer), with: .color(CKColor.orange))
+    }
+
     private func center(_ context: inout GraphicsContext, _ size: CGSize) {
         let radius = min(size.height, size.width) / 2.0
         
@@ -71,13 +100,29 @@ struct StopwatchFace: View {
         context.rotate(by: angle)
         context.fill(Rectangle().path(in: scaleRect), with: .color(color))
     }
+    
+    private func minHand(_ context: inout GraphicsContext, _ size: CGSize, timeInterval: TimeInterval, color: Color) {
+        let radius = min(size.height, size.width) / 2.0
+        let radian = 2.0 * CGFloat.pi / 60.0 / 30.0 * timeInterval
+        
+        context.translateBy(x: radius, y: radius * 0.65)
+        let scaleWidth = 2.0 * CGFloat.pi * radius * 0.3 / 180.0
+        let scalePoint = CGPoint(x: -scaleWidth / 2.0, y: -radius * 0.275)
+        let scaleSize = CGSize(width: scaleWidth, height: radius * 0.275)
+        let scaleRect = CGRect(origin: scalePoint, size: scaleSize)
+        let angle = Angle(radians: radian)
+        context.rotate(by: angle)
+        context.fill(Rectangle().path(in: scaleRect), with: .color(color))
+    }
 
-    private func timeWindow(_ context: inout GraphicsContext, _ size: CGSize) {
+    private func timeWindow(_ context: inout GraphicsContext, _ size: CGSize, timeInterval: TimeInterval) {
         let radius = min(size.height, size.width) / 2.0
         
         context.translateBy(x: radius, y: radius)
         
-        let text = "06:24.69"
+        let now = Date()
+        let elap = now.addingTimeInterval(timeInterval)
+        let text = SystemFormatStyle.Stopwatch(startingAt: now).format(elap)
         let sec = Text(text).font(.system(size: 32)).foregroundStyle(CKColor.label).tracking(2.0)
         let position = CGPoint(x: 0, y: radius * 0.35)
         context.draw(sec, at: position, anchor: .center)
@@ -115,7 +160,51 @@ struct StopwatchFace: View {
             context.rotate(by: angle)
         }
     }
+    
+    private func minIndex(_ context: inout GraphicsContext, _ size: CGSize) {
+        let radius = min(size.height, size.width) / 2.0
+        
+        context.translateBy(x: radius, y: radius * 0.65)
+        for i in 0..<6 {
+            let text = (i != 0) ? "\(i * 5)" : "30"
+            let sec = Text(text).font(.system(size: 20)).foregroundStyle(CKColor.label)
+            let position = CGPoint(x: 0, y: -radius * 0.15)
+                .applying(.init(rotationAngle: Angle(degrees: Double(i * 60)).radians))
+            context.draw(sec, at: position, anchor: .center)
+        }
+    }
 
+    private func minScale(_ context: inout GraphicsContext, _ size: CGSize) {
+        let radius = min(size.height, size.width) / 2.0
+        let scaleWidth = 2.0 * CGFloat.pi * radius * 0.3 / 180.0
+        
+        let scalePoint = CGPoint(x: -scaleWidth / 2.0, y: -radius * 0.275)
+        let qScaleSize = CGSize(width: scaleWidth, height: scaleWidth * 3.0)
+        let qScaleRect = CGRect(origin: scalePoint, size: qScaleSize)
+        let sScaleSize = CGSize(width: scaleWidth, height: scaleWidth * 6.0)
+        let sScaleRect = CGRect(origin: scalePoint, size: sScaleSize)
+
+        context.translateBy(x: radius, y: radius * 0.65)
+        
+        for _ in 0..<60 {
+            context.fill(Rectangle().path(in: qScaleRect), with: .color(CKColor.gray5))
+            let angle = Angle(degrees: 6.0)
+            context.rotate(by: angle)
+        }
+        
+        for _ in 0..<30 {
+            context.fill(Rectangle().path(in: sScaleRect), with: .color(CKColor.gray5))
+            let angle = Angle(degrees: 12.0)
+            context.rotate(by: angle)
+        }
+        
+        for _ in 0..<6 {
+            context.fill(Rectangle().path(in: sScaleRect), with: .color(CKColor.label))
+            let angle = Angle(degrees: 60.0)
+            context.rotate(by: angle)
+        }
+    }
+    
     private func scale(_ context: inout GraphicsContext, _ size: CGSize) {
         let radius = min(size.height, size.width) / 2.0
         let scaleWidth = 2.0 * CGFloat.pi * radius / 480.0
@@ -128,19 +217,19 @@ struct StopwatchFace: View {
 
         context.translateBy(x: radius, y: radius)
         
-        for _ in 0..<480 {
+        for _ in 0..<240 {
             context.fill(Rectangle().path(in: qScaleRect), with: .color(CKColor.gray5))
             let angle = Angle(degrees: 1.5)
             context.rotate(by: angle)
         }
         
-        for _ in 0..<120 {
+        for _ in 0..<60 {
             context.fill(Rectangle().path(in: sScaleRect), with: .color(CKColor.gray5))
             let angle = Angle(degrees: 6.0)
             context.rotate(by: angle)
         }
         
-        for _ in 0..<24 {
+        for _ in 0..<12 {
             context.fill(Rectangle().path(in: sScaleRect), with: .color(CKColor.label))
             let angle = Angle(degrees: 30.0)
             context.rotate(by: angle)
@@ -148,8 +237,32 @@ struct StopwatchFace: View {
     }
 }
 
-#Preview {
-    StopwatchFace()
+private struct TestStopwatch: View {
+    let now = Date.now
+    
+    var body: some View {
+        TimelineView(.periodic(from: now, by: 0.03)) { ctx in
+            StopwatchFace(total: ctx.date - now + 11.0, split: ctx.date - now)
+        }
+    }
+}
+
+#Preview("Stateful") {
+    TestStopwatch()
+        .frame(width: 500, height: 500)
+        .padding()
+        .background(CKColor.background)
+}
+
+#Preview("First Lap: 30[s]") {
+    StopwatchFace(total: 30.0, split: 30.0)
+        .frame(width: 500, height: 500)
+        .padding()
+        .background(CKColor.background)
+}
+
+#Preview("progress..") {
+    StopwatchFace(total: 555.0, split: 20.0) // total: 9m 15s, split: 20 [sec]
         .frame(width: 500, height: 500)
         .padding()
         .background(CKColor.background)
