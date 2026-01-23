@@ -16,7 +16,8 @@ final class Stopwatch {
     private(set) var laps: [Lap] = []
     private(set) var components: [ActionComponent] = []
     private(set) var isActive: Bool = false
-
+    private(set) var watchMode: WatchMode!
+    
     @ObservationIgnored
     private var timer = Timer.publish(every: 0.03, on: .current, in: .common)
     /// Timer 취소
@@ -35,6 +36,7 @@ final class Stopwatch {
     private static let defaultKey: String = "isRunning"
 
     init(configuration: Configuration = .debug) {
+        self.watchMode = WatchMode(isActive: false, change: self.changeWatchMode)
         self.configure(configuration)
         self.readLaps()
         self.setResetButtons()
@@ -47,6 +49,10 @@ final class Stopwatch {
 private extension Stopwatch {
     func lap() {
         addLap()
+        
+        if watchMode.isActive {
+            changeWatchMode()
+        }
     }
     
     func start() {
@@ -167,6 +173,12 @@ private extension Stopwatch {
         case .some(true): start()
         default: break
         }
+    }
+}
+
+private extension Stopwatch {
+    func changeWatchMode() {
+        self.watchMode.isActive.toggle()
     }
 }
 

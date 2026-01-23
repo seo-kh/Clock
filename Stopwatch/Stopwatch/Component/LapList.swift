@@ -74,7 +74,10 @@ extension StopwatchScreen._StopwatchScreen {
 
 #Preview {
     StopwatchScreen._StopwatchScreen.LapList(laps: [
-        Lap(number: 9, split: .now.addingTimeInterval(30), total: .now.addingTimeInterval(30), progress: .now.addingTimeInterval(90))
+        Lap(number: 9, split: .now.addingTimeInterval(30), total: .now.addingTimeInterval(30), progress: .now.addingTimeInterval(90)),
+        Lap(number: 10, split: .now.addingTimeInterval(30), total: .now.addingTimeInterval(30), progress: .now.addingTimeInterval(90)),
+        Lap(number: 11, split: .now.addingTimeInterval(30), total: .now.addingTimeInterval(30), progress: .now.addingTimeInterval(90)),
+        Lap(number: 12, split: .now.addingTimeInterval(30), total: .now.addingTimeInterval(30), progress: .now.addingTimeInterval(90)),
     ])
     .padding()
     .background(CKColor.background)

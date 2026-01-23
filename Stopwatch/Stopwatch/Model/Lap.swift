@@ -66,3 +66,14 @@ extension Lap {
     static let empty: Lap = Lap(number: 0, split: Date.now, total: Date.now, progress: Date.now)
 }
 
+extension Array where Element == Lap {
+    static let dummy: Self = [
+        Lap(number: 0, split: .now + 30.0, total: .now, progress: .now + 120.0),
+        Lap(number: 1, split: .now + 40.0, total: .now, progress: .now + 140.0),
+        Lap(number: 2, split: .now + 50.0, total: .now, progress: .now + 160.0),
+        Lap(number: 3, split: .now + 60.0, total: .now, progress: .now + 180.0),
+        Lap(number: 4, split: .now + 70.0, total: .now, progress: .now + 200.0),
+        Lap(number: 5, split: .now + 80.0, total: .now, progress: .now + 220.0),
+        Lap(number: 6, split: .now + 90.0, total: .now, progress: .now + 240.0),
+    ]
+}

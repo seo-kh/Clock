@@ -15,7 +15,18 @@ struct StopwatchScreen: View {
     var body: some View {
         _StopwatchScreen(laps: stopwatch.laps,
                          components: stopwatch.components,
-                         isActive: stopwatch.isActive)
+                         isActive: stopwatch.isActive,
+                         watchMode: stopwatch.watchMode)
+    }
+}
+
+struct WatchMode {
+    var isActive: Bool
+    var change: () -> Void
+    
+    init(isActive: Bool = false, change: @escaping () -> Void = {}) {
+        self.isActive = isActive
+        self.change = change
     }
 }
 
@@ -25,6 +36,7 @@ extension StopwatchScreen {
         let laps: [Lap]
         let components: [ActionComponent]
         let isActive: Bool
+        let watchMode: WatchMode
         
         private var currentLap: Lap {
             switch laps.first {
@@ -35,11 +47,33 @@ extension StopwatchScreen {
         
         var body: some View {
             VStack(alignment: .center, spacing: 0.0) {
-                TimeLabel(lap: currentLap)
-                    .padding(.vertical, 20.0)
-                
-                LapList(laps: laps)
-                
+                Group {
+                    if watchMode.isActive {
+                        Spacer()
+                        
+                        StopwatchFace(lap: laps.first ?? .empty)
+                            .aspectRatio(1.0 / 1.0, contentMode: .fit)
+                            .frame(width: 370)
+                            .onTapGesture {
+                                watchMode.change()
+                            }
+                            .transition(.delayAppear(for: 0.20))
+                        
+                        Spacer()
+                    } else {
+                        TimeLabel(lap: currentLap)
+                            .padding(.vertical, 20.0)
+                            .onTapGesture {
+                                watchMode.change()
+                            }
+                            .transition(.downUp(y: 200))
+
+                        LapList(laps: laps)
+                            .transition(.up(y: 280))
+                    }
+                }
+                .animation(.easeOut(duration: 0.20), value: watchMode.isActive)
+
                 ActionGroup(components: components, isActive: isActive)
                     .padding(.vertical, 40.0)
             }
@@ -50,19 +84,19 @@ extension StopwatchScreen {
 }
 
 #Preview("Start") {
-    StopwatchScreen._StopwatchScreen(laps: [], components: [], isActive: true)
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init())
         .frame(
             minWidth: 600,
             idealWidth: 600,
             maxWidth: CGFloat.infinity,
             minHeight: 610,
             idealHeight: 610,
-            maxHeight: CGFloat.infinity
+            maxHeight: 610
         )
 }
 
 #Preview("Empty") {
-    StopwatchScreen._StopwatchScreen(laps: [], components: [], isActive: true)
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init())
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -74,7 +108,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Stopwatch") {
-    StopwatchScreen._StopwatchScreen(laps: [], components: [], isActive: true)
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init())
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -85,4 +119,40 @@ extension StopwatchScreen {
         )
 }
 
+#Preview("Start - watch") {
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init(isActive: true))
+        .frame(
+            minWidth: 600,
+            idealWidth: 600,
+            maxWidth: CGFloat.infinity,
+            minHeight: 610,
+            idealHeight: 610,
+            maxHeight: CGFloat.infinity
+        )
+}
+
+#Preview("Empty - watch") {
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init(isActive: true))
+        .frame(
+            minWidth: 600,
+            idealWidth: 600,
+            maxWidth: CGFloat.infinity,
+            minHeight: 610,
+            idealHeight: 610,
+            maxHeight: CGFloat.infinity
+        )
+}
+
+
+#Preview("Stopwatch - watch") {
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init(isActive: true))
+        .frame(
+            minWidth: 600,
+            idealWidth: 600,
+            maxWidth: CGFloat.infinity,
+            minHeight: 610,
+            idealHeight: 610,
+            maxHeight: CGFloat.infinity
+        )
+}
 

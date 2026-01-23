@@ -21,6 +21,16 @@ struct StopwatchFace: View {
     let total: TimeInterval
     let split: TimeInterval
     
+    init(total: TimeInterval, split: TimeInterval) {
+        self.total = total
+        self.split = split
+    }
+    
+    init(lap: Lap) {
+        self.total = lap.progress - lap.total
+        self.split = lap.progress - lap.split
+    }
+    
     var body: some View {
         Canvas { context, size in
             context.drawLayer { scaleCtx in
@@ -70,7 +80,7 @@ struct StopwatchFace: View {
         
         context.translateBy(x: radius, y: radius * 0.65)
 
-        let pivot: CGFloat = 12.0
+        let pivot: CGFloat = 6.0
         let outer = CGRect(origin: CGPoint(x: -pivot / 2.0, y: -pivot / 2.0), size: CGSize(width: pivot, height: pivot))
         context.fill(Circle().path(in: outer), with: .color(CKColor.orange))
     }
@@ -80,7 +90,7 @@ struct StopwatchFace: View {
         
         context.translateBy(x: radius, y: radius)
 
-        let pivot: CGFloat = 16.0
+        let pivot: CGFloat = 8.0
         let outer = CGRect(origin: CGPoint(x: -pivot / 2.0, y: -pivot / 2.0), size: CGSize(width: pivot, height: pivot))
         let inner = outer.applying(.init(scaleX: 0.5, y: 0.5))
         context.fill(Circle().path(in: outer), with: .color(CKColor.orange))
@@ -123,7 +133,7 @@ struct StopwatchFace: View {
         let now = Date()
         let elap = now.addingTimeInterval(timeInterval)
         let text = SystemFormatStyle.Stopwatch(startingAt: now).format(elap)
-        let sec = Text(text).font(.system(size: 32)).foregroundStyle(CKColor.label).tracking(2.0)
+        let sec = Text(text).font(.system(size: 24)).foregroundStyle(CKColor.label).tracking(2.0)
         let position = CGPoint(x: 0, y: radius * 0.35)
         context.draw(sec, at: position, anchor: .center)
     }
@@ -134,7 +144,7 @@ struct StopwatchFace: View {
         context.translateBy(x: radius, y: radius)
         for i in 0..<12 {
             let text = (i != 0) ? "\(i * 5)" : "60"
-            let sec = Text(text).font(.system(size: 42)).foregroundStyle(CKColor.label)
+            let sec = Text(text).font(.system(size: 28)).foregroundStyle(CKColor.label)
             let position = CGPoint(x: 0, y: -radius * 0.80)
                 .applying(.init(rotationAngle: Angle(degrees: Double(i * 30)).radians))
             context.draw(sec, at: position, anchor: .center)
@@ -167,7 +177,7 @@ struct StopwatchFace: View {
         context.translateBy(x: radius, y: radius * 0.65)
         for i in 0..<6 {
             let text = (i != 0) ? "\(i * 5)" : "30"
-            let sec = Text(text).font(.system(size: 20)).foregroundStyle(CKColor.label)
+            let sec = Text(text).font(.system(size: 14)).foregroundStyle(CKColor.label)
             let position = CGPoint(x: 0, y: -radius * 0.15)
                 .applying(.init(rotationAngle: Angle(degrees: Double(i * 60)).radians))
             context.draw(sec, at: position, anchor: .center)
