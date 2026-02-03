@@ -278,204 +278,54 @@ private struct TestStopwatch: View {
         .background(CKColor.background)
 }
 
-
-/**
- 
- New StopwatchFace API (DSL)
- 
- -> StopwatchContent => context
- -> StopwatchContentBuilder =>
- 
- StopwatchFace {
- Layer {
- Scale() *note* : what to show, where to place
- Scale()
- Scale()
- }
- 
- Layer {
- Index()
- }
- }
- */
+// ---------------------------- Stopwatch DSL --------------------------
 
 struct _StopwatchFace: View {
     let contents: [StopwatchContent]
     
-    init(@StopwatchContentBuilder _ content: () -> [StopwatchContent]) {
+    init(@StopwatchContentBuilder _ content: () -> [any StopwatchContent]) {
         self.contents = content()
     }
     
     var body: some View {
         Canvas { ctx, size in
-            for content in contents {
-                content
-                    .bound(size)
-                    .draw(&ctx)
-            }
-        }
-    }
-    
-}
-
-protocol StopwatchContent {
-    func draw(_ context: inout GraphicsContext)
-    func bound(_ size: CGSize) -> StopwatchContent
-}
-
-@resultBuilder
-enum StopwatchContentBuilder {
-    static func buildBlock(_ components: StopwatchContent...) -> [StopwatchContent] {
-        components
-    }
-}
-
-struct Layer: StopwatchContent {
-    private let rect: CGRect
-    private let contents: [StopwatchContent]
-    private let alignment: Alignment
-    private let offset: CGSize
-    
-    enum Alignment {
-        case topLeading
-        case center
-        case bottomTrailing
-    }
-    
-    private init(rect: CGRect, contents: [StopwatchContent], alignment: Alignment, offset: CGSize) {
-        self.rect = rect
-        self.contents = contents
-        self.alignment = alignment
-        self.offset = offset
-    }
-    
-    init(alignment: Alignment? = nil, offset: CGSize? = nil, @StopwatchContentBuilder _ content: () -> [StopwatchContent]) {
-        self.init(rect: .zero,
-                  contents: content(),
-                  alignment: alignment ?? .topLeading,
-                  offset: offset ?? .zero)
-        
-    }
-    
-    func draw(_ context: inout GraphicsContext) {
-        context.drawLayer { ctx in
-            ctx.translateBy(x: rect.minX, y: rect.minY)
+            let rect = CGRect(origin: CGPoint.zero, size: size)
             
             for content in contents {
                 content
-                    .bound(rect.size)
+                    .bound(rect)
                     .draw(&ctx)
             }
         }
     }
     
-    func bound(_ size: CGSize) -> StopwatchContent {
-        let alignedPoint: CGPoint
-        switch alignment {
-        case .topLeading:
-            alignedPoint = .zero
-        case .center:
-            alignedPoint = CGPoint(x: size.width / 2.0, y: size.height / 2.0)
-        case .bottomTrailing:
-            alignedPoint = CGPoint(x: size.width, y: size.height)
-        }
-        
-        let offsetPoint: CGPoint = alignedPoint.applying(.init(translationX: offset.width, y: offset.height))
-        let transforRect = CGRect(origin: offsetPoint, size: size)
-        
-        return Self(rect: transforRect, contents: contents, alignment: alignment, offset: offset)
-    }
-}
-
-struct ScaleTick: StopwatchContent {
-    private var path: Path
-    private var shading: GraphicsContext.Shading
-    
-    private init(path: Path, shading: GraphicsContext.Shading) {
-        self.path = path
-        self.shading = shading
-    }
-    
-    init(path: Path) {
-        let rect = path.boundingRect
-        let trans = CGAffineTransform(translationX: -(rect.width / 2.0), y: .zero)
-        let newPath = path.applying(trans)
-        self.init(path: newPath, shading: .color(.black))
-    }
-    
-    init(_ callback: (inout Path) -> Void) {
-        self.init(path: Path(callback))
-    }
-    
-    init(shape: any Shape, rect: CGRect) {
-        self.init(path: shape.path(in: rect))
-    }
-    
-    init(shape: any Shape, origin: CGPoint, size: CGSize) {
-        let rect = CGRect(origin: origin, size: size)
-        self.init(path: shape.path(in: rect))
-    }
-
-    func bound(_ size: CGSize) -> StopwatchContent {
-        self
-    }
-
-    func style(with shading: GraphicsContext.Shading) -> Self {
-        Self(path: self.path, shading: shading)
-    }
-    
-    func draw(_ context: inout GraphicsContext) {
-        context.fill(path, with: shading)
-    }
-}
-
-struct Scale: StopwatchContent {
-    private let tick: ScaleTick
-    private let total: Int
-    private let span: Int
-    private let aspectRatio: CGFloat
-    
-    private init(tick: ScaleTick, total: Int, span: Int, aspectRatio: CGFloat) {
-        self.tick = tick
-        self.total = total
-        self.span = span
-        self.aspectRatio = aspectRatio
-    }
-    
-    init(total: Int, span: Int = 0, aspectRatio: CGFloat = 1.0 / 1.0) {
-        let tick = ScaleTick(shape: Rectangle(), rect: .zero)
-        self.init(tick: tick, total: total, span: span, aspectRatio: aspectRatio)
-    }
-    
-    func bound(_ size: CGSize) -> any StopwatchContent {
-        let radius = min(size.height, size.width) / 2.0
-        
-        // tick spec
-        let tickWidth = 2.0 * CGFloat.pi * radius / Double(total * (span + 1))
-        let tickHeight = tickWidth / aspectRatio
-        let tickSize = CGSize(width: tickWidth, height: tickHeight)
-        let tickPoint = CGPoint(x: 0, y: -radius)
-        let tickRect = CGRect(origin: tickPoint, size: tickSize)
-        // tick
-        let tick = ScaleTick(shape: Rectangle(), rect: tickRect)
-        // new init
-        return Self(tick: tick, total: total, span: span, aspectRatio: aspectRatio)
-    }
-    
-    func draw(_ context: inout GraphicsContext) {
-        for _ in 0..<total {
-            tick.draw(&context)
-            let degree = Angle.degrees(360.0 / Double(total))
-            context.rotate(by: degree)
-        }
-    }
 }
 
 #Preview {
     _StopwatchFace {
-        Layer(alignment: .center, offset: .init(width: 0, height: 0)) {
-            Scale(total: 240, span: 1, aspectRatio: 1.0 / 3.0)
+        Layer(alignment: .center) {
+            // 1
+            Scale(total: 240, span: 2) {
+                Mark(kind: .shape(Rectangle()))
+                    .style(with: .color(CKColor.gray5))
+            }
+            .aspectRatio(1.0 / 3.0)
+            
+            // 2
+            Scale(total: 60, span: 8) {
+                Mark(kind: .shape(Rectangle()))
+                    .style(with: .color(CKColor.gray5))
+            }
+            .aspectRatio(1.0 / 6.0)
+            
+            // 3
+            Scale(total: 12, span: 40) {
+                Mark(kind: .shape(Rectangle()))
+                    .style(with: .color(CKColor.label))
+            }
+            .aspectRatio(1.0 / 6.0)
         }
     }
     .frame(width: 500, height: 500)
+    .background(CKColor.background)
 }
