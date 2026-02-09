@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct TupleContent<T>: WatchContent where T: WatchContent {
+public struct TupleContent<T>: WatchContent {
     var value: T
     
     public init(_ value: T) {
