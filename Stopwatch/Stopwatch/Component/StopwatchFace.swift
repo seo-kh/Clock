@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WatchUI
 
 /// 시계화면 UI
 ///
@@ -325,7 +326,30 @@ struct _StopwatchFace: View {
             }
             .aspectRatio(1.0 / 6.0)
         }
+        
+        Layer(alignment: .center) {
+            Scale(total: 60, span: 3) {
+                Mark(kind: .shape(Rectangle()))
+                    .style(with: .color(CKColor.gray5))
+            }
+            .aspectRatio(1.0 / 3.0)
+            
+            Scale(total: 30, span: 6) {
+                Mark(kind: .shape(Rectangle()))
+                    .style(with: .color(CKColor.gray5))
+            }
+            .aspectRatio(1.0 / 6.0)
+            
+            Scale(total: 6, span: 30) {
+                Mark(kind: .shape(Rectangle()))
+                    .style(with: .color(CKColor.label))
+            }
+            .aspectRatio(1.0 / 6.0)
+        }
+        .frame(width: 138, height: 138)
+        .offset(y: -86)
     }
     .frame(width: 500, height: 500)
+    .padding()
     .background(CKColor.background)
 }

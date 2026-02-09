@@ -6,7 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		233708CD2F35B96700F86484 /* WatchUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 233708B92F35A3A000F86484 /* WatchUI.framework */; };
+		233708CE2F35B96700F86484 /* WatchUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 233708B92F35A3A000F86484 /* WatchUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
+		233708CF2F35B96700F86484 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 23FBE83E2F0BA1C60090B363 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 233708B82F35A3A000F86484;
+			remoteInfo = WatchUI;
+		};
 		23FBE8542F0BA1C70090B363 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 23FBE83E2F0BA1C60090B363 /* Project object */;
@@ -23,13 +35,33 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		233708D12F35B96700F86484 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				233708CE2F35B96700F86484 /* WatchUI.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		233708B92F35A3A000F86484 /* WatchUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WatchUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23FBE8462F0BA1C60090B363 /* Stopwatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stopwatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23FBE8532F0BA1C70090B363 /* StopwatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StopwatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		23FBE85D2F0BA1C70090B363 /* StopwatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StopwatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		233708BA2F35A3A000F86484 /* WatchUI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WatchUI;
+			sourceTree = "<group>";
+		};
 		23FBE8482F0BA1C60090B363 /* Stopwatch */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Stopwatch;
@@ -48,10 +80,18 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		233708B62F35A3A000F86484 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		23FBE8432F0BA1C60090B363 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				233708CD2F35B96700F86484 /* WatchUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +112,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		233708CC2F35B96700F86484 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		23FBE83D2F0BA1C60090B363 = {
 			isa = PBXGroup;
 			children = (
 				23FBE8482F0BA1C60090B363 /* Stopwatch */,
 				23FBE8562F0BA1C70090B363 /* StopwatchTests */,
 				23FBE8602F0BA1C70090B363 /* StopwatchUITests */,
+				233708BA2F35A3A000F86484 /* WatchUI */,
+				233708CC2F35B96700F86484 /* Frameworks */,
 				23FBE8472F0BA1C60090B363 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,13 +137,47 @@
 				23FBE8462F0BA1C60090B363 /* Stopwatch.app */,
 				23FBE8532F0BA1C70090B363 /* StopwatchTests.xctest */,
 				23FBE85D2F0BA1C70090B363 /* StopwatchUITests.xctest */,
+				233708B92F35A3A000F86484 /* WatchUI.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		233708B42F35A3A000F86484 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		233708B82F35A3A000F86484 /* WatchUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 233708BF2F35A3A000F86484 /* Build configuration list for PBXNativeTarget "WatchUI" */;
+			buildPhases = (
+				233708B42F35A3A000F86484 /* Headers */,
+				233708B52F35A3A000F86484 /* Sources */,
+				233708B62F35A3A000F86484 /* Frameworks */,
+				233708B72F35A3A000F86484 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				233708BA2F35A3A000F86484 /* WatchUI */,
+			);
+			name = WatchUI;
+			packageProductDependencies = (
+			);
+			productName = WatchUI;
+			productReference = 233708B92F35A3A000F86484 /* WatchUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		23FBE8452F0BA1C60090B363 /* Stopwatch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 23FBE8672F0BA1C70090B363 /* Build configuration list for PBXNativeTarget "Stopwatch" */;
@@ -102,10 +185,12 @@
 				23FBE8422F0BA1C60090B363 /* Sources */,
 				23FBE8432F0BA1C60090B363 /* Frameworks */,
 				23FBE8442F0BA1C60090B363 /* Resources */,
+				233708D12F35B96700F86484 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				233708D02F35B96700F86484 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				23FBE8482F0BA1C60090B363 /* Stopwatch */,
@@ -173,6 +258,9 @@
 				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
+					233708B82F35A3A000F86484 = {
+						CreatedOnToolsVersion = 26.2;
+					};
 					23FBE8452F0BA1C60090B363 = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -203,11 +291,19 @@
 				23FBE8452F0BA1C60090B363 /* Stopwatch */,
 				23FBE8522F0BA1C70090B363 /* StopwatchTests */,
 				23FBE85C2F0BA1C70090B363 /* StopwatchUITests */,
+				233708B82F35A3A000F86484 /* WatchUI */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		233708B72F35A3A000F86484 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		23FBE8442F0BA1C60090B363 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -232,6 +328,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		233708B52F35A3A000F86484 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		23FBE8422F0BA1C60090B363 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -256,6 +359,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		233708D02F35B96700F86484 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 233708B82F35A3A000F86484 /* WatchUI */;
+			targetProxy = 233708CF2F35B96700F86484 /* PBXContainerItemProxy */;
+		};
 		23FBE8552F0BA1C70090B363 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 23FBE8452F0BA1C60090B363 /* Stopwatch */;
@@ -269,6 +377,100 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		233708C02F35A3A000F86484 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7CBCKLT6ZU;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.alphacircle.WatchUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 1.3;
+			};
+			name = Debug;
+		};
+		233708C12F35A3A000F86484 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7CBCKLT6ZU;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.alphacircle.WatchUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 1.3;
+			};
+			name = Release;
+		};
 		23FBE8652F0BA1C70090B363 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -578,6 +780,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		233708BF2F35A3A000F86484 /* Build configuration list for PBXNativeTarget "WatchUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				233708C02F35A3A000F86484 /* Debug */,
+				233708C12F35A3A000F86484 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		23FBE8412F0BA1C60090B363 /* Build configuration list for PBXProject "Stopwatch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

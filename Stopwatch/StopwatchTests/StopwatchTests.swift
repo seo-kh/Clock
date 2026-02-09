@@ -115,4 +115,15 @@ struct StopwatchTests {
         // then
         #expect(stopwatch.laps.count == 0) // test 1
     }
+    
+    @Test("tuple test")
+    func test7() async throws {
+        func f<each T: Numeric>(v: repeat each T) -> (repeat each T) {
+            (repeat each v)
+        }
+        
+        let r = f(v: 1, 2, 3, 9, 0.004)
+        
+        print(r)
+    }
 }

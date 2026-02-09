@@ -28,6 +28,10 @@ extension StopwatchScreen._StopwatchScreen {
             .font(.system(size: 110, weight: .thin, design: .default))
             .tracking(3.0)
         }
+        
+        func d() {
+            let d = Text("h")
+        }
     }
 }
 

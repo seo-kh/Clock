@@ -999,5 +999,211 @@ struct CombineTests {
             cancellable.cancel()
         }
     }
+    
+    @Suite("Controlling timing")
+    struct ControllingTimingOperators {
+        /// Measures and emits the time interval between events received from an upstream publisher.
+        @Test("measureInterval(using:options:)")
+        func test1() async throws {
+            let cancellable = Timer.publish(every: 1, on: .main, in: .default)
+                .autoconnect()
+                .measureInterval(using: RunLoop.main)
+                .sink(receiveValue: { print($0) })
+            
+            try await Task.sleep(for: .milliseconds(5500))
+            
+            cancellable.cancel()
+        }
+        
+        @Test("measureInterval(using:)")
+        func test2() async throws {
+            let tapPub = PassthroughSubject<Void, Never>()
+            
+            let cancellable = tapPub
+                .measureInterval(using: RunLoop.main)
+                .sink(receiveValue: { print($0) })
+            
+            tapPub.send()
+            try await Task.sleep(for: .seconds(1))
+            tapPub.send()
+            try await Task.sleep(for: .seconds(2))
+            tapPub.send()
+            try await Task.sleep(for: .seconds(3))
+            tapPub.send()
+            cancellable.cancel()
+        }
+        
+        /// Publishes elements only after a specified time interval elapses between events.
+        @Test("debounce(for:scheduler:options:)")
+        func test3() async throws {
+            let bounces: [(Int, TimeInterval)] = [
+                (0, 0),
+                (1, 0.25),
+                (2, 1),
+                (3, 1.25),
+                (4, 1.5),
+                (5, 2),
+            ]
+            
+            let subject = PassthroughSubject<Int, Never>()
+            let cancellable = subject
+                .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+                .sink(receiveValue: { index in
+                    print("Received index \(index)")
+                })
+            
+            for bounce in bounces {
+                DispatchQueue.main.asyncAfter(deadline: .now() + bounce.1, execute: DispatchWorkItem(block: {
+                    subject.send(bounce.0)
+                }))
+            }
+            
+            try await Task.sleep(for: .seconds(5))
+            cancellable.cancel()
+        }
+        
+        /// Delays delivery of all output to the downstream receiver by a specified amount of time on a particular scheduler.
+        @Test("delay(for:tolerance:schduler:options:)")
+        func test4() async throws {
+            let df = DateFormatter()
+            df.dateStyle = .none
+            df.timeStyle = .long
+            let cancellable = Timer.publish(every: 1.0, on: .main, in: .default)
+                .autoconnect()
+                .handleEvents(receiveOutput: { date in
+                    print("sending timestamp \(df.string(from: date)) to delay()")
+                })
+                .delay(for: .seconds(3), scheduler: RunLoop.main, options: .none)
+                .sink(receiveCompletion: {  print("completion: \($0)") },
+                      receiveValue: { value in
+                    let now = Date()
+                    print("At \(df.string(from: now)) received timestamp \(df.string(from: value))")
+                })
+            
+            try await Task.sleep(for: .seconds(4))
+            
+            cancellable.cancel()
+        }
+        
+        /// Publishes either the most-recent or first element published by the upstream publisher in the specified time interval.
+        @Test("throttle(for:scheduler:latest:)")
+        func test5() async throws {
+            let cancellable = Timer.publish(every: 3.0, on: .main, in: .default)
+                .autoconnect()
+                .handleEvents(receiveOutput: { print($0) })
+                .throttle(for: 10.0, scheduler: RunLoop.main, latest: true)
+                .sink(receiveCompletion: { print("Completion: \($0).") },
+                      receiveValue: { print("Received Timestamp: \($0).") })
+            
+            try await Task.sleep(for: .seconds(15))
+            cancellable.cancel()
+        }
+        
+        /// Terminates publishing if the upstream publisher exceeds the specified time interval without producing an element.
+        @Test("timeout(_:scheduler:options:customError:)")
+        func test6() async throws {
+            var cancellable: Cancellable? = nil
+            let tapPub = PassthroughSubject<String, Never>()
+            let sleep = 2 // 3
+            
+            cancellable = tapPub
+                .timeout(3.0, scheduler: RunLoop.main)
+                .sink(receiveCompletion: { print("timeout: ", $0) },
+                      receiveValue: { print("value: ", $0) })
+            
+            try await Task.sleep(for: .seconds(sleep))
+            tapPub.send("Tap1 !")
+            tapPub.send("Tap2 !")
+            tapPub.send("Tap3 !")
+            tapPub.send("Tap4 !")
+            tapPub.send("Tap5 !")
+            tapPub.send("Tap6 !")
+            tapPub.send("Tap7 !")
+            
+            try await Task.sleep(for: .seconds(sleep * 2))
+            cancellable?.cancel()
+        }
+    }
+    
+    @Suite("Working with multiple subscribers")
+    struct WorkingMultipleSubscriberOperators {
+        /// Applies a closure to create a subject that delivers elements to subscribers.
+        @Test("multicast(_:)")
+        func test1() async throws {
+            let pub = ["First", "Second", "Third"].publisher
+                .map({ ($0, Int.random(in: 0...100)) })
+                .print("Random")
+                .multicast({ PassthroughSubject<(String, Int), Never>() })
+            
+            let can1 = pub
+                .sink(receiveValue: { print("stream 1 received: \($0)") })
+            
+            let can2 = pub
+                .sink(receiveValue: { print("stream 2 received: \($0)") })
+            
+            let can4 = pub
+                .connect()
+            
+            let can3 = pub
+                .sink(receiveValue: { print("stream 3 received: \($0)") })
+            
+            
+            try await Task.sleep(for: .seconds(2))
+            
+            can1.cancel()
+            can2.cancel()
+            can3.cancel()
+            can4.cancel()
+        }
+        
+        /// Provides a subject to deliver elements to multiple subscribers.
+        @Test("multicast(subject:)")
+        func test2() async throws {
+            let pub = ["First", "Second", "Third"].publisher
+                .map({ ($0, Int.random(in: 0...100)) })
+                .print("Random")
+                .multicast(subject: PassthroughSubject<(String, Int), Never>())
+            
+            let can1 = pub
+                .sink(receiveValue: { print("stream 1 received: \($0)") })
+            
+            let can2 = pub
+                .sink(receiveValue: { print("stream 2 received: \($0)") })
+            
+            let can3 = pub
+                .sink(receiveValue: { print("stream 3 received: \($0)") })
+            
+            let can4 = pub
+                .connect()
+            
+            try await Task.sleep(for: .seconds(2))
+            
+            can1.cancel()
+            can2.cancel()
+            can3.cancel()
+            can4.cancel()
+        }
+        
+        /// Shares the output of an upstream publisher with multiple subscribers.
+        @Test("share()")
+        func test3() async throws {
+            let pub = (1...3).publisher
+                .delay(for: 1, scheduler: DispatchQueue.main)
+                .map({ _ in return Int.random(in: 0...100) })
+                .print("Random")
+                .share()
+            
+            let can1 = pub
+                .sink(receiveValue: { print("Stream 1 received: \($0)") })
+            
+            let can2 = pub
+                .sink(receiveValue: { print("Stream 2 received: \($0)") })
+            
+            try await Task.sleep(for: .seconds(2))
+            
+            can1.cancel()
+            can2.cancel()
+        }
+    }
 }
 
