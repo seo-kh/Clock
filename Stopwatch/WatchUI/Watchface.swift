@@ -23,32 +23,40 @@ public struct Watchface<Content: WatchContent>: View {
     
     private func render(context: inout GraphicsContext, rect: CGRect, content: some WatchContent) {
         switch content {
-        case let pathMark as PathMark:
-            context.fill(pathMark.path, with: .color(.yellow))
-        case let tuple as TupleContent<Content>:
-            Mirror(reflecting: tuple).children
-                .forEach {
-                    if let child = $0.value as? any WatchContent {
-                        self.render(context: &context, rect: rect, content: child)
-                    }
-                }
+        case let mark as TextMark:
+            renderText(context: &context, rect: rect, text: mark.value)
         default:
-            break
+            renderTuple(context: &context, rect: rect, content: content)
+        }
+    }
+    
+    private func renderText(context: inout GraphicsContext, rect: CGRect, text: Text) {
+        context.draw(text, in: rect)
+    }
+    
+    private func renderTuple(context: inout GraphicsContext, rect: CGRect, content: some WatchContent) {
+        
+    }
+}
+
+#Preview("test: layer mark render") {
+    Watchface {
+        Layer(alignment: .center) {
+            TextMark("layer test")
         }
     }
 }
 
 #Preview("test: multiple mark render") {
     Watchface {
-        PathMark(Path(ellipseIn: .init(origin: .zero, size: .init(width: 400, height: 200))))
-        PathMark(Path(ellipseIn: .init(origin: .zero, size: .init(width: 100, height: 200))))
-        PathMark(Path(ellipseIn: .init(origin: .zero, size: .init(width: 100, height: 200))))
+        TextMark("text 1")
+        TextMark("text 2")
+        TextMark("text 3")
     }
 }
 
 #Preview("test: one mark styling") {
     Watchface {
-        PathMark(Path(ellipseIn: .init(origin: .zero, size: .init(width: 100, height: 200))))
-//            .style(with: .blue)
+        TextMark("text")
     }
 }

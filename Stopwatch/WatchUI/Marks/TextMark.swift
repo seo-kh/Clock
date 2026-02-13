@@ -7,20 +7,18 @@
 
 import SwiftUI
 
-public struct TextMark: WatchContent {
-    let text: Text
+public struct TextMark: WatchContent, PrimitiveContent {
+    let value: Text
     
     public init(_ text: Text) {
-        self.text = text
+        self.value = text
     }
     
     public init(_ text: String) {
-        self.text = Text(text)
+        self.value = Text(text)
     }
     
-    public var body: Never {
-        fatalError("TextMark is a primitive content.")
-    }
+    public typealias Body = Never
 }
 
 #Preview("test: one mark render") {

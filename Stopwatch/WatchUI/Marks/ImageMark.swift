@@ -7,16 +7,14 @@
 
 import SwiftUI
 
-public struct ImageMark: WatchContent {
-    let image: Image
+public struct ImageMark: WatchContent, PrimitiveContent {
+    let value: Image
     
     public init(_ image: Image) {
-        self.image = image
+        self.value = image
     }
     
-    public var body: Never {
-        fatalError("ImageMark is a primitive content.")
-    }
+    public typealias Body = Never
 }
 
 #Preview {

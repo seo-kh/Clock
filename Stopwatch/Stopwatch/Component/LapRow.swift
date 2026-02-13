@@ -48,10 +48,11 @@ extension StopwatchScreen._StopwatchScreen.LapList {
                 _number.frame(maxWidth: .infinity, alignment: .leading)
                 _split.frame(maxWidth: .infinity)
                 _total.frame(maxWidth: .infinity, alignment: .trailing)
-                Image
             }
             .font(_font)
             .foregroundStyle(_color)
+            
+            TupleView(Text("h"))
         }
     }
 }

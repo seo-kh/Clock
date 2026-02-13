@@ -18,9 +18,3 @@ struct Empty: StopwatchContent {
     }
 }
 
-struct Test: WatchContent {
-    var body: some WatchContent {
-        WatchUI.Mark(shape: Path(ellipseIn: .zero))
-            
-    }
-}

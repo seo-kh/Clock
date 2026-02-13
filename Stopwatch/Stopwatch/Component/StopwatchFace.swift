@@ -216,6 +216,41 @@ struct StopwatchFace: View {
         }
     }
     
+    private func scale(rect: CGRect, total: Int, span: Int = 1, aspectRatio: CGFloat = 1.0 / 1.0) {
+        let radius = min(rect.height, rect.width) / 2.0
+        let scaleWidth = 2.0 * CGFloat.pi * radius / CGFloat(total * span)
+        
+        let scalePoint = CGPoint(x: -scaleWidth / 2.0, y: -radius)
+        let scaleSize = CGSize(width: scaleWidth, height: scaleWidth / aspectRatio)
+        let scaleRect = CGRect(origin: scalePoint, size: scaleSize)
+    }
+    
+    private func loop<Data>(_ context: inout GraphicsContext,
+                            rect: CGRect,
+                            data: Data,
+                            render: ((Data.Element) -> Void)? = nil
+    ) where Data: RandomAccessCollection, Data.Element: Hashable {
+        for ele in data {
+            render?(ele)
+        }
+    }
+
+    private func rotate(_ context: inout GraphicsContext,
+                        angle: Angle,
+                        render: (() -> Void)? = nil
+    ) {
+        render?()
+        context.rotate(by: angle)
+    }
+
+    private func shape(_ context: inout GraphicsContext,
+                       rect: CGRect,
+                       shape: some Shape,
+                       shading: GraphicsContext.Shading
+    ) {
+        context.fill(shape.path(in: rect), with: shading)
+    }
+
     private func scale(_ context: inout GraphicsContext, _ size: CGSize) {
         let radius = min(size.height, size.width) / 2.0
         let scaleWidth = 2.0 * CGFloat.pi * radius / 480.0
