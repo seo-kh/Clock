@@ -22,20 +22,18 @@ public struct Scale<Content: WatchContent>: WatchContent {
     
     public init(span: Int = 1, @WatchContentBuilder content: () -> Content) where Content == ArrayContent {
         let array = content()
-        self.init(total: array.contents.count, span: span, content: { array })
+        self.init(total: array.count, span: span, content: { array })
     }
     
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         // degree
-        let degree = Angle.degrees(360.0 / Double(total))
+        let angle = Angle.degrees(360.0 / Double(total))
         let newRect = self.align(from: rect)
 
         for content in array.contents {
             content
+                .coordinateRotation(angle: angle) // rotate
                 .render(&context, rect: newRect)
-
-            // rotate
-            context.rotate(by: degree)
         }
     }
     
@@ -65,7 +63,6 @@ public extension Scale {
         _self.aspectRatio = aspectRatio
         return _self
     }
-    
 }
 
 #Preview {
