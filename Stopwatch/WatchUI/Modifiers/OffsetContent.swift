@@ -10,13 +10,30 @@ import SwiftUI
 
 struct OffsetContent<Content: WatchContent>: WatchContent {
     let offset: CGPoint
+    let inplace: Bool
     let content: () -> Content
     
     func render(_ context: inout GraphicsContext, rect: CGRect) {
-        let transform = CGAffineTransform(translationX: offset.x, y: offset.y)
-        let newRect = rect.applying(transform)
+        context.translateBy(x: offset.x, y: offset.y)
+
         content()
-            .render(&context, rect: newRect)
+            .render(&context, rect: rect)
+        
+        if !inplace {
+            context.translateBy(x: -offset.x, y: -offset.y)
+        }
     }
 }
 
+#Preview {
+    Watchface {
+        Layer(alignment: .center) {
+            Scale(total: 60, span: 3) {
+                ShapeMark(Rectangle())
+            }
+            .aspectRatio(1.0 / 3.0)
+            .frame(width: 200, height: 200)
+            .offset(y: -76)
+        }
+    }
+}

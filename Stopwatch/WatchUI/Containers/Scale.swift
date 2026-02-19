@@ -58,7 +58,8 @@ public struct Scale<Content: WatchContent>: WatchContent {
 
 // MARK: - Modifiers
 public extension Scale {
-    func apply(_ aspectRatio: CGFloat) -> Self {
+    /// 가로 / 세로 비율
+    func aspectRatio(_ aspectRatio: CGFloat) -> Self {
         var _self = self
         _self.aspectRatio = aspectRatio
         return _self
@@ -70,9 +71,9 @@ public extension Scale {
         Layer(alignment: .center) {
             Scale(total: 240, span: 2) {
                 ShapeMark(Rectangle())
-                    .apply(.color(.red))
+                    .style(with: .color(.red))
             }
-            .apply(1.0 / 3.0)
+            .aspectRatio(1.0 / 3.0)
         }
     }
 }

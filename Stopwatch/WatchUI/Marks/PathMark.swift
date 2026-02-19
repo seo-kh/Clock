@@ -10,31 +10,25 @@ import SwiftUI
 public struct PathMark: WatchContent {
     let path: Path
     var shading: GraphicsContext.Shading
-    var style: FillStyle
+    var fillStyle: FillStyle
     
     public init(_ path: Path) {
         self.path = path
         self.shading = GraphicsContext.Shading.foreground
-        self.style = FillStyle()
+        self.fillStyle = FillStyle()
     }
     
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
-        context.fill(self.path, with: self.shading, style: self.style)
+        context.fill(self.path, with: self.shading, style: self.fillStyle)
     }
 }
 
 // MARK: - Modifiers
 public extension PathMark {
-    
-    func apply(_ shading: GraphicsContext.Shading) -> Self {
+    func style(with shading: GraphicsContext.Shading, fillStyle: FillStyle = FillStyle()) -> Self {
         var _self = self
         _self.shading = shading
-        return _self
-    }
-    
-    func apply(_ style: FillStyle) -> Self {
-        var _self = self
-        _self.style = style
+        _self.fillStyle = fillStyle
         return _self
     }
 }
