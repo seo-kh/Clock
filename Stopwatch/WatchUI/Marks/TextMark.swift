@@ -7,22 +7,32 @@
 
 import SwiftUI
 
-public struct TextMark: WatchContent, PrimitiveContent {
-    let value: Text
+public struct TextMark: WatchContent {
+    private let text: Text
+    private let anchor: UnitPoint?
     
-    public init(_ text: Text) {
-        self.value = text
+    public init(anchor: UnitPoint? = nil, content: () -> Text) {
+        self.text = content()
+        self.anchor = anchor
     }
     
-    public init(_ text: String) {
-        self.value = Text(text)
+    public init(text: String, anchor: UnitPoint? = nil) {
+        self.init(anchor: anchor, content: { Text(text) })
     }
     
-    public typealias Body = Never
+    public func render(_ context: inout GraphicsContext, rect: CGRect) {
+        if let anchor {
+            context.draw(self.text, at: rect.origin, anchor: anchor)
+        } else {
+            context.draw(self.text, in: rect)
+        }
+    }
 }
 
 #Preview("test: one mark render") {
     Watchface {
-        TextMark("Hi")
+        TextMark(anchor: .topLeading) {
+            Text("Text Mark")
+        }
     }
 }

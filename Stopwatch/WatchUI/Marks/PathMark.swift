@@ -7,17 +7,34 @@
 
 import SwiftUI
 
-public struct PathMark: WatchContent, PrimitiveContent {
-    let value: Path
+public struct PathMark: WatchContent {
+    let path: Path
+    var shading: GraphicsContext.Shading
+    var style: FillStyle
     
     public init(_ path: Path) {
-        self.value = path
+        self.path = path
+        self.shading = GraphicsContext.Shading.foreground
+        self.style = FillStyle()
     }
     
-    public init(_ shape: any Shape, rect: CGRect) {
-        self.value = shape.path(in: rect)
+    public func render(_ context: inout GraphicsContext, rect: CGRect) {
+        context.fill(self.path, with: self.shading, style: self.style)
     }
-    
-    public typealias Body = Never
 }
 
+// MARK: - Modifiers
+public extension PathMark {
+    
+    func apply(_ shading: GraphicsContext.Shading) -> Self {
+        var _self = self
+        _self.shading = shading
+        return _self
+    }
+    
+    func apply(_ style: FillStyle) -> Self {
+        var _self = self
+        _self.style = style
+        return _self
+    }
+}
