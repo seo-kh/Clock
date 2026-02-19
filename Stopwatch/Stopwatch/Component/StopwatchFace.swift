@@ -316,47 +316,98 @@ private struct TestStopwatch: View {
 
 // ---------------------------- Stopwatch DSL --------------------------
 
-struct _StopwatchFace: View {
-    let contents: [StopwatchContent]
-    
-    init(@StopwatchContentBuilder _ content: () -> [any StopwatchContent]) {
-        self.contents = content()
-    }
-    
-    var body: some View {
-        Canvas { ctx, size in
-            let rect = CGRect(origin: CGPoint.zero, size: size)
-            
-            for content in contents {
-                content
-                    .bound(rect)
-                    .draw(&ctx)
-            }
-        }
-    }
-    
-}
+//struct _StopwatchFace: View {
+//    let contents: [StopwatchContent]
+//    
+//    init(@StopwatchContentBuilder _ content: () -> [any StopwatchContent]) {
+//        self.contents = content()
+//    }
+//    
+//    var body: some View {
+//        Canvas { ctx, size in
+//            let rect = CGRect(origin: CGPoint.zero, size: size)
+//            
+//            for content in contents {
+//                content
+//                    .bound(rect)
+//                    .draw(&ctx)
+//            }
+//        }
+//    }
+//    
+//}
 
-#Preview {
-    _StopwatchFace {
+//#Preview {
+//    _StopwatchFace {
+//        Layer(alignment: .center) {
+//            // 1
+//            Scale(total: 240, span: 2) {
+//                Mark(kind: .shape(Rectangle()))
+//                    .style(with: .color(CKColor.gray5))
+//            }
+//            .aspectRatio(1.0 / 3.0)
+//            
+//            // 2
+//            Scale(total: 60, span: 8) {
+//                Mark(kind: .shape(Rectangle()))
+//                    .style(with: .color(CKColor.gray5))
+//            }
+//            .aspectRatio(1.0 / 6.0)
+//            
+//            // 3
+//            Scale(total: 12, span: 40) {
+//                Mark(kind: .shape(Rectangle()))
+//                    .style(with: .color(CKColor.label))
+//            }
+//            .aspectRatio(1.0 / 6.0)
+//        }
+//        
+//        Layer(alignment: .center) {
+//            Scale(total: 60, span: 3) {
+//                Mark(kind: .shape(Rectangle()))
+//                    .style(with: .color(CKColor.gray5))
+//            }
+//            .aspectRatio(1.0 / 3.0)
+//            
+//            Scale(total: 30, span: 6) {
+//                Mark(kind: .shape(Rectangle()))
+//                    .style(with: .color(CKColor.gray5))
+//            }
+//            .aspectRatio(1.0 / 6.0)
+//            
+//            Scale(total: 6, span: 30) {
+//                Mark(kind: .shape(Rectangle()))
+//                    .style(with: .color(CKColor.label))
+//            }
+//            .aspectRatio(1.0 / 6.0)
+//        }
+//        .frame(width: 138, height: 138)
+//        .offset(y: -86)
+//    }
+//    .frame(width: 500, height: 500)
+//    .padding()
+//    .background(CKColor.background)
+//}
+
+// ---------------- Watchface API -------------
+
+#Preview("watch face") {
+    Watchface {
         Layer(alignment: .center) {
-            // 1
             Scale(total: 240, span: 2) {
-                Mark(kind: .shape(Rectangle()))
+                ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
             }
             .aspectRatio(1.0 / 3.0)
             
-            // 2
             Scale(total: 60, span: 8) {
-                Mark(kind: .shape(Rectangle()))
+                ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
             }
             .aspectRatio(1.0 / 6.0)
             
-            // 3
             Scale(total: 12, span: 40) {
-                Mark(kind: .shape(Rectangle()))
+                ShapeMark(Rectangle())
                     .style(with: .color(CKColor.label))
             }
             .aspectRatio(1.0 / 6.0)
@@ -364,27 +415,55 @@ struct _StopwatchFace: View {
         
         Layer(alignment: .center) {
             Scale(total: 60, span: 3) {
-                Mark(kind: .shape(Rectangle()))
+                ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
             }
             .aspectRatio(1.0 / 3.0)
-            
+            .frame(width: 138)
+
             Scale(total: 30, span: 6) {
-                Mark(kind: .shape(Rectangle()))
+                ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
             }
             .aspectRatio(1.0 / 6.0)
-            
+            .frame(width: 138)
+
             Scale(total: 6, span: 30) {
-                Mark(kind: .shape(Rectangle()))
+                ShapeMark(Rectangle())
                     .style(with: .color(CKColor.label))
             }
             .aspectRatio(1.0 / 6.0)
+            .frame(width: 138)
         }
-        .frame(width: 138, height: 138)
         .offset(y: -86)
+        
+        Layer(alignment: .center) {
+            Index(0..<12) { i in
+                TextMark(anchor: .center) {
+                    let text = (i != 0) ? "\(i * 5)" : "60"
+                    let sec = Text(text)
+                        .font(.system(size: 28))
+                        .foregroundStyle(CKColor.label)
+                    return sec
+                }
+            }
+            .frame(width: 500.0 * 0.8)
+        }
+        
+        Layer(alignment: .center) {
+            Index(0..<6) { i in
+                TextMark(anchor: .center) {
+                    let text = (i != 0) ? "\(i * 5)" : "30"
+                    let sec = Text(text)
+                        .font(.system(size: 14))
+                        .foregroundStyle(CKColor.label)
+                    return sec
+                }
+            }
+            .offset(y: -500.0 * 0.17)
+            .frame(width: 500.0 * 0.15)
+        }
     }
-    .frame(width: 500, height: 500)
+    .frame(width: 500,height: 500)
     .padding()
-    .background(CKColor.background)
 }

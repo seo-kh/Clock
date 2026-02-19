@@ -77,6 +77,23 @@
 		23FBE85D2F0BA1C70090B363 /* StopwatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StopwatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		9AAD3B882F472A5D0011879C /* Exceptions for "Stopwatch" folder in "Stopwatch" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Component/DSL/Empty.swift,
+				Component/DSL/Layer.swift,
+				Component/DSL/Loop.swift,
+				Component/DSL/Mark.swift,
+				Component/DSL/Scale.swift,
+				Component/DSL/StopwatchContent.swift,
+				Component/DSL/StopwatchContentBuilder.swift,
+				Component/DSL/StopwatchStyle.swift,
+			);
+			target = 23FBE8452F0BA1C60090B363 /* Stopwatch */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		232344F32F3DBC3700AF6332 /* WatchUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -90,6 +107,9 @@
 		};
 		23FBE8482F0BA1C60090B363 /* Stopwatch */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				9AAD3B882F472A5D0011879C /* Exceptions for "Stopwatch" folder in "Stopwatch" target */,
+			);
 			path = Stopwatch;
 			sourceTree = "<group>";
 		};

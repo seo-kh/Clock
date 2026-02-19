@@ -10,12 +10,12 @@ import SwiftUI
 public struct ImageMark: WatchContent {
     let image: Image
     let anchor: UnitPoint?
-    var style: FillStyle
+    var fillStyle: FillStyle
     
     public init(anchor: UnitPoint? = nil, content: () -> Image) {
         self.image = content()
         self.anchor = anchor
-        self.style = FillStyle()
+        self.fillStyle = FillStyle()
     }
     
     public init(systemName: String, anchor: UnitPoint? = nil) {
@@ -26,16 +26,16 @@ public struct ImageMark: WatchContent {
         if let anchor {
             context.draw(image, at: rect.origin, anchor: anchor)
         } else {
-            context.draw(image, in: rect, style: style)
+            context.draw(image, in: rect, style: fillStyle)
         }
     }
 }
 
 // MARK: - Modifiers
 public extension ImageMark {
-    func apply(_ style: FillStyle) -> Self {
+    func style(with style: FillStyle) -> Self {
         var _self = self
-        _self.style = style
+        _self.fillStyle = style
         return _self
     }
 }

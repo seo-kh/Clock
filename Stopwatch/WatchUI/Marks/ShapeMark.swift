@@ -24,7 +24,7 @@ public struct ShapeMark<S: Shape>: WatchContent {
 
 // MARK: - Modifiers
 public extension ShapeMark {
-    func apply(_ shading: GraphicsContext.Shading) -> Self {
+    func style(with shading: GraphicsContext.Shading) -> Self {
         var _self = self
         _self.shading = shading
         return _self
