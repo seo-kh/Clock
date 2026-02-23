@@ -9,25 +9,24 @@ import SwiftUI
 
 public struct ShapeMark<S: Shape>: WatchContent {
     private let shape: S
-    private var shading: GraphicsContext.Shading
+    private let shading: GraphicsContext.Shading
+    
+    init(_ shape: S, shading: GraphicsContext.Shading) {
+        self.shape = shape
+        self.shading = shading
+    }
     
     public init(_ shape: S) {
-        self.shape = shape
-        self.shading = GraphicsContext.Shading.foreground
+        self.init(shape, shading: .foreground)
     }
 
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         context.fill(shape.path(in: rect), with: shading)
     }
-    
 }
 
-// MARK: - Modifiers
 public extension ShapeMark {
-    func style(with shading: GraphicsContext.Shading) -> Self {
-        var _self = self
-        _self.shading = shading
-        return _self
+    func style(with shading: GraphicsContext.Shading) -> some WatchContent {
+        ShapeMark(self.shape, shading: shading)
     }
 }
-

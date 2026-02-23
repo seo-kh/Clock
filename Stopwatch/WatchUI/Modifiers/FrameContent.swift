@@ -9,14 +9,14 @@ import SwiftUI
 import Foundation
 
 struct FrameContent<Content: WatchContent>: WatchContent {
-    let width: CGFloat?
-    let height: CGFloat?
+    let widthRule: SizeRule
+    let heightRule: SizeRule
     let content: () -> Content
     
     func render(_ context: inout GraphicsContext, rect: CGRect) {
         var newRect = rect
-        newRect.size.width = width ?? rect.size.width
-        newRect.size.height = height ?? rect.size.height
+        newRect.size.width = widthRule.transform(from: rect.width)
+        newRect.size.height = heightRule.transform(from: rect.height)
         
         content()
             .render(&context, rect: newRect)
