@@ -314,108 +314,34 @@ private struct TestStopwatch: View {
         .background(CKColor.background)
 }
 
-// ---------------------------- Stopwatch DSL --------------------------
-
-//struct _StopwatchFace: View {
-//    let contents: [StopwatchContent]
-//    
-//    init(@StopwatchContentBuilder _ content: () -> [any StopwatchContent]) {
-//        self.contents = content()
-//    }
-//    
-//    var body: some View {
-//        Canvas { ctx, size in
-//            let rect = CGRect(origin: CGPoint.zero, size: size)
-//            
-//            for content in contents {
-//                content
-//                    .bound(rect)
-//                    .draw(&ctx)
-//            }
-//        }
-//    }
-//    
-//}
-
-//#Preview {
-//    _StopwatchFace {
-//        Layer(alignment: .center) {
-//            // 1
-//            Scale(total: 240, span: 2) {
-//                Mark(kind: .shape(Rectangle()))
-//                    .style(with: .color(CKColor.gray5))
-//            }
-//            .aspectRatio(1.0 / 3.0)
-//            
-//            // 2
-//            Scale(total: 60, span: 8) {
-//                Mark(kind: .shape(Rectangle()))
-//                    .style(with: .color(CKColor.gray5))
-//            }
-//            .aspectRatio(1.0 / 6.0)
-//            
-//            // 3
-//            Scale(total: 12, span: 40) {
-//                Mark(kind: .shape(Rectangle()))
-//                    .style(with: .color(CKColor.label))
-//            }
-//            .aspectRatio(1.0 / 6.0)
-//        }
-//        
-//        Layer(alignment: .center) {
-//            Scale(total: 60, span: 3) {
-//                Mark(kind: .shape(Rectangle()))
-//                    .style(with: .color(CKColor.gray5))
-//            }
-//            .aspectRatio(1.0 / 3.0)
-//            
-//            Scale(total: 30, span: 6) {
-//                Mark(kind: .shape(Rectangle()))
-//                    .style(with: .color(CKColor.gray5))
-//            }
-//            .aspectRatio(1.0 / 6.0)
-//            
-//            Scale(total: 6, span: 30) {
-//                Mark(kind: .shape(Rectangle()))
-//                    .style(with: .color(CKColor.label))
-//            }
-//            .aspectRatio(1.0 / 6.0)
-//        }
-//        .frame(width: 138, height: 138)
-//        .offset(y: -86)
-//    }
-//    .frame(width: 500, height: 500)
-//    .padding()
-//    .background(CKColor.background)
-//}
 
 // ---------------- Watchface API -------------
-
 #Preview("watch face") {
     Watchface {
         
         // Minute layer
         Layer(alignment: .center) {
-            Scale(total: 60, span: 3) { i in
+            Scale(0..<60, span: 3) { _ in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
-                    .coordinateRotation(angle: .degrees(360.0 / 60))
+                    .align(.top)
                     .aspectRatio(1.0 / 3.0)
             }
             .frame(width: 138)
+            
 
-            Scale(total: 30, span: 6) { i in
+            Scale(0..<30, span: 6) { _ in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
-                    .coordinateRotation(angle: .degrees(360.0 / 30))
+                    .align(.top)
                     .aspectRatio(1.0 / 6.0)
             }
             .frame(width: 138)
 
-            Scale(total: 6, span: 30) { i in
+            Scale(0..<6, span: 30) { _ in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.label))
-                    .coordinateRotation(angle: .degrees(360.0 / 6))
+                    .align(.top)
                     .aspectRatio(1.0 / 6.0)
             }
             .frame(width: 138)
@@ -435,7 +361,7 @@ private struct TestStopwatch: View {
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.orange))
             }
-            .frame(width: 138)
+            .frame(width: 138, height: 138)
             .coordinateRotation(angle: .degrees(30))
             
             ShapeMark(Circle())
@@ -447,24 +373,24 @@ private struct TestStopwatch: View {
 
         // Seconds layer
         Layer(alignment: .center) {
-            Scale(total: 240, span: 2) { i in
+            Scale(0..<240, span: 2) { _ in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
-                    .coordinateRotation(angle: .degrees(360.0 / 240))
+                    .align(.top)
                     .aspectRatio(1.0 / 3.0)
             }
             
-            Scale(total: 60, span: 8) { i in
+            Scale(0..<60, span: 8) { _ in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
-                    .coordinateRotation(angle: .degrees(360.0 / 60))
+                    .align(.top)
                     .aspectRatio(1.0 / 6.0)
             }
             
-            Scale(total: 12, span: 40) { i in
+            Scale(0..<12, span: 40) { _ in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.label))
-                    .coordinateRotation(angle: .degrees(360.0 / 12))
+                    .align(.top)
                     .aspectRatio(1.0 / 6.0)
             }
             
@@ -511,7 +437,7 @@ private struct TestStopwatch: View {
                     .tracking(2.0)
             }
         }
-        .offset(y: 90)
+        .offset(y: 50)
         
     }
     .frame(width: 500,height: 500)

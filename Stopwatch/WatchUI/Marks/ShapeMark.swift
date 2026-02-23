@@ -9,48 +9,72 @@ import SwiftUI
 
 public struct ShapeMark<S: Shape>: WatchContent {
     private let shape: S
-    private let anchor: UnitPoint
     private let shading: GraphicsContext.Shading
     
-    init(_ shape: S, anchor: UnitPoint, shading: GraphicsContext.Shading) {
+    init(_ shape: S, shading: GraphicsContext.Shading) {
         self.shape = shape
-        self.anchor = anchor
         self.shading = shading
     }
     
-    public init(_ shape: S, anchor: UnitPoint = .topLeading) {
-        self.init(shape, anchor: anchor, shading: .foreground)
+    public init(_ shape: S) {
+        self.init(shape, shading: .foreground)
     }
 
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
-        let newRect = self.align(from: rect)
-        context.fill(shape.path(in: newRect), with: shading)
+        context.fill(shape.path(in: rect), with: shading)
     }
 }
 
 public extension ShapeMark {
-    func style(with shading: GraphicsContext.Shading) -> some WatchContent {
-        ShapeMark(self.shape, anchor: self.anchor, shading: shading)
+    func style(with shading: GraphicsContext.Shading) -> ShapeMark {
+        ShapeMark(self.shape, shading: shading)
+    }
+    
+    func align(_ anchor: UnitPoint) -> some WatchContent {
+        Align(anchor: anchor, content: { self })
     }
 }
 
 extension ShapeMark {
-    func align(from rect: CGRect) -> CGRect {
-        let transform: CGAffineTransform =
-        switch anchor {
-        case .topLeading: .init(translationX: -rect.minX, y: rect.minY)
-        case .top: .init(translationX: -rect.midX, y: -rect.minY)
-        case .topTrailing: .init(translationX: -rect.maxX, y: -rect.minY)
-        case .leading: .init(translationX: -rect.minX, y: -rect.midY)
-        case .center: .init(translationX: -rect.midX, y: -rect.midY)
-        case .trailing: .init(translationX: -rect.maxX, y: -rect.midY)
-        case .bottomLeading: .init(translationX: -rect.minX, y: -rect.maxY)
-        case .bottom: .init(translationX: -rect.midX, y: -rect.maxY)
-        case .bottomTrailing: .init(translationX: -rect.maxX, y: -rect.maxY)
-        default: .init(translationX: .zero, y: .zero)
+    struct Align<Content: WatchContent>: WatchContent {
+        let anchor: UnitPoint
+        let content: () -> Content
+        
+        func delta(from rect: CGRect) -> (x: CGFloat, y: CGFloat) {
+            let minX = 0.0
+            let minY = 0.0
+            let midX = rect.width / 2.0
+            let midY = rect.height / 2.0
+            let maxX = rect.width
+            let maxY = rect.height
+            
+            return switch anchor {
+            case .topLeading: (minX, minY)
+            case .top: (midX, minY)
+            case .topTrailing: (maxX, minY)
+                
+            case .leading: (minX, midY)
+            case .center: (midX, midY)
+            case .trailing: (maxX, midY)
+                
+            case .bottomLeading: (minX, maxY)
+            case .bottom: (midX, maxY)
+            case .bottomTrailing: (maxX, maxY)
+                
+            default: (0, 0)
+            }
         }
         
-        return rect.applying(transform)
+        public func render(_ context: inout GraphicsContext, rect: CGRect) {
+            
+            let delta = self.delta(from: rect)
+            var newRect = rect
+            newRect.origin.x += -delta.x
+            newRect.origin.y += -delta.y
+            
+            content()
+                .render(&context, rect: newRect)
+        }
     }
 }
 
@@ -58,11 +82,48 @@ extension ShapeMark {
     Watchface {
         Layer(alignment: .center) {
             ShapeMark(Rectangle())
-                .frame(width: 100, height: 50)
-                .offset(y: -50)
+                .style(with: .color(.red))
+                .frame(width: 50, height: 50)
             
-            ShapeMark(Rectangle(), anchor: .center)
-                .frame(width: 100, height: 50)
+            ShapeMark(Rectangle())
+                .style(with: .color(.orange))
+                .align(.top)
+                .frame(width: 50, height: 50)
+            
+            ShapeMark(Rectangle())
+                .style(with: .color(.yellow))
+                .align(.topTrailing)
+                .frame(width: 50, height: 50)
+            
+            ShapeMark(Rectangle())
+                .style(with: .color(.green))
+                .align(.leading)
+                .frame(width: 50, height: 50)
+            
+            ShapeMark(Rectangle())
+                .style(with: .color(.cyan))
+                .align(.center)
+                .frame(width: 50, height: 50)
+            
+            ShapeMark(Rectangle())
+                .style(with: .color(.blue))
+                .align(.trailing)
+                .frame(width: 50, height: 50)
+            
+            ShapeMark(Rectangle())
+                .style(with: .color(.pink))
+                .align(.bottomLeading)
+                .frame(width: 50, height: 50)
+            
+            ShapeMark(Rectangle())
+                .style(with: .color(.purple))
+                .align(.bottom)
+                .frame(width: 50, height: 50)
+            
+            ShapeMark(Rectangle())
+                .style(with: .color(.indigo))
+                .align(.bottomTrailing)
+                .frame(width: 50, height: 50)
         }
     }
 }

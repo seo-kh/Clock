@@ -29,13 +29,7 @@ public extension WatchContent {
     }
     
     func frame(width: CGFloat? = nil, height: CGFloat? = nil) -> some WatchContent {
-        let widthRule: SizeRule = if let width { .fixed(width) } else { .identity }
-        let heightRule: SizeRule = if let height { .fixed(height) } else { .identity }
-        return FrameContent(widthRule: widthRule, heightRule: heightRule, content: { self })
-    }
-    
-    func frame(width: SizeRule = .identity, height: SizeRule = .identity) -> some WatchContent {
-        FrameContent(widthRule: width, heightRule: height, content: { self })
+        FrameContent(width: width, height: height, content: { self })
     }
 
     func aspectRatio(_ aspectRatio: CGFloat) -> some WatchContent {

@@ -7,10 +7,14 @@
 
 import SwiftUI
 
-struct AnyWatchContent: WatchContent {
+public struct AnyWatchContent: WatchContent {
     let content: any WatchContent
     
-    func render(_ context: inout GraphicsContext, rect: CGRect) {
+    public init(content: any WatchContent) {
+        self.content = content
+    }
+    
+    public func render(_ context: inout GraphicsContext, rect: CGRect) {
         content
             .render(&context, rect: rect)
     }

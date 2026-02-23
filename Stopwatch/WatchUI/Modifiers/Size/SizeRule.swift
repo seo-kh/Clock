@@ -16,8 +16,8 @@ public extension SizeRule where Self == AnySizeRule {
         AnySizeRule(rule:FixedSizeRule(size: size))
     }
     
-    static func equal(_ parts: CGFloat) -> some SizeRule {
-        AnySizeRule(rule: EqualSizeRule(parts: parts))
+    static func equal(parts: CGFloat, span: CGFloat = 1) -> some SizeRule {
+        AnySizeRule(rule: EqualSizeRule(total: parts * span))
     }
     
     static var identity: some SizeRule {
