@@ -29,3 +29,37 @@ struct CoordinateRotatorContent<Content: WatchContent>: WatchContent {
         }
     }
 }
+
+public struct _ShapeMark<S: Shape>: WatchContent {
+    private let shape: S
+    private let shading: GraphicsContext.Shading
+    
+    init(_ shape: S, shading: GraphicsContext.Shading) {
+        self.shape = shape
+        self.shading = shading
+    }
+    
+    public init(_ shape: S) {
+        self.init(shape, shading: .foreground)
+    }
+
+    public func render(_ context: inout GraphicsContext, rect: CGRect) {
+        context.fill(shape.path(in: rect), with: shading)
+    }
+}
+
+
+#Preview {
+    Watchface {
+        Layer(alignment: .center) {
+            _ShapeMark(Rectangle())
+                .frame(width: 30, height: 60)
+                .offset(y: -100)
+            
+            _ShapeMark(Rectangle())
+                .frame(width: 30, height: 60)
+                .offset(y: -100)
+                .coordinateRotation(angle: .degrees(50))
+        }
+    }
+}
