@@ -31,4 +31,8 @@ public extension WatchContent {
     func frame(width: CGFloat? = nil, height: CGFloat? = nil) -> some WatchContent {
         FrameContent(width: width, height: height, content: { self })
     }
+    
+    func aspectRatio(_ aspectRatio: CGFloat) -> some WatchContent {
+        AspectRatioContent(aspectRatio: aspectRatio, content: { self })
+    }
 }

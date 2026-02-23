@@ -400,24 +400,24 @@ private struct TestStopwatch: View {
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
                     .coordinateRotation(angle: .degrees(360.0 / 60))
+                    .aspectRatio(1.0 / 3.0)
             }
-            .aspectRatio(1.0 / 3.0)
             .frame(width: 138)
 
             Scale(total: 30, span: 6) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
                     .coordinateRotation(angle: .degrees(360.0 / 30))
+                    .aspectRatio(1.0 / 6.0)
             }
-            .aspectRatio(1.0 / 6.0)
             .frame(width: 138)
 
             Scale(total: 6, span: 30) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.label))
                     .coordinateRotation(angle: .degrees(360.0 / 6))
+                    .aspectRatio(1.0 / 6.0)
             }
-            .aspectRatio(1.0 / 6.0)
             .frame(width: 138)
             
             Index(0..<6) { i in
@@ -451,22 +451,22 @@ private struct TestStopwatch: View {
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
                     .coordinateRotation(angle: .degrees(360.0 / 240))
+                    .aspectRatio(1.0 / 3.0)
             }
-            .aspectRatio(1.0 / 3.0)
             
             Scale(total: 60, span: 8) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
                     .coordinateRotation(angle: .degrees(360.0 / 60))
+                    .aspectRatio(1.0 / 6.0)
             }
-            .aspectRatio(1.0 / 6.0)
             
             Scale(total: 12, span: 40) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.label))
                     .coordinateRotation(angle: .degrees(360.0 / 12))
+                    .aspectRatio(1.0 / 6.0)
             }
-            .aspectRatio(1.0 / 6.0)
             
             Index(0..<12) { i in
                 TextMark(anchor: .center) {
