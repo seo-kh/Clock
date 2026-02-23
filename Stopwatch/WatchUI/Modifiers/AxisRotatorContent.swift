@@ -14,8 +14,25 @@ struct AxisRotatorContent<Content: WatchContent>: WatchContent {
     
     func render(_ context: inout GraphicsContext, rect: CGRect) {
         let transform = CGAffineTransform(rotationAngle: angle.radians)
-        let newRect = rect.applying(transform)
+        let newPoint = rect.origin.applying(transform)
+        var newRect = rect
+        newRect.origin = newPoint
+
         content()
             .render(&context, rect: newRect)
+    }
+}
+
+#Preview {
+    Watchface {
+        Layer(alignment: .center) {
+            TextMark(text: "º", anchor: .center)
+            
+            Loop(data: 0..<6) { i in
+                TextMark(text: "\(i)", anchor: .center)
+                    .axisRotation(angle: .degrees(30.0 * Double(i))) // rect.point가 zero면 axis rotation이 동작하지 않음.
+                    .offset(x: -75)
+            }
+        }
     }
 }

@@ -20,12 +20,12 @@ public extension WatchContent {
         AxisRotatorContent(angle: angle, content: { self })
     }
 
-    func offset(_ offset: CGPoint, inplace: Bool = false) -> some WatchContent {
-        OffsetContent(offset: offset, inplace: inplace, content: { self })
+    func offset(_ offset: CGPoint) -> some WatchContent {
+        OffsetContent(offset: offset, content: { self })
     }
     
-    func offset(x: CGFloat = 0.0, y: CGFloat = 0.0, inplace: Bool = false) -> some WatchContent {
-        OffsetContent(offset: CGPoint(x: x, y: y), inplace: inplace, content: { self })
+    func offset(x: CGFloat = 0.0, y: CGFloat = 0.0) -> some WatchContent {
+        OffsetContent(offset: CGPoint(x: x, y: y), content: { self })
     }
     
     func frame(width: CGFloat? = nil, height: CGFloat? = nil) -> some WatchContent {
