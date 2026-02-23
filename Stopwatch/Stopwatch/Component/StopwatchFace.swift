@@ -393,20 +393,33 @@ private struct TestStopwatch: View {
 
 #Preview("watch face") {
     Watchface {
-        Layer(alignment: .center) {
-            Index(0..<12) { i in
-                TextMark(anchor: .center) {
-                    let text = (i != 0) ? "\(i * 5)" : "60"
-                    let sec = Text(text)
-                        .font(.system(size: 28))
-                        .foregroundStyle(CKColor.label)
-                    return sec
-                }
-            }
-            .frame(width: 500.0 * 0.8)
-        }
         
+        // Minute layer
         Layer(alignment: .center) {
+            Scale(total: 60, span: 3) { i in
+                ShapeMark(Rectangle())
+                    .style(with: .color(CKColor.gray5))
+                    .coordinateRotation(angle: .degrees(360.0 / 60))
+            }
+            .aspectRatio(1.0 / 3.0)
+            .frame(width: 138)
+
+            Scale(total: 30, span: 6) { i in
+                ShapeMark(Rectangle())
+                    .style(with: .color(CKColor.gray5))
+                    .coordinateRotation(angle: .degrees(360.0 / 30))
+            }
+            .aspectRatio(1.0 / 6.0)
+            .frame(width: 138)
+
+            Scale(total: 6, span: 30) { i in
+                ShapeMark(Rectangle())
+                    .style(with: .color(CKColor.label))
+                    .coordinateRotation(angle: .degrees(360.0 / 6))
+            }
+            .aspectRatio(1.0 / 6.0)
+            .frame(width: 138)
+            
             Index(0..<6) { i in
                 TextMark(anchor: .center) {
                     let text = (i != 0) ? "\(i * 5)" : "30"
@@ -416,32 +429,8 @@ private struct TestStopwatch: View {
                     return sec
                 }
             }
-            .offset(y: -500.0 * 0.20)
             .frame(width: 500.0 * 0.15)
-        }
-        
-        Layer(alignment: .center) {
-            Scale(total: 60, span: 3) {
-                ShapeMark(Rectangle())
-                    .style(with: .color(CKColor.gray5))
-            }
-            .aspectRatio(1.0 / 3.0)
-            .frame(width: 138)
 
-            Scale(total: 30, span: 6) {
-                ShapeMark(Rectangle())
-                    .style(with: .color(CKColor.gray5))
-            }
-            .aspectRatio(1.0 / 6.0)
-            .frame(width: 138)
-
-            Scale(total: 6, span: 30) {
-                ShapeMark(Rectangle())
-                    .style(with: .color(CKColor.label))
-            }
-            .aspectRatio(1.0 / 6.0)
-            .frame(width: 138)
-            
             Hand(width: .equally(180), height: .fit) {
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.orange))
@@ -456,25 +445,40 @@ private struct TestStopwatch: View {
         }
         .offset(y: -100)
 
+        // Seconds layer
         Layer(alignment: .center) {
-            Scale(total: 240, span: 2) {
+            Scale(total: 240, span: 2) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
+                    .coordinateRotation(angle: .degrees(360.0 / 240))
             }
             .aspectRatio(1.0 / 3.0)
             
-            Scale(total: 60, span: 8) {
+            Scale(total: 60, span: 8) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.gray5))
+                    .coordinateRotation(angle: .degrees(360.0 / 60))
             }
             .aspectRatio(1.0 / 6.0)
             
-            Scale(total: 12, span: 40) {
+            Scale(total: 12, span: 40) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.label))
+                    .coordinateRotation(angle: .degrees(360.0 / 12))
             }
             .aspectRatio(1.0 / 6.0)
             
+            Index(0..<12) { i in
+                TextMark(anchor: .center) {
+                    let text = (i != 0) ? "\(i * 5)" : "60"
+                    let sec = Text(text)
+                        .font(.system(size: 28))
+                        .foregroundStyle(CKColor.label)
+                    return sec
+                }
+            }
+            .frame(width: 500.0 * 0.8)
+
             Hand(width: .equally(480), height: .propotional(1.1)) {
                 ShapeMark(Rectangle())
                     .style(with: .color(CKColor.blue))
@@ -498,6 +502,7 @@ private struct TestStopwatch: View {
                 .offset(x: -2, y: -2)
         }
         
+        // Time window
         Layer(alignment: .center) {
             TextMark(anchor: .center) {
                 Text("09:10.40")

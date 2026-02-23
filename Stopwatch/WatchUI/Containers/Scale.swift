@@ -11,28 +11,21 @@ public struct Scale<Content: WatchContent>: WatchContent {
     let total: Int
     let span: Int
     var aspectRatio: CGFloat
-    let array: ArrayContent
+    let content: (Int) -> Content
     
-    public init(total: Int, span: Int = 1, content: () -> Content) {
+    public init(total: Int, span: Int = 1, content: @escaping (Int) -> Content) {
         self.total = max(total, 1)
         self.span = max(span, 1)
         self.aspectRatio = 1.0 / 1.0
-        self.array = ArrayContent(repeating: content(), count: self.total)
-    }
-    
-    public init(span: Int = 1, @WatchContentBuilder content: () -> Content) where Content == ArrayContent {
-        let array = content()
-        self.init(total: array.count, span: span, content: { array })
+        self.content = content
     }
     
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         // degree
-        let angle = Angle.degrees(360.0 / Double(total))
         let newRect = self.align(from: rect)
 
-        for content in array.contents {
-            content
-                .coordinateRotation(angle: angle) // rotate
+        for i in 0..<total {
+            content(i)
                 .render(&context, rect: newRect)
         }
     }
@@ -69,9 +62,10 @@ public extension Scale {
 #Preview {
     Watchface {
         Layer(alignment: .center) {
-            Scale(total: 240, span: 2) {
+            Scale(total: 240, span: 2) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(.red))
+                    .coordinateRotation(angle: .degrees(360.0 / 240.0))
             }
             .aspectRatio(1.0 / 3.0)
         }

@@ -68,23 +68,26 @@ public struct Hand<T: WatchContent>: WatchContent {
 #Preview {
     Watchface {
         Layer(alignment: .center) {
-            Scale(total: 60, span: 3) {
+            Scale(total: 60, span: 3) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(.gray))
+                    .coordinateRotation(angle: .degrees(360.0 / 60))
             }
             .aspectRatio(1.0 / 3.0)
             .frame(width: 138)
             
-            Scale(total: 30, span: 6) {
+            Scale(total: 30, span: 6) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(.gray))
+                    .coordinateRotation(angle: .degrees(360.0 / 30))
             }
             .aspectRatio(1.0 / 6.0)
             .frame(width: 138)
             
-            Scale(total: 6, span: 30) {
+            Scale(total: 6, span: 30) { i in
                 ShapeMark(Rectangle())
                     .style(with: .color(.white))
+                    .coordinateRotation(angle: .degrees(360.0 / 6))
             }
             .aspectRatio(1.0 / 6.0)
             .frame(width: 138)

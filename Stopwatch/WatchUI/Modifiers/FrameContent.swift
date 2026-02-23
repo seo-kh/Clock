@@ -25,8 +25,9 @@ struct FrameContent<Content: WatchContent>: WatchContent {
 #Preview {
     Watchface {
         Layer(alignment: .center) {
-            Scale(total: 60, span: 3) {
+            Scale(total: 60, span: 3) { i in
                 ShapeMark(Rectangle())
+                    .coordinateRotation(angle: .degrees(360.0 / 60))
             }
             .aspectRatio(1.0 / 3.0)
             .frame(width: 200, height: 200)
