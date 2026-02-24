@@ -9,32 +9,42 @@ import Foundation
 import SwiftUI
 
 public struct ArrayContent: WatchContent {
-    let contents: [any WatchContent]
+    var contents: [Element]
+    
+    typealias Element = (index: Int, body: any WatchContent)
     
     var count: Int {
         contents.count
     }
     
-    init(repeating value: any WatchContent, count: Int) {
-        let contents: [any WatchContent] = Array(repeating: value, count: count)
-        self.init(contents: contents)
-    }
-    
     init(contents: [any WatchContent]) {
         self.contents = contents
+            .enumerated()
+            .map({ ($0, $1) })
     }
     
     init<each Content: WatchContent>(_ contents: (repeat each Content)) {
         var _contents: [any WatchContent] = []
+        
         for content in repeat each contents {
             _contents.append(content)
         }
+        
         self.init(contents: _contents)
+    }
+    
+    func map<E>(_ transform: (Element) throws(E) -> any WatchContent) -> Self where E: Error {
+        do {
+            let newContents = try contents.map(transform)
+            return Self(contents: newContents)
+        } catch {
+            return self
+        }
     }
     
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         for content in contents {
-            content.render(&context, rect: rect)
+            content.body.render(&context, rect: rect)
         }
     }
 }

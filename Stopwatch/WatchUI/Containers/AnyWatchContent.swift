@@ -14,6 +14,10 @@ public struct AnyWatchContent: WatchContent {
         self.content = content
     }
     
+    public init<C: WatchContent>(content: @escaping () -> C) {
+        self.content = content()
+    }
+
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         content
             .render(&context, rect: rect)

@@ -16,7 +16,7 @@ public struct Loop<Data, Content>: WatchContent where Data: RandomAccessCollecti
         data.count
     }
     
-    public init(data: Data, content: @escaping (Data.Element) -> Content) {
+    public init(data: Data, @WatchContentBuilder content: @escaping (Data.Element) -> Content) {
         self.data = data
         self.content = content
     }

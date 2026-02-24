@@ -319,29 +319,19 @@ private struct TestStopwatch: View {
 #Preview("watch face") {
     Watchface {
         
-        // Minute layer
+        // Minute Scale
         Layer(alignment: .center) {
-            Scale(0..<60, span: 3) { _ in
+            Scale(0..<60, span: 3) { i in
                 ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.gray5))
-                    .aspectRatio(1.0 / 3.0)
+                    .style(with: .color(i.isMultiple(of: 10) ? CKColor.label : CKColor.gray5))
+                    .aspectRatio(i.isMultiple(of: 2) ? 1.0 / 6.0 : 1.0 / 3.0)
             }
             .frame(width: 138)
-            
-            Scale(0..<30, span: 6) { _ in
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.gray5))
-                    .aspectRatio(1.0 / 6.0)
-            }
-            .frame(width: 138)
+        }
+        .offset(y: -100)
 
-            Scale(0..<6, span: 30) { _ in
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.label))
-                    .aspectRatio(1.0 / 6.0)
-            }
-            .frame(width: 138)
-            
+        // Minute Index
+        Layer(alignment: .center) {
             Index(0..<6) { i in
                 TextMark(anchor: .center) {
                     let text = (i != 0) ? "\(i * 5)" : "30"
@@ -355,6 +345,7 @@ private struct TestStopwatch: View {
         }
         .offset(y: -100)
         
+        // Minute Hand
         Layer(alignment: .center) {
             Hand(size: .init(width: .equal(parts: 180))) {
                 ShapeMark(Rectangle(), anchor: .top)
@@ -365,33 +356,26 @@ private struct TestStopwatch: View {
         }
         .offset(y: -100)
 
+        // Minute Hand Center
         Layer(alignment: .center) {
             ShapeMark(Circle(), anchor: .center)
                 .style(with: .color(CKColor.orange))
                 .frame(width: 6, height: 6)
                 .offset(y: -100)
         }
+        
+        // ----------------------------------------------------------
 
-        // Seconds layer
+        // Seconds Scale
         Layer(alignment: .center) {
-            Scale(0..<240, span: 2) { _ in
+            Scale(0..<240, span: 2) { i in
                 ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.gray5))
-                    .aspectRatio(1.0 / 3.0)
+                    .style(with: .color(i.isMultiple(of: 20) ? CKColor.label : CKColor.gray5))
+                    .aspectRatio(i.isMultiple(of: 4) ? 1.0 / 6.0 : 1.0 / 3.0)
             }
+        }
             
-            Scale(0..<60, span: 8) { _ in
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.gray5))
-                    .aspectRatio(1.0 / 6.0)
-            }
-            
-            Scale(0..<12, span: 40) { _ in
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.label))
-                    .aspectRatio(1.0 / 6.0)
-            }
-            
+        Layer(alignment: .center) {
             Index(0..<12) { i in
                 TextMark(anchor: .center) {
                     let text = (i != 0) ? "\(i * 5)" : "60"
@@ -444,18 +428,4 @@ private struct TestStopwatch: View {
     }
     .frame(width: 500,height: 500)
     .padding()
-}
-
-extension Scale {
-    init<D, C>(_ data: D, span: Int = 1, content: @escaping (D.Element) -> C) where D: RandomAccessCollection, C: WatchContent, Content == AnyWatchContent {
-        let _parts: CGFloat = CGFloat(data.count)
-        let _span: CGFloat = CGFloat(span)
-        self.init(size: .init(width: .equal(parts: _parts, span: _span))) {
-            AnyWatchContent(content: Loop(data: data) { ele in
-                    content(ele)
-                        .coordinateRotation(angle: Angle.degrees(360.0 / _parts))
-                }
-            )
-        }
-    }
 }
