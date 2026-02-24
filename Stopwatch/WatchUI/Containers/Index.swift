@@ -7,48 +7,138 @@
 
 import SwiftUI
 
-public struct Index<Data, Content>: WatchContent where Content: WatchContent, Data: RandomAccessCollection, Data.Element: Hashable {
-    let data: Data
-    let content: (Data.Element) -> Content
+public struct Index<Content>: WatchContent where Content: WatchContent {
+    let size: Size
+    let content: () -> Content
     
-    public init(_ data: Data, content: @escaping (Data.Element) -> Content) {
-        self.data = data
+    init(size: Size, content: @escaping () -> Content) {
+        self.size = size
         self.content = content
     }
     
-    private func align(from src: CGRect) -> CGPoint {
-        let radius = min(src.size.height, src.size.width) / 2.0
-        let position = CGPoint(x: 0, y: -radius)
-        return position
+    public func render(_ context: inout GraphicsContext, rect: CGRect) {
+        let length: CGFloat = min(rect.width, rect.height)
+        let radius: CGFloat = length / 2.0
+        let newRect: CGRect = size.makeCGRect(length: radius)
+        
+        content()
+            .render(&context, rect: newRect)
+    }
+}
+
+public extension Index {
+    init<D, R>(_ data: D, @WatchContentBuilder rowContent: @escaping (D.Element) -> R) where D: RandomAccessCollection, D.Element: Equatable, R: WatchContent, Content == AnyWatchContent {
+        let parts: CGFloat = CGFloat(data.count)
+        let radians: CGFloat = 2.0 * CGFloat.pi / parts
+        let size: Size = .init()
+        let idxData: [(index: Int, body: D.Element)] = data.enumerated().map({ ($0, $1) })
+        
+        self.init(size: size, content: {
+            AnyWatchContent {
+                Loop(data: idxData) { element in
+                    let angle: Angle = Angle.radians(radians * CGFloat(element.index))
+                    return rowContent(element.body).axisRotation(angle: angle)
+                }
+            }
+        })
     }
     
-    public func render(_ context: inout GraphicsContext, rect: CGRect) {
-        let radians: CGFloat = 2.0 * CGFloat.pi / CGFloat(data.count)
-        let radius = min(rect.size.height, rect.size.width) / 2.0
-        let position = CGPoint(x: 0, y: -radius)
-
-        for (idx, ele) in data.enumerated() {
+    init<Element: WatchContent>(@WatchContentBuilder content: @escaping () -> Element) where Content == AnyWatchContent {
+        let _content = content()
+        
+        if let array = _content as? ArrayContent {
+            let parts: CGFloat = CGFloat(array.count)
+            let radians: CGFloat = 2.0 * CGFloat.pi / parts
+            let size: Size = .init()
             
-            let angle: Angle = Angle(radians: radians * CGFloat(idx))
-            let transform = CGAffineTransform(rotationAngle: angle.radians)
-            let newRect: CGRect = CGRect(origin: position.applying(transform), size: rect.size)
-            content(ele)
-                .render(&context, rect: newRect)
+            self.init(size: size) {
+                AnyWatchContent {
+                    array
+                        .map { element in
+                            let angle: Angle = Angle.radians(radians * CGFloat(element.index))
+                            return element.body.axisRotation(angle: angle)
+                        }
+                }
+            }
+        } else {
+            let size: Size = .init()
+            
+            self.init(size: size, content: {
+                    AnyWatchContent {
+                        _content
+                    }
+                }
+            )
         }
     }
 }
 
-#Preview {
+#Preview("index face") {
     Watchface {
         Layer(alignment: .center) {
-            Index(0..<12) { i in
+            Index(["30", "5", "10", "15", "20", "25"]) { sec in
                 TextMark(anchor: .center) {
-                    let text = (i != 0) ? "\(i * 5)" : "60"
-                    let sec = Text(text).font(.system(size: 28)).foregroundStyle(.white)
-                    return sec
+                    Text(sec)
+                        .font(.system(size: 14))
+                        .foregroundStyle(.white)
                 }
             }
             .frame(width: 160, height: 160)
         }
     }
 }
+
+#Preview("loop") {
+    Watchface {
+        Layer(alignment: .center) {
+            Index(0..<10, rowContent: { i in
+                TextMark(anchor: .center) {
+                    Text("\(i)")
+                        .font(.largeTitle)
+                }
+            })
+            .frame(width: 160, height: 160)
+        }
+    }
+}
+
+#Preview("builder") {
+    Watchface {
+        Layer(alignment: .center) {
+            Index(content: {
+                TextMark(anchor: .center) {
+                    Text("60")
+                        .font(.largeTitle)
+                }
+                TextMark(anchor: .center) {
+                    Text("5")
+                        .font(.largeTitle)
+                }
+                TextMark(anchor: .center) {
+                    Text("10")
+                        .font(.largeTitle)
+                }
+                TextMark(anchor: .center) {
+                    Text("15")
+                        .font(.largeTitle)
+                }
+            })
+            .frame(width: 160, height: 160)
+        }
+    }
+}
+
+#Preview("single") {
+    Watchface {
+        Layer(alignment: .center) {
+            Index(content: {
+                TextMark(anchor: .center) {
+                    Text("60")
+                        .font(.largeTitle)
+                }
+            })
+            .frame(width: 160, height: 160)
+        }
+    }
+}
+

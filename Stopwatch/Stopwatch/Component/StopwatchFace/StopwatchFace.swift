@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import WatchUI
 
 /// 시계화면 UI
 ///
@@ -216,41 +215,6 @@ struct StopwatchFace: View {
         }
     }
     
-    private func scale(rect: CGRect, total: Int, span: Int = 1, aspectRatio: CGFloat = 1.0 / 1.0) {
-        let radius = min(rect.height, rect.width) / 2.0
-        let scaleWidth = 2.0 * CGFloat.pi * radius / CGFloat(total * span)
-        
-        let scalePoint = CGPoint(x: -scaleWidth / 2.0, y: -radius)
-        let scaleSize = CGSize(width: scaleWidth, height: scaleWidth / aspectRatio)
-        let scaleRect = CGRect(origin: scalePoint, size: scaleSize)
-    }
-    
-    private func loop<Data>(_ context: inout GraphicsContext,
-                            rect: CGRect,
-                            data: Data,
-                            render: ((Data.Element) -> Void)? = nil
-    ) where Data: RandomAccessCollection, Data.Element: Hashable {
-        for ele in data {
-            render?(ele)
-        }
-    }
-
-    private func rotate(_ context: inout GraphicsContext,
-                        angle: Angle,
-                        render: (() -> Void)? = nil
-    ) {
-        render?()
-        context.rotate(by: angle)
-    }
-
-    private func shape(_ context: inout GraphicsContext,
-                       rect: CGRect,
-                       shape: some Shape,
-                       shading: GraphicsContext.Shading
-    ) {
-        context.fill(shape.path(in: rect), with: shading)
-    }
-
     private func scale(_ context: inout GraphicsContext, _ size: CGSize) {
         let radius = min(size.height, size.width) / 2.0
         let scaleWidth = 2.0 * CGFloat.pi * radius / 480.0
@@ -314,118 +278,3 @@ private struct TestStopwatch: View {
         .background(CKColor.background)
 }
 
-
-// ---------------- Watchface API -------------
-#Preview("watch face") {
-    Watchface {
-        
-        // Minute Scale
-        Layer(alignment: .center) {
-            Scale(0..<60, span: 3) { i in
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(i.isMultiple(of: 10) ? CKColor.label : CKColor.gray5))
-                    .aspectRatio(i.isMultiple(of: 2) ? 1.0 / 6.0 : 1.0 / 3.0)
-            }
-            .frame(width: 138)
-        }
-        .offset(y: -100)
-
-        // Minute Index
-        Layer(alignment: .center) {
-            Index(0..<6) { i in
-                TextMark(anchor: .center) {
-                    let text = (i != 0) ? "\(i * 5)" : "30"
-                    let sec = Text(text)
-                        .font(.system(size: 14))
-                        .foregroundStyle(CKColor.label)
-                    return sec
-                }
-            }
-            .frame(width: 500.0 * 0.15)
-        }
-        .offset(y: -100)
-        
-        // Minute Hand
-        Layer(alignment: .center) {
-            Hand(size: .init(width: .equal(parts: 180))) {
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.orange))
-                    .coordinateRotation(angle: .degrees(120))
-            }
-            .frame(width: 138, height: 138)
-        }
-        .offset(y: -100)
-
-        // Minute Hand Center
-        Layer(alignment: .center) {
-            ShapeMark(Circle(), anchor: .center)
-                .style(with: .color(CKColor.orange))
-                .frame(width: 6, height: 6)
-                .offset(y: -100)
-        }
-        
-        // ----------------------------------------------------------
-
-        // Seconds Scale
-        Layer(alignment: .center) {
-            Scale(0..<240, span: 2) { i in
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(i.isMultiple(of: 20) ? CKColor.label : CKColor.gray5))
-                    .aspectRatio(i.isMultiple(of: 4) ? 1.0 / 6.0 : 1.0 / 3.0)
-            }
-        }
-            
-        Layer(alignment: .center) {
-            Index(0..<12) { i in
-                TextMark(anchor: .center) {
-                    let text = (i != 0) ? "\(i * 5)" : "60"
-                    let sec = Text(text)
-                        .font(.system(size: 28))
-                        .foregroundStyle(CKColor.label)
-                    return sec
-                }
-            }
-            .frame(width: 500.0 * 0.8)
-        }
-        
-        Layer(alignment: .center) {
-            Hand(size: .init(width: .equal(parts: 480), height: .propotional(1.1))) {
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.blue))
-            }
-            .coordinateRotation(angle: .degrees(129))
-        }
-        
-        Layer(alignment: .center) {
-            Hand(size: .init(width: .equal(parts: 480), height: .propotional(1.1))) {
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(CKColor.orange))
-            }
-            .coordinateRotation(angle: .degrees(60))
-        }
-
-        Layer(alignment: .center) {
-            ShapeMark(Circle(), anchor: .center)
-                .style(with: .color(CKColor.orange))
-                .frame(width: 8, height: 8)
-            
-            ShapeMark(Circle(), anchor: .center)
-                .style(with: .color(CKColor.background))
-                .frame(width: 4, height: 4)
-        }
-        
-        // Time window
-        Layer(alignment: .center) {
-            TextMark(anchor: .center) {
-                Text("09:10.40")
-                    .font(.system(size: 24))
-                    .foregroundStyle(CKColor.label)
-                    .tracking(2.0)
-            }
-        }
-        .offset(y: 50)
-        
-    }
-    .frame(width: 500,height: 500)
-    .padding()
-}
