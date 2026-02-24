@@ -252,7 +252,7 @@ private struct TestStopwatch: View {
     
     var body: some View {
         TimelineView(.periodic(from: now, by: 0.03)) { ctx in
-            StopwatchFace(total: ctx.date - now + 11.0, split: ctx.date - now)
+            _StopwatchFace(total: ctx.date - now + 11.0, split: ctx.date - now)
         }
     }
 }

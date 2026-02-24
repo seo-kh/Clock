@@ -28,6 +28,14 @@ public extension WatchContent {
         OffsetContent(offset: CGPoint(x: x, y: y), content: { self })
     }
     
+    func scale(_ s: CGFloat) -> some WatchContent {
+        ScaleContent(CGSize(width: s, height: s), content: { self })
+    }
+
+    func scale(_ scale: CGSize) -> some WatchContent {
+        ScaleContent(scale, content: { self })
+    }
+    
     func frame(width: CGFloat? = nil, height: CGFloat? = nil) -> some WatchContent {
         FrameContent(width: width, height: height, content: { self })
     }

@@ -51,8 +51,6 @@ extension StopwatchScreen._StopwatchScreen.LapList {
             }
             .font(_font)
             .foregroundStyle(_color)
-            
-            TupleView(Text("h"))
         }
     }
 }

@@ -51,7 +51,7 @@ extension StopwatchScreen {
                     if watchMode.isActive {
                         Spacer()
                         
-                        StopwatchFace(lap: laps.first ?? .empty)
+                        _StopwatchFace(lap: laps.first ?? .empty)
                             .aspectRatio(1.0 / 1.0, contentMode: .fit)
                             .frame(width: 370)
                             .onTapGesture {
