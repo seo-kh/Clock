@@ -23,4 +23,8 @@ public extension SizeRule where Self == AnySizeRule {
     static var identity: some SizeRule {
         AnySizeRule(rule: IdentitySizeRule())
     }
+    
+    static func propotional(_ ratio: CGFloat) -> some SizeRule {
+        AnySizeRule(rule: PropotionalSizeRule(ratio: ratio))
+    }
 }

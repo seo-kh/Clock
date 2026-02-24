@@ -12,8 +12,8 @@ public protocol WatchContent {
 }
 
 public extension WatchContent {
-    func coordinateRotation(angle: Angle, inplace: Bool = false) -> some WatchContent {
-        CoordinateRotatorContent(angle: angle, inplace: inplace, content: { self })
+    func coordinateRotation(angle: Angle) -> some WatchContent {
+        CoordinateRotatorContent(angle: angle, content: { self })
     }
     
     func axisRotation(angle: Angle) -> some WatchContent {

@@ -352,19 +352,25 @@ private struct TestStopwatch: View {
                 }
             }
             .frame(width: 500.0 * 0.15)
-
-            Hand(width: .equally(180), height: .fit) {
-                ShapeMark(Rectangle())
+        }
+        .offset(y: -100)
+        
+        Layer(alignment: .center) {
+            Hand(size: .init(width: .equal(parts: 180))) {
+                ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.orange))
+                    .coordinateRotation(angle: .degrees(120))
             }
             .frame(width: 138, height: 138)
-            .coordinateRotation(angle: .degrees(30))
-            
+        }
+        .offset(y: -100)
+
+        Layer(alignment: .center) {
             ShapeMark(Circle(), anchor: .center)
                 .style(with: .color(CKColor.orange))
                 .frame(width: 6, height: 6)
+                .offset(y: -100)
         }
-        .offset(y: -100)
 
         // Seconds layer
         Layer(alignment: .center) {
@@ -396,19 +402,25 @@ private struct TestStopwatch: View {
                 }
             }
             .frame(width: 500.0 * 0.8)
-
-            Hand(width: .equally(480), height: .propotional(1.1)) {
-                ShapeMark(Rectangle())
+        }
+        
+        Layer(alignment: .center) {
+            Hand(size: .init(width: .equal(parts: 480), height: .propotional(1.1))) {
+                ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.blue))
             }
-            .coordinateRotation(angle: .degrees(30), inplace: true)
-
-            Hand(width: .equally(480), height: .propotional(1.1)) {
-                ShapeMark(Rectangle())
+            .coordinateRotation(angle: .degrees(129))
+        }
+        
+        Layer(alignment: .center) {
+            Hand(size: .init(width: .equal(parts: 480), height: .propotional(1.1))) {
+                ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.orange))
             }
-            .coordinateRotation(angle: .degrees(60), inplace: true)
-            
+            .coordinateRotation(angle: .degrees(60))
+        }
+
+        Layer(alignment: .center) {
             ShapeMark(Circle(), anchor: .center)
                 .style(with: .color(CKColor.orange))
                 .frame(width: 8, height: 8)
