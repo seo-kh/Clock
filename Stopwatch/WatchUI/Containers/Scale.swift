@@ -8,23 +8,25 @@
 import SwiftUI
 
 public struct Scale<Content: WatchContent>: WatchContent {
-    let size: SizeRule
+    let size: Size
     let content: () -> Content
     
-    public init(size: SizeRule, content: @escaping () -> Content) {
+    public init(size: Size, content: @escaping () -> Content) {
         self.size = size
         self.content = content
     }
     
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
-        let length = min(rect.width, rect.height)
-        let radius = length / 2.0
-        let width = size.transform(from: length)
+        let length: CGFloat = min(rect.width, rect.height)
+        let radius: CGFloat = length / 2.0
+        let width: CGFloat = size.width.transform(from: radius)
+        let height: CGFloat = size.height.transform(from: radius)
+        let position: CGFloat = size.position.transform(from: radius)
         
-        var newRect = rect
+        var newRect: CGRect = rect
         newRect.size.width = width
-        newRect.size.height = radius
-        newRect.origin.y = -radius
+        newRect.size.height = height
+        newRect.origin.y = -position
         
         content()
             .render(&context, rect: newRect)
@@ -32,27 +34,69 @@ public struct Scale<Content: WatchContent>: WatchContent {
 }
 
 public extension Scale {
-    init<D, C>(_ data: D, span: Int = 1, content: @escaping (D.Element) -> C) where D: RandomAccessCollection, C: WatchContent, Content == AnyWatchContent {
-        let parts: CGFloat = CGFloat(data.count)
-        self.init(size: .equal(parts: parts, span: CGFloat(span))) {
-            AnyWatchContent(content: Loop(data: data) { ele in
-                    content(ele)
-                        .coordinateRotation(angle: Angle.degrees(360.0 / parts))
-                }
-            )
+    struct Size {
+        let width: SizeRule
+        let height: SizeRule
+        let position: SizeRule
+        
+        public init(width: SizeRule = .identity, height: SizeRule = .identity, position: SizeRule = .identity) {
+            self.width = width
+            self.height = height
+            self.position = position
         }
     }
 }
 
 
-#Preview {
+#Preview("equal width") {
+    let width: SizeRule = .equal(parts: 60, span: 3)
+    let height: SizeRule = .identity
+    let position: SizeRule = .identity
+    
     Watchface {
         Layer(alignment: .center) {
-            Scale(0..<240, span: 2) { _ in
-                ShapeMark(Rectangle())
-                    .style(with: .color(.red))
-                    .align(.top)
-                    .aspectRatio(1.0 / 3.0)
+            Scale(size: .init(width: width, height: height, position: position)) {
+                Loop(data: 0..<60) { _ in
+                    ShapeMark(Rectangle(), anchor: .top)
+                        .style(with: .color(.red))
+                        .coordinateRotation(angle: .degrees(360.0 / 60))
+                }
+            }
+        }
+    }
+}
+
+#Preview("fixed height") {
+    let width: SizeRule = .equal(parts: 60, span: 3)
+    let height: SizeRule = .fixed(10)
+    let position: SizeRule = .identity
+    
+    Watchface {
+        Layer(alignment: .center) {
+            Scale(size: .init(width: width, height: height, position: position)) {
+                Loop(data: 0..<60) { _ in
+                    ShapeMark(Rectangle(), anchor: .top)
+                        .style(with: .color(.red))
+                        .coordinateRotation(angle: .degrees(360.0 / 60))
+                }
+            }
+        }
+    }
+}
+
+#Preview("fixed position") {
+    let width: SizeRule = .equal(parts: 60, span: 3)
+    let height: SizeRule = .fixed(10)
+    let position: SizeRule = .fixed(100)
+    
+    Watchface {
+        Layer(alignment: .center) {
+            Scale(size: .init(width: width, height: height, position: position)) {
+                Loop(data: 0..<60) { _ in
+                    ShapeMark(Rectangle(), anchor: .top)
+                        .style(with: .color(.red))
+                        .coordinateRotation(angle: .degrees(360.0 / 60))
+                }
             }
         }
     }
