@@ -13,17 +13,17 @@ public struct ArrayContent: WatchContent {
     
     typealias Element = (index: Int, body: any WatchContent)
     
-    var count: Int {
+    public var count: Int {
         contents.count
     }
     
-    init(contents: [any WatchContent]) {
+    public init(contents: [any WatchContent]) {
         self.contents = contents
             .enumerated()
             .map({ ($0, $1) })
     }
     
-    init<each Content: WatchContent>(_ contents: (repeat each Content)) {
+    public init<each Content: WatchContent>(_ contents: (repeat each Content)) {
         var _contents: [any WatchContent] = []
         
         for content in repeat each contents {

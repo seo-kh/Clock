@@ -1,5 +1,5 @@
 //
-//  StopwatchFace+WatchUI.swift
+//  StopwatchFace+DSL.swift
 //  Stopwatch
 //
 //  Created by alphacircle on 2/24/26.
@@ -8,33 +8,30 @@
 import SwiftUI
 import WatchUI
 
-struct _StopwatchFace: View {
-    let total: TimeInterval
-    let split: TimeInterval
-    
-    init(total: TimeInterval, split: TimeInterval) {
-        self.total = total
-        self.split = split
-    }
-    
-    init(lap: Lap) {
-        self.total = lap.progress - lap.total
-        self.split = lap.progress - lap.split
-    }
-    
-    var body: some View {
-        Watchface {
-            minuteLayer()
-
-            secondsLayer()
-            
-            windowLayer()
+extension StopwatchFace {
+    struct DSL: View {
+        let total: TimeInterval
+        let split: TimeInterval
+        
+        init(total: TimeInterval, split: TimeInterval) {
+            self.total = total
+            self.split = split
+        }
+        
+        var body: some View {
+            Watchface {
+                minuteLayer()
+                
+                secondsLayer()
+                
+                windowLayer()
+            }
         }
     }
 }
 
 /// UI Components
-private extension _StopwatchFace {
+private extension StopwatchFace.DSL {
     @WatchContentBuilder
     func windowLayer() -> some WatchContent {
         // Time window
@@ -149,7 +146,7 @@ private extension _StopwatchFace {
     }
 }
 
-extension _StopwatchFace {
+extension StopwatchFace.DSL {
     private var totalTimeFormat: AttributedString {
         let now = Date.now
         let elapsed = now.addingTimeInterval(total)
@@ -213,7 +210,7 @@ extension _StopwatchFace {
 }
 
 #Preview("watch face") {
-    _StopwatchFace(total: 340, split: 402)
+    StopwatchFace.DSL(total: 340, split: 402)
         .frame(width: 370,height: 500)
         .padding()
 }
