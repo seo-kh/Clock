@@ -25,7 +25,7 @@ struct AxisRotatorContent<Content: WatchContent>: WatchContent {
 
 #Preview {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             TextMark(text: "º", anchor: .center)
             
             Loop(data: 0..<6) { i in

@@ -75,7 +75,7 @@ public extension Index {
 
 #Preview("index face") {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Index(["30", "5", "10", "15", "20", "25"]) { sec in
                 TextMark(anchor: .center) {
                     Text(sec)
@@ -90,7 +90,7 @@ public extension Index {
 
 #Preview("loop") {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Index(0..<10, rowContent: { i in
                 TextMark(anchor: .center) {
                     Text("\(i)")
@@ -104,7 +104,7 @@ public extension Index {
 
 #Preview("builder") {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Index(content: {
                 TextMark(anchor: .center) {
                     Text("60")
@@ -130,7 +130,7 @@ public extension Index {
 
 #Preview("single") {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Index(content: {
                 TextMark(anchor: .center) {
                     Text("60")

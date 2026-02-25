@@ -23,7 +23,7 @@ struct AspectRatioContent<Content: WatchContent>: WatchContent {
 
 #Preview {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             ShapeMark(Rectangle())
                 .aspectRatio(1.0 / 2.0) // width : height = 1 : 2
                 .frame(width: 50, height: 500) // aspect ratio가 설정되면 height는 무시됨.

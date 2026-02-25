@@ -24,7 +24,7 @@ struct OffsetContent<Content: WatchContent>: WatchContent {
 
 #Preview {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             TextMark(text: "center", anchor: .center)
             
             TextMark(text: "offset y: -50", anchor: .center)

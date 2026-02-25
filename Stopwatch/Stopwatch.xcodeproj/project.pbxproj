@@ -7,20 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		232344FC2F3DBC7E00AF6332 /* WatchUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 233708B92F35A3A000F86484 /* WatchUI.framework */; platformFilters = (ios, macos, ); };
-		232344FD2F3DBC7E00AF6332 /* WatchUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 233708B92F35A3A000F86484 /* WatchUI.framework */; platformFilters = (ios, macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		233708CD2F35B96700F86484 /* WatchUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 233708B92F35A3A000F86484 /* WatchUI.framework */; };
 		233708CE2F35B96700F86484 /* WatchUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 233708B92F35A3A000F86484 /* WatchUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		232344F72F3DBC3700AF6332 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 23FBE83E2F0BA1C60090B363 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 233708B82F35A3A000F86484;
-			remoteInfo = WatchUI;
-		};
 		233708CF2F35B96700F86484 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 23FBE83E2F0BA1C60090B363 /* Project object */;
@@ -45,17 +36,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		232344FE2F3DBC7E00AF6332 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				232344FD2F3DBC7E00AF6332 /* WatchUI.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		233708D12F35B96700F86484 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -70,7 +50,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		232344F22F3DBC3700AF6332 /* WatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		233708B92F35A3A000F86484 /* WatchUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WatchUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23FBE8462F0BA1C60090B363 /* Stopwatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stopwatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23FBE8532F0BA1C70090B363 /* StopwatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StopwatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,11 +74,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		232344F32F3DBC3700AF6332 /* WatchUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WatchUITests;
-			sourceTree = "<group>";
-		};
 		233708BA2F35A3A000F86484 /* WatchUI */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WatchUI;
@@ -126,14 +100,6 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		232344EF2F3DBC3700AF6332 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				232344FC2F3DBC7E00AF6332 /* WatchUI.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		233708B62F35A3A000F86484 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -180,7 +146,6 @@
 				23FBE8562F0BA1C70090B363 /* StopwatchTests */,
 				23FBE8602F0BA1C70090B363 /* StopwatchUITests */,
 				233708BA2F35A3A000F86484 /* WatchUI */,
-				232344F32F3DBC3700AF6332 /* WatchUITests */,
 				233708CC2F35B96700F86484 /* Frameworks */,
 				23FBE8472F0BA1C60090B363 /* Products */,
 			);
@@ -193,7 +158,6 @@
 				23FBE8532F0BA1C70090B363 /* StopwatchTests.xctest */,
 				23FBE85D2F0BA1C70090B363 /* StopwatchUITests.xctest */,
 				233708B92F35A3A000F86484 /* WatchUI.framework */,
-				232344F22F3DBC3700AF6332 /* WatchUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -211,30 +175,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		232344F12F3DBC3700AF6332 /* WatchUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 232344F92F3DBC3700AF6332 /* Build configuration list for PBXNativeTarget "WatchUITests" */;
-			buildPhases = (
-				232344EE2F3DBC3700AF6332 /* Sources */,
-				232344EF2F3DBC3700AF6332 /* Frameworks */,
-				232344F02F3DBC3700AF6332 /* Resources */,
-				232344FE2F3DBC7E00AF6332 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				232344F82F3DBC3700AF6332 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				232344F32F3DBC3700AF6332 /* WatchUITests */,
-			);
-			name = WatchUITests;
-			packageProductDependencies = (
-			);
-			productName = WatchUITests;
-			productReference = 232344F22F3DBC3700AF6332 /* WatchUITests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		233708B82F35A3A000F86484 /* WatchUI */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 233708BF2F35A3A000F86484 /* Build configuration list for PBXNativeTarget "WatchUI" */;
@@ -338,9 +278,6 @@
 				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					232344F12F3DBC3700AF6332 = {
-						CreatedOnToolsVersion = 26.2;
-					};
 					233708B82F35A3A000F86484 = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -375,19 +312,11 @@
 				23FBE8522F0BA1C70090B363 /* StopwatchTests */,
 				23FBE85C2F0BA1C70090B363 /* StopwatchUITests */,
 				233708B82F35A3A000F86484 /* WatchUI */,
-				232344F12F3DBC3700AF6332 /* WatchUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		232344F02F3DBC3700AF6332 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		233708B72F35A3A000F86484 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -419,13 +348,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		232344EE2F3DBC3700AF6332 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		233708B52F35A3A000F86484 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -457,15 +379,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		232344F82F3DBC3700AF6332 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				macos,
-			);
-			target = 233708B82F35A3A000F86484 /* WatchUI */;
-			targetProxy = 232344F72F3DBC3700AF6332 /* PBXContainerItemProxy */;
-		};
 		233708D02F35B96700F86484 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 233708B82F35A3A000F86484 /* WatchUI */;
@@ -484,59 +397,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		232344FA2F3DBC3700AF6332 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7CBCKLT6ZU;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
-				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alphacircle.WatchUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = macosx;
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		232344FB2F3DBC3700AF6332 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7CBCKLT6ZU;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alphacircle.WatchUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = macosx;
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		233708C02F35A3A000F86484 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -940,15 +800,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		232344F92F3DBC3700AF6332 /* Build configuration list for PBXNativeTarget "WatchUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				232344FA2F3DBC3700AF6332 /* Debug */,
-				232344FB2F3DBC3700AF6332 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		233708BF2F35A3A000F86484 /* Build configuration list for PBXNativeTarget "WatchUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

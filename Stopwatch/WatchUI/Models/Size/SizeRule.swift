@@ -11,20 +11,26 @@ public protocol SizeRule {
     func transform(from original: CGFloat) -> CGFloat
 }
 
-public extension SizeRule where Self == AnySizeRule {
+public extension SizeRule where Self == FixedSizeRule {
     static func fixed(_ size: CGFloat) -> some SizeRule {
-        AnySizeRule(rule:FixedSizeRule(size: size))
+        FixedSizeRule(size: size)
     }
+}
     
+public extension SizeRule where Self == EqualSizeRule {
     static func equal(parts: CGFloat, span: CGFloat = 1) -> some SizeRule {
-        AnySizeRule(rule: EqualSizeRule(total: parts * span))
+        EqualSizeRule(total: parts * span)
     }
+}
     
+public extension SizeRule where Self == IdentitySizeRule {
     static var identity: some SizeRule {
-        AnySizeRule(rule: IdentitySizeRule())
+        IdentitySizeRule()
     }
+}
     
+public extension SizeRule where Self == PropotionalSizeRule {
     static func propotional(_ ratio: CGFloat) -> some SizeRule {
-        AnySizeRule(rule: PropotionalSizeRule(ratio: ratio))
+        PropotionalSizeRule(ratio: ratio)
     }
 }

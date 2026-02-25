@@ -7,59 +7,85 @@
 
 import SwiftUI
 
-public struct Layer<Content: WatchContent>: WatchContent {
-    let alignment: Alignment
+extension GraphicsContext {
+    mutating func translateBy(_ point: CGPoint) {
+        self.translateBy(x: point.x, y: point.y)
+    }
+}
+
+public struct Layer<Content: WatchContent>: WatchContent, AlignmentRule {
+    let anchor: UnitPoint
     let content: () -> Content
     
-    public init(alignment: Alignment = .center, @WatchContentBuilder content: @escaping () -> Content) {
-        self.alignment = alignment
+    public init(anchor: UnitPoint = .center, @WatchContentBuilder content: @escaping () -> Content) {
+        self.anchor = anchor
         self.content = content
     }
     
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         context.drawLayer { layerContext in
-            let newPoint = self.align(from: rect)
-            
             layerContext
-                .translateBy(x: newPoint.x, y: newPoint.y)
+                .translateBy(self.alignOrigin(to: rect))
             
             content()
                 .render(&layerContext, rect: rect)
-        }
-    }
-    
-    private func align(from src: CGRect) -> CGPoint {
-        switch alignment {
-        case .topLeading: CGPoint(x: src.minX, y: src.minY)
-        case .top: CGPoint(x: src.midX, y: src.minY)
-        case .topTrailing: CGPoint(x: src.maxX, y: src.midY)
-            
-        case .leading: CGPoint(x: src.minX, y: src.midY)
-        case .center: CGPoint(x: src.midX, y: src.midY)
-        case .trailing: CGPoint(x: src.maxX, y: src.midY)
-            
-        case .bottomLeading: CGPoint(x: src.minX, y: src.maxY)
-        case .bottom: CGPoint(x: src.midX, y: src.maxY)
-        case .bottomTrailing: CGPoint(x: src.maxX, y: src.maxY)
-            
-        default: CGPoint(x: src.minX, y: src.minY)
         }
     }
 }
 
 #Preview("test: layer mark render") {
     Watchface {
-        Layer(alignment: .top) {
+        Layer(anchor: .top) {
             TextMark(anchor: .center) {
                 Text("Top")
                     .foregroundStyle(.yellow)
             }
         }
         
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             TextMark(anchor: .center) {
                 Text("Center")
             }
+        }
+        
+        Layer(anchor: .init(x: 0.75, y: 0.35)) {
+            TextMark(anchor: .center) {
+                Text("**Center**")
+            }
+        }
+    }
+}
+
+#Preview("fix") {
+    Watchface {
+        // Minute Scale
+        Layer(anchor: .center) {
+            Scale(0..<60, span: 3) { i in
+                ShapeMark(Rectangle(), anchor: .top)
+                    .style(with: .color(i.isMultiple(of: 10) ? .white : .gray))
+                    .aspectRatio(i.isMultiple(of: 2) ? 1.0 / 6.0 : 1.0 / 3.0)
+            }
+            .scale(0.30)
+        }
+        .offset(y: -75)
+
+        // Minute Hand
+        Layer(anchor: .center) {
+            Hand(size: .init(width: .equal(parts: 180))) {
+                ShapeMark(Rectangle(), anchor: .top)
+                    .style(with: .color(.orange))
+                    .coordinateRotation(angle: .radians(1))
+            }
+            .scale(0.30)
+        }
+        .offset(y: -75)
+        
+        // Minute Hand Center
+        Layer(anchor: .center) {
+            ShapeMark(Circle(), anchor: .center)
+                .style(with: .color(.orange))
+                .frame(width: 6, height: 6)
+                .offset(y: -75)
         }
     }
 }

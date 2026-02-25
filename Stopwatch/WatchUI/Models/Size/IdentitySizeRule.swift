@@ -7,8 +7,10 @@
 
 import Foundation
 
-struct IdentitySizeRule: SizeRule {
-    func transform(from original: CGFloat) -> CGFloat {
+public struct IdentitySizeRule: SizeRule {
+    public init() {}
+    
+    public func transform(from original: CGFloat) -> CGFloat {
         return original
     }
 }

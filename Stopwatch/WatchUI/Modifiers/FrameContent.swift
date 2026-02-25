@@ -25,7 +25,7 @@ struct FrameContent<Content: WatchContent>: WatchContent {
 
 #Preview("frame") {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             ShapeMark(Rectangle())
                 .frame(width: 100, height: 30)
             

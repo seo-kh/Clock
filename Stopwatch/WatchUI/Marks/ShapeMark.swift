@@ -72,7 +72,7 @@ extension ShapeMark {
 
 #Preview {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             ShapeMark(Rectangle())
                 .style(with: .color(.red))
                 .frame(width: 50, height: 50)

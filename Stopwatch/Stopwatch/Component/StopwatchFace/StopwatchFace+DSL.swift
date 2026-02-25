@@ -35,7 +35,7 @@ private extension StopwatchFace.DSL {
     @WatchContentBuilder
     func windowLayer() -> some WatchContent {
         // Time window
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             TextMark(anchor: .center) {
                 Text(totalTimeFormat)
                     .font(.system(size: 24))
@@ -49,7 +49,7 @@ private extension StopwatchFace.DSL {
     @WatchContentBuilder
     func secondsLayer() -> some WatchContent {
         // Seconds Scale
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Scale(0..<240, span: 2) { i in
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(i.isMultiple(of: 20) ? CKColor.label : CKColor.gray5))
@@ -58,7 +58,7 @@ private extension StopwatchFace.DSL {
         }
             
         // Seconds Index
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Index(seconds) { second in
                 TextMark(anchor: .center) {
                     Text(second)
@@ -70,7 +70,7 @@ private extension StopwatchFace.DSL {
         }
         
         // Lap Hand
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Hand(size: .init(width: .equal(parts: 480), height: .propotional(1.1))) {
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.blue))
@@ -79,7 +79,7 @@ private extension StopwatchFace.DSL {
         }
         
         // Seconds Hand
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Hand(size: .init(width: .equal(parts: 480), height: .propotional(1.1))) {
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.orange))
@@ -88,7 +88,7 @@ private extension StopwatchFace.DSL {
         }
 
         // Seconds Hand Center
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             ShapeMark(Circle(), anchor: .center)
                 .style(with: .color(CKColor.orange))
                 .frame(width: 8, height: 8)
@@ -102,7 +102,7 @@ private extension StopwatchFace.DSL {
     @WatchContentBuilder
     func minuteLayer() -> some WatchContent {
         // Minute Scale
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Scale(0..<60, span: 3) { i in
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(i.isMultiple(of: 10) ? CKColor.label : CKColor.gray5))
@@ -113,7 +113,7 @@ private extension StopwatchFace.DSL {
         .offset(y: -75)
 
         // Minute Index
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Index(minutes) { minute in
                 TextMark(anchor: .center) {
                     Text(minute)
@@ -126,7 +126,7 @@ private extension StopwatchFace.DSL {
         .offset(y: -75)
         
         // Minute Hand
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Hand(size: .init(width: .equal(parts: 180))) {
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.orange))
@@ -137,7 +137,7 @@ private extension StopwatchFace.DSL {
         .offset(y: -75)
 
         // Minute Hand Center
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             ShapeMark(Circle(), anchor: .center)
                 .style(with: .color(CKColor.orange))
                 .frame(width: 6, height: 6)

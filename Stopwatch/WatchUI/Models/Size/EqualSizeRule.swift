@@ -7,10 +7,14 @@
 
 import Foundation
 
-struct EqualSizeRule: SizeRule {
+public struct EqualSizeRule: SizeRule {
     let total: CGFloat
     
-    func transform(from original: CGFloat) -> CGFloat {
+    public init(total: CGFloat) {
+        self.total = total
+    }
+    
+    public func transform(from original: CGFloat) -> CGFloat {
         let unitLength = 2.0 * CGFloat.pi * original / total
         return unitLength
     }

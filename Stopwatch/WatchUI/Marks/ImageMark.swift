@@ -42,8 +42,14 @@ public extension ImageMark {
 
 #Preview {
     Watchface {
-        ImageMark(anchor: .topLeading) {
-            Image(systemName: "circle")
+        Layer(anchor: .topLeading) {
+            ImageMark {
+                Image(systemName: "clock")
+            }
+
+            ImageMark(anchor: .topLeading) {
+                Image(systemName: "clock")
+            }
         }
     }
 }

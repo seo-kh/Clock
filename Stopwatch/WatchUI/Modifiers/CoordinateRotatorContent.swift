@@ -28,7 +28,7 @@ struct CoordinateRotatorContent<Content: WatchContent>: WatchContent {
 
 #Preview {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             ShapeMark(Rectangle())
                 .frame(width: 30, height: 60)
                 .offset(y: -100)

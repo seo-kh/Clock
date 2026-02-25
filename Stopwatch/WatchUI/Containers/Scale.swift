@@ -71,7 +71,7 @@ public extension Scale {
 
 #Preview("new api - plain") {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Scale(span: 5) {
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(.red))
@@ -88,7 +88,7 @@ public extension Scale {
 
 #Preview("new api - loop") {
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Scale(0..<3, span: 5) { i in
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(.red))
@@ -103,7 +103,7 @@ public extension Scale {
     let y: SizeRule = .identity
     
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Scale(size: .init(y: y, width: width, height: height)) {
                 Loop(data: 0..<60) { _ in
                     ShapeMark(Rectangle(), anchor: .top)
@@ -121,7 +121,7 @@ public extension Scale {
     let y: SizeRule = .identity
     
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Scale(size: .init(y: y, width: width, height: height)) {
                 Loop(data: 0..<60) { _ in
                     ShapeMark(Rectangle(), anchor: .top)
@@ -139,7 +139,7 @@ public extension Scale {
     let y: SizeRule = .fixed(100)
     
     Watchface {
-        Layer(alignment: .center) {
+        Layer(anchor: .center) {
             Scale(size: .init(y: y, width: width, height: height)) {
                 Loop(data: 0..<60) { _ in
                     ShapeMark(Rectangle(), anchor: .top)
