@@ -43,4 +43,8 @@ public extension WatchContent {
     func aspectRatio(_ aspectRatio: CGFloat) -> some WatchContent {
         AspectRatioContent(aspectRatio: aspectRatio, content: { self })
     }
+    
+    func opacity(_ opacity: Double) -> some WatchContent {
+        OpacityContent(opacity: opacity, content: { self })
+    }
 }
