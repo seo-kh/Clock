@@ -8,9 +8,9 @@
 import SwiftUI
 
 public struct ShapeMark<S: Shape>: WatchContent {
-    private let shape: S
-    private let anchor: UnitPoint
-    private let shading: GraphicsContext.Shading
+    let shape: S
+    let anchor: UnitPoint
+    let shading: GraphicsContext.Shading
     
     init(_ shape: S, anchor: UnitPoint, shading: GraphicsContext.Shading) {
         self.shape = shape
@@ -18,14 +18,12 @@ public struct ShapeMark<S: Shape>: WatchContent {
         self.shading = shading
     }
     
-    public init(_ shape: S, anchor: UnitPoint = .topLeading) {
+    public init(_ shape: S, anchor: UnitPoint = .center) {
         self.init(shape, anchor: anchor, shading: .foreground)
     }
 
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
-        let delta = self.delta(from: rect)
-        var newRect = rect
-        self.align(&newRect, to: delta)
+        let newRect = anchor.alignAnchorPoint(to: rect)
         context.fill(shape.path(in: newRect), with: shading)
     }
 }
@@ -36,44 +34,10 @@ public extension ShapeMark {
     }
 }
 
-extension ShapeMark {
-    func delta(from rect: CGRect) -> (x: CGFloat, y: CGFloat) {
-        let minX = 0.0
-        let minY = 0.0
-        let midX = rect.width / 2.0
-        let midY = rect.height / 2.0
-        let maxX = rect.width
-        let maxY = rect.height
-        
-        return switch anchor {
-        case .topLeading: (minX, minY)
-        case .top: (midX, minY)
-        case .topTrailing: (maxX, minY)
-            
-        case .leading: (minX, midY)
-        case .center: (midX, midY)
-        case .trailing: (maxX, midY)
-            
-        case .bottomLeading: (minX, maxY)
-        case .bottom: (midX, maxY)
-        case .bottomTrailing: (maxX, maxY)
-            
-        default: (0, 0)
-        }
-    }
-        
-    func align(_ rect: inout CGRect, to delta: (x: CGFloat, y: CGFloat)) {
-        
-        rect.origin.x += -delta.x
-        rect.origin.y += -delta.y
-    }
-            
-}
-
-#Preview {
+#Preview("shape anchor test") {
     Watchface {
         Layer(anchor: .center) {
-            ShapeMark(Rectangle())
+            ShapeMark(Rectangle(), anchor: .topLeading)
                 .style(with: .color(.red))
                 .frame(width: 50, height: 50)
             

@@ -7,13 +7,7 @@
 
 import SwiftUI
 
-extension GraphicsContext {
-    mutating func translateBy(_ point: CGPoint) {
-        self.translateBy(x: point.x, y: point.y)
-    }
-}
-
-public struct Layer<Content: WatchContent>: WatchContent, AlignmentRule {
+public struct Layer<Content: WatchContent>: WatchContent {
     let anchor: UnitPoint
     let content: () -> Content
     
@@ -24,8 +18,10 @@ public struct Layer<Content: WatchContent>: WatchContent, AlignmentRule {
     
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         context.drawLayer { layerContext in
+            let point = anchor.alignOriginPoint(to: rect)
+            
             layerContext
-                .translateBy(self.alignOrigin(to: rect))
+                .translateBy(x: point.x, y: point.y)
             
             content()
                 .render(&layerContext, rect: rect)
@@ -33,10 +29,36 @@ public struct Layer<Content: WatchContent>: WatchContent, AlignmentRule {
     }
 }
 
-#Preview("test: layer mark render") {
+#Preview("demo") {
+    Watchface {
+        let data: [(anchor: UnitPoint, color: Color)] = [
+            (UnitPoint(x: 0.25, y: 0.25), Color.red),
+            (UnitPoint(x: 0.50, y: 0.25), Color.orange),
+            (UnitPoint(x: 0.75, y: 0.25), Color.yellow),
+            
+            (UnitPoint(x: 0.25, y: 0.50), Color.green),
+            (UnitPoint(x: 0.50, y: 0.50), Color.cyan),
+            (UnitPoint(x: 0.75, y: 0.50), Color.blue),
+            
+            (UnitPoint(x: 0.25, y: 0.75), Color.indigo),
+            (UnitPoint(x: 0.50, y: 0.75), Color.pink),
+            (UnitPoint(x: 0.75, y: 0.75), Color.purple),
+        ]
+        
+        Loop(data: data) { element in
+            Layer(anchor: element.anchor) {
+                ShapeMark(Circle(), anchor: .center)
+                    .style(with: .color(element.color))
+                    .frame(width: 80, height: 80)
+            }
+        }
+    }
+}
+
+#Preview("layer mark render") {
     Watchface {
         Layer(anchor: .top) {
-            TextMark(anchor: .center) {
+            TextMark(anchor: .top) {
                 Text("Top")
                     .foregroundStyle(.yellow)
             }
@@ -52,40 +74,6 @@ public struct Layer<Content: WatchContent>: WatchContent, AlignmentRule {
             TextMark(anchor: .center) {
                 Text("**Center**")
             }
-        }
-    }
-}
-
-#Preview("fix") {
-    Watchface {
-        // Minute Scale
-        Layer(anchor: .center) {
-            Scale(0..<60, span: 3) { i in
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(i.isMultiple(of: 10) ? .white : .gray))
-                    .aspectRatio(i.isMultiple(of: 2) ? 1.0 / 6.0 : 1.0 / 3.0)
-            }
-            .scale(0.30)
-        }
-        .offset(y: -75)
-
-        // Minute Hand
-        Layer(anchor: .center) {
-            Hand(size: .init(width: .equal(parts: 180))) {
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(.orange))
-                    .coordinateRotation(angle: .radians(1))
-            }
-            .scale(0.30)
-        }
-        .offset(y: -75)
-        
-        // Minute Hand Center
-        Layer(anchor: .center) {
-            ShapeMark(Circle(), anchor: .center)
-                .style(with: .color(.orange))
-                .frame(width: 6, height: 6)
-                .offset(y: -75)
         }
     }
 }
