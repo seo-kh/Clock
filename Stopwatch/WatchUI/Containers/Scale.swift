@@ -11,7 +11,7 @@ public struct Scale<Content: WatchContent>: WatchContent {
     let size: Size
     let content: () -> Content
     
-    init(size: Size, content: @escaping () -> Content) {
+    public init(size: Size, content: @escaping () -> Content) {
         self.size = size
         self.content = content
     }
@@ -26,72 +26,57 @@ public struct Scale<Content: WatchContent>: WatchContent {
     }
 }
 
-public extension Scale {
-    init<D, R>(_ data: D, span: Int = 1, @WatchContentBuilder rowContent: @escaping (D.Element) -> R) where D: RandomAccessCollection, D.Element: Equatable, R: WatchContent, Content == AnyWatchContent {
-        let parts: CGFloat = CGFloat(data.count)
-        let size: Size = .init(width: .equal(parts: parts, span: CGFloat(span)))
+public extension Scale where Content == AnyWatchContent {
+    init<R>(_ interval: Range<Int>, times: Int = 1, period: Int = 1, @WatchContentBuilder tickContent: @escaping (Tick) -> R) where R: WatchContent {
+        // tick의 사이즈 계산
+        let _times = max(1, times)
+        let _period = max(1, period)
+        let _count = interval.count
+        let tickCount = _count * _times
+        let total = tickCount * _period
+        let size: Size = Size(width: .equal(parts: CGFloat(total)))
+        
+        // tick의 base, offset, delta, angle 계산 및 적용
+        let offsetInterval = 0..<_times
+        let delta = 1.0 / TimeInterval(_times)
+        let angle = Angle(degrees: 360.0 / CGFloat(tickCount))
+        
         self.init(size: size, content: {
             AnyWatchContent {
-                Loop(data: data) { element in
-                    let isFirst: Bool = (data.first == element)
-                    return rowContent(element)
-                        .coordinateRotation(angle: isFirst ? .degrees(0.0) : .degrees(360.0 / parts))
+                Loop(data: interval) { base in
+                    Loop(data: offsetInterval) { offset in
+                        let tick = Tick(base: base, offset: offset, delta: delta)
+                        
+                        tickContent(tick)
+                            .coordinateRotation(angle: tick.isOrigin ? Angle.zero : angle)
+                    }
                 }
             }
         })
     }
-    
-    init<Element: WatchContent>(span: Int = 1, @WatchContentBuilder content: @escaping () -> Element) where Content == AnyWatchContent {
-        let _content = content()
-        
-        if let array = _content as? ArrayContent {
-            let parts: CGFloat = CGFloat(array.count)
-            let size: Size = .init(width: .equal(parts: parts, span: CGFloat(span)))
-            self.init(size: size) {
-                AnyWatchContent {
-                    array
-                        .map { element in
-                            let isFirst: Bool = (array.contents.first?.index == element.index)
-                            let angle: Angle = isFirst ? .degrees(0.0) : .degrees(360.0 / parts)
-                            return element.body.coordinateRotation(angle: angle)
-                        }
-                }
+}
+
+#Preview("scale demo 1") {
+    Watchface {
+        Layer(anchor: .center) {
+            Scale(0..<6, times: 4, period: 2) { tick in
+                ShapeMark(Circle(), anchor: .center)
+                    .style(with: .color(Color(hue: tick.mark / 6.0, saturation: 1.0, brightness: 1.0)))
+                    .aspectRatio(1.0)
+                    .scale(tick.isBase ? 1.2 : 0.7)
             }
-        } else {
-            let size: Size = .init(width: .equal(parts: CGFloat(span)))
-            self.init(size: size, content: {
-                    AnyWatchContent {
-                        _content
-                    }
-                }
-            )
+            .scale(0.9)
         }
     }
 }
 
-#Preview("new api - plain") {
+#Preview("scale demo 2") {
     Watchface {
         Layer(anchor: .center) {
-            Scale(span: 5) {
+            Scale(0..<6, times: 4, period: 2) { tick in
                 ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(.red))
-
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(.green))
-
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(.blue))
-            }
-        }
-    }
-}
-
-#Preview("new api - loop") {
-    Watchface {
-        Layer(anchor: .center) {
-            Scale(0..<3, span: 5) { i in
-                ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(.red))
+                    .style(with: .color(tick.mark < 3.0 ? .red : .blue))
+                    .aspectRatio(tick.isBase ? 1.0 / 3.0 : 1.0 / 1.5)
             }
         }
     }

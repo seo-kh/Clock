@@ -50,10 +50,10 @@ private extension StopwatchFace.DSL {
     func secondsLayer() -> some WatchContent {
         // Seconds Scale
         Layer(anchor: .center) {
-            Scale(0..<240, span: 2) { i in
+            Scale(0..<60, times: 4, period: 2) { tick in
                 ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(i.isMultiple(of: 20) ? CKColor.label : CKColor.gray5))
-                    .aspectRatio(i.isMultiple(of: 4) ? 1.0 / 6.0 : 1.0 / 3.0)
+                    .style(with: .color(tick.isMultiple(of: 5) ? CKColor.label : CKColor.gray5))
+                    .aspectRatio(tick.isBase ? 1.0 / 6.0 : 1.0 / 3.0)
             }
         }
             
@@ -103,27 +103,27 @@ private extension StopwatchFace.DSL {
     func minuteLayer() -> some WatchContent {
         // Minute Scale
         Layer(anchor: .center) {
-            Scale(0..<60, span: 3) { i in
+            Scale(0..<30, times: 2, period: 3) { tick in
                 ShapeMark(Rectangle(), anchor: .top)
-                    .style(with: .color(i.isMultiple(of: 10) ? CKColor.label : CKColor.gray5))
-                    .aspectRatio(i.isMultiple(of: 2) ? 1.0 / 6.0 : 1.0 / 3.0)
+                    .style(with: .color(tick.isMultiple(of: 5) ? CKColor.label : CKColor.gray5))
+                    .aspectRatio(tick.isBase ? 1.0 / 6.0 : 1.0 / 3.0)
             }
-            .scale(0.30)
+            .scale(0.275)
         }
-        .offset(y: -75)
+        .offset(y: -70)
 
         // Minute Index
         Layer(anchor: .center) {
             Index(minutes) { minute in
                 TextMark(anchor: .center) {
                     Text(minute)
-                        .font(.system(size: 14))
+                        .font(.system(size: 16))
                         .foregroundStyle(CKColor.label)
                 }
             }
             .scale(0.15)
         }
-        .offset(y: -75)
+        .offset(y: -70)
         
         // Minute Hand
         Layer(anchor: .center) {
@@ -132,16 +132,16 @@ private extension StopwatchFace.DSL {
                     .style(with: .color(CKColor.orange))
                     .coordinateRotation(angle: .radians(totalMinuteRev))
             }
-            .scale(0.30)
+            .scale(0.275)
         }
-        .offset(y: -75)
+        .offset(y: -70)
 
         // Minute Hand Center
         Layer(anchor: .center) {
             ShapeMark(Circle(), anchor: .center)
                 .style(with: .color(CKColor.orange))
                 .frame(width: 6, height: 6)
-                .offset(y: -75)
+                .offset(y: -70)
         }
     }
 }
