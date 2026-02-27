@@ -34,7 +34,7 @@ public extension Scale where Content == AnyWatchContent {
         let _count = interval.count
         let tickCount = _count * _times
         let total = tickCount * _period
-        let size: Size = Size(width: .equal(parts: CGFloat(total)))
+        let size: Size = Size(width: .equal(total: CGFloat(total)))
         
         // tick의 base, offset, delta, angle 계산 및 적용
         let offsetInterval = 0..<_times
@@ -83,7 +83,7 @@ public extension Scale where Content == AnyWatchContent {
 }
 
 #Preview("equal width") {
-    let width: SizeRule = .equal(parts: 60, span: 3)
+    let width: SizeRule = .equal(total: 180)
     let height: SizeRule = .identity
     let y: SizeRule = .identity
     
@@ -101,7 +101,7 @@ public extension Scale where Content == AnyWatchContent {
 }
 
 #Preview("fixed height") {
-    let width: SizeRule = .equal(parts: 60, span: 3)
+    let width: SizeRule = .equal(total: 180)
     let height: SizeRule = .fixed(10)
     let y: SizeRule = .identity
     
@@ -119,7 +119,7 @@ public extension Scale where Content == AnyWatchContent {
 }
 
 #Preview("fixed position") {
-    let width: SizeRule = .equal(parts: 60, span: 3)
+    let width: SizeRule = .equal(total: 180)
     let height: SizeRule = .fixed(10)
     let y: SizeRule = .fixed(100)
     

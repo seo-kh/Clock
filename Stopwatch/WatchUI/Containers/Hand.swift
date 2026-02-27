@@ -30,7 +30,7 @@ public struct Hand<T: WatchContent>: WatchContent {
 #Preview {
     Watchface {
         Layer(anchor: .center) {
-            Hand(size: .init(width: .equal(parts: 180))) {
+            Hand(size: .init(width: .equal(total: 180))) {
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(.orange))
                     .coordinateRotation(angle: .degrees(120))
@@ -39,7 +39,7 @@ public struct Hand<T: WatchContent>: WatchContent {
         }
         
         Layer(anchor: .center) {
-            Scale(size: .init(width: .equal(parts: 60, span: 3))) {
+            Scale(size: .init(width: .equal(total: 180))) {
                 Loop(data: 0..<60) { _ in
                     ShapeMark(Rectangle(), anchor: .top)
                         .style(with: .color(.gray))

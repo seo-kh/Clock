@@ -18,8 +18,8 @@ public extension SizeRule where Self == FixedSizeRule {
 }
     
 public extension SizeRule where Self == EqualSizeRule {
-    static func equal(parts: CGFloat, span: CGFloat = 1) -> some SizeRule {
-        EqualSizeRule(total: parts * span)
+    static func equal(total: CGFloat) -> some SizeRule {
+        EqualSizeRule(total: total)
     }
 }
     

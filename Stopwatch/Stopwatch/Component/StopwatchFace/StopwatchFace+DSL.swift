@@ -71,7 +71,7 @@ private extension StopwatchFace.DSL {
         
         // Lap Hand
         Layer(anchor: .center) {
-            Hand(size: .init(width: .equal(parts: 480), height: .propotional(1.1))) {
+            Hand(size: .init(width: .equal(total: 480), height: .propotional(1.1))) {
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.blue))
             }
@@ -80,7 +80,7 @@ private extension StopwatchFace.DSL {
         
         // Seconds Hand
         Layer(anchor: .center) {
-            Hand(size: .init(width: .equal(parts: 480), height: .propotional(1.1))) {
+            Hand(size: .init(width: .equal(total: 480), height: .propotional(1.1))) {
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.orange))
             }
@@ -127,7 +127,7 @@ private extension StopwatchFace.DSL {
         
         // Minute Hand
         Layer(anchor: .center) {
-            Hand(size: .init(width: .equal(parts: 180))) {
+            Hand(size: .init(width: .equal(total: 180))) {
                 ShapeMark(Rectangle(), anchor: .top)
                     .style(with: .color(CKColor.orange))
                     .coordinateRotation(angle: .radians(totalMinuteRev))
