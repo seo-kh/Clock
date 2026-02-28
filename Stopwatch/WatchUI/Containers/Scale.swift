@@ -27,7 +27,7 @@ public struct Scale<Content: WatchContent>: WatchContent {
 }
 
 public extension Scale where Content == AnyWatchContent {
-    init<R>(_ interval: Range<Int>, times: Int = 1, period: Int = 1, @WatchContentBuilder tickContent: @escaping (Tick) -> R) where R: WatchContent {
+    init<R>(_ interval: Range<Int>, times: Int = 1, period: Int = 1, @WatchContentBuilder scaleContent: @escaping (Tick) -> R) where R: WatchContent {
         // tick의 사이즈 계산
         let _times = max(1, times)
         let _period = max(1, period)
@@ -47,7 +47,7 @@ public extension Scale where Content == AnyWatchContent {
                     Loop(data: offsetInterval) { offset in
                         let tick = Tick(base: base, offset: offset, delta: delta)
                         
-                        tickContent(tick)
+                        scaleContent(tick)
                             .coordinateRotation(angle: tick.isOrigin ? Angle.zero : angle)
                     }
                 }

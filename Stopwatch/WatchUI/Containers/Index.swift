@@ -27,7 +27,7 @@ public struct Index<Content>: WatchContent where Content: WatchContent {
 }
 
 public extension Index {
-    init<D, R>(_ data: D, @WatchContentBuilder rowContent: @escaping (D.Element) -> R) where D: RandomAccessCollection, D.Element: Equatable, R: WatchContent, Content == AnyWatchContent {
+    init<D, R>(_ data: D, @WatchContentBuilder indexContent: @escaping (D.Element) -> R) where D: RandomAccessCollection, D.Element: Equatable, R: WatchContent, Content == AnyWatchContent {
         let total: CGFloat = CGFloat(data.count)
         let radians: CGFloat = 2.0 * CGFloat.pi / total
         let size: Size = .init(width: .equal(total: total))
@@ -38,7 +38,7 @@ public extension Index {
                 Loop(data: indicies) { index in
                     let angle: Angle = Angle.radians(radians * CGFloat(index))
                     let offset = data.index(data.startIndex, offsetBy: index)
-                    return rowContent(data[offset]).axisRotation(angle: angle)
+                    return indexContent(data[offset]).axisRotation(angle: angle)
                 }
             }
         })
@@ -63,7 +63,7 @@ public extension Index {
 #Preview("loop") {
     Watchface {
         Layer(anchor: .center) {
-            Index(0..<10, rowContent: { i in
+            Index(0..<10, indexContent: { i in
                 TextMark(anchor: .center) {
                     Text("\(i)")
                         .font(.largeTitle)

@@ -9,47 +9,34 @@ import SwiftUI
 
 public struct ImageMark: WatchContent {
     let image: Image
-    let anchor: UnitPoint?
-    var fillStyle: FillStyle
+    let anchor: UnitPoint
     
-    public init(anchor: UnitPoint? = nil, content: () -> Image) {
+    public init(anchor: UnitPoint = .center, content: () -> Image) {
         self.image = content()
         self.anchor = anchor
-        self.fillStyle = FillStyle()
     }
     
-    public init(systemName: String, anchor: UnitPoint? = nil) {
+    public init(systemName: String, anchor: UnitPoint = .center) {
         self.init(anchor: anchor, content: { Image(systemName: systemName) })
     }
     
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
-        if let anchor {
-            context.draw(image, at: rect.origin, anchor: anchor)
-        } else {
-            context.draw(image, in: rect, style: fillStyle)
-        }
-    }
-}
-
-// MARK: - Modifiers
-public extension ImageMark {
-    func style(with style: FillStyle) -> Self {
-        var _self = self
-        _self.fillStyle = style
-        return _self
+        context.draw(image, at: rect.origin, anchor: anchor)
     }
 }
 
 #Preview {
     Watchface {
-        Layer(anchor: .topLeading) {
+        Layer(anchor: .center) {
             ImageMark {
                 Image(systemName: "clock")
             }
+            .frame(width: 50, height: 50)
 
             ImageMark(anchor: .topLeading) {
                 Image(systemName: "clock")
             }
+            .frame(width: 50, height: 50)
         }
     }
 }
