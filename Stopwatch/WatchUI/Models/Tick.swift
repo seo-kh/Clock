@@ -15,11 +15,6 @@ public struct Tick {
         TimeInterval(base) + TimeInterval(offset) * delta
     }
     
-    public func isMultiple(of other: TimeInterval) -> Bool {
-        let result = mark.truncatingRemainder(dividingBy: other)
-        return abs(result) < 0.0001
-    }
-    
     public var isBase: Bool {
         offset == 0
     }
@@ -27,11 +22,17 @@ public struct Tick {
     public var isOrigin: Bool {
         base == 0 && offset == 0
     }
-    
+
     public init(base: Int, offset: Int = 0, delta: TimeInterval = 1) {
         self.base = base
         self.offset = offset
         self.delta = delta
     }
+    
+    public func isMultiple(of other: TimeInterval) -> Bool {
+        let result = mark.truncatingRemainder(dividingBy: other)
+        return abs(result) < 0.0001
+    }
+    
 }
 

@@ -28,3 +28,15 @@ public struct Loop<Data, Content>: WatchContent where Data: RandomAccessCollecti
         }
     }
 }
+
+#Preview {
+    Watchface {
+        Layer {
+            Loop(data: [-30, 0, 30]) { offset in
+                ShapeMark(Rectangle(), anchor: .center)
+                    .frame(width: 40, height: 10)
+                    .offset(y: offset)
+            }
+        }
+    }
+}
