@@ -20,8 +20,12 @@ public struct WatchContentBuilder {
     public static func buildBlock<each Content>(_ content: repeat each Content) -> TupleContent<(repeat each Content)> where repeat each Content: WatchContent {
         return TupleContent(contents: (repeat each content))
     }
-    
+
     public static func buildExpression<Content>(_ content: Content) -> Content where Content: WatchContent {
+        return content
+    }
+    
+    public static func buildOptional<Content: WatchContent>(_ content: Content?) -> Content? {
         return content
     }
 }
