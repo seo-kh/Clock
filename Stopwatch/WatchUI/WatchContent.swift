@@ -12,6 +12,9 @@ import SwiftUI
 /// 모든 렌더링 가능한 요소가 구현해야 합니다.
 public protocol WatchContent {
     /// 주어진 `GraphicsContext`와 `CGRect` 내에 콘텐츠를 그림
+    /// - Parameters:
+    ///   - context: 드로잉 컨텍스트
+    ///   - rect: 콘텐츠 사이즈
     func render(_ context: inout GraphicsContext, rect: CGRect)
 }
 
@@ -19,6 +22,25 @@ public extension WatchContent {
     /// 그래픽 좌표계 회전
     /// - Parameter angle: 회전 각도
     /// - Returns: 회전된 좌표계에서 그려지는 콘텐츠
+    ///
+    /// ```swift
+    /// Watchface {
+    ///     Layer(anchor: .center) {
+    ///         ShapeMark(Rectangle())
+    ///             .frame(width: 30, height: 60)
+    ///             .offset(y: -100)
+    ///
+    ///         ShapeMark(Rectangle())
+    ///             .frame(width: 30, height: 60)
+    ///             .offset(y: -100)
+    ///             .coordinateRotation(angle: .degrees(50))
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// `GraphicsContext` 자체를 회전시킵니다. 이후 그려지는 모든 콘텐츠가 회전된 좌표계에서 그려집니다.
+    ///
+    /// ![An image of WatchContent in rotated coordinate system.](rotate_coordinate.png)
     func coordinateRotation(angle: Angle) -> some WatchContent {
         CoordinateRotatorContent(angle: angle, content: { self })
     }
@@ -26,6 +48,25 @@ public extension WatchContent {
     /// 콘텐츠의 원점(rect.origin)을 축으로 회전
     /// - Parameter angle: 회전 각도
     /// - Returns: 회전된 원점에서 그려지는 콘텐츠
+    ///
+    /// ```swift
+    /// Watchface {
+    ///     Layer(anchor: .center) {
+    ///         TextMark(text: "º", anchor: .center)
+    ///
+    ///         Loop(data: 0..<6) { i in
+    ///             TextMark(text: "\(i)", anchor: .center)
+    ///                 .axisRotation(angle: .degrees(30.0 * Double(i))) // rect.point가 zero면 axis rotation이 동작하지 않음.
+    ///                 .offset(x: -75)
+    ///         }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// 콘텐츠 origin을 원점 축 기준으로 회전합니다. \
+    /// `GraphicsContext`는 변경하지 않고 rect의 origin 좌표만 회전 변환합니다.
+    ///
+    /// ![An image of WatchContent in rotated origin](rotate_axis.png)
     func axisRotation(angle: Angle) -> some WatchContent {
         AxisRotatorContent(angle: angle, content: { self })
     }
@@ -164,13 +205,55 @@ public extension WatchContent {
     /// 콘텐츠 width 기준으로 height를 비율로 결정
     /// - Parameter aspectRatio: 너비 / 높이 비율
     /// - Returns: 비율이 적용되어 그려지는 콘텐츠
+    ///
+    /// ```swift
+    ///Watchface {
+    ///    Layer(anchor: .center) {
+    ///        ShapeMark(Rectangle())
+    ///            .aspectRatio(1.0 / 2.0) // width : height = 1 : 2
+    ///            .frame(width: 50, height: 500) // aspect ratio가 설정되면 height는 무시됨.
+    ///    }
+    ///}
+    /// ```
+    ///
+    /// 콘텐츠 width를 기준으로 height = width / aspectRatio를 계산합니다.
+    ///
+    /// ![An image of WatchContent applied size of aspect raio](aspect_ratio.png)
     func aspectRatio(_ aspectRatio: CGFloat) -> some WatchContent {
         AspectRatioContent(aspectRatio: aspectRatio, content: { self })
     }
     
     /// 콘텐츠의 불투명도 설정
-    /// - Parameter opacity: 0부터 1사이의 불투명도 값
+    /// - Parameter opacity: 0부터 1사이 불투명도 값
     /// - Returns: 불투명도가 적용되어 그려지는 콘텐츠
+    ///
+    /// ```swift
+    /// Watchface {
+    ///     Layer(anchor: .top) {
+    ///         ShapeMark(Rectangle(), anchor: .top)
+    ///             .style(with: .color(.purple))
+    ///             .frame(width: 200, height: 100)
+    ///
+    ///         TextMark(text: "opacity: 100%", anchor: .center)
+    ///             .offset(y: 50)
+    ///     }
+    ///
+    ///     Layer(anchor: .center) {
+    ///         ShapeMark(Rectangle())
+    ///             .style(with: .color(.purple))
+    ///             .frame(width: 200, height: 100)
+    ///             .opacity(0.4)
+    ///
+    ///         TextMark(text: "opacity: 40%", anchor: .center)
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// ---
+    ///
+    /// 불투명도 적용
+    ///
+    /// ![An image of WatchContent applied opacity ratio](opacity.png)
     func opacity(_ opacity: Double) -> some WatchContent {
         OpacityContent(opacity: opacity, content: { self })
     }
