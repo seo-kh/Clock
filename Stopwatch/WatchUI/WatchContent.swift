@@ -33,6 +33,24 @@ public extension WatchContent {
     /// 콘텐츠의 origin을 이동
     /// - Parameter offset: 이동 변위
     /// - Returns: 이동된 원점에서 그려지는 콘텐츠
+    ///
+    /// ```swift
+    /// Watchface {
+    ///     Layer(anchor: .center) {
+    ///         TextMark(text: "center", anchor: .center)
+    ///
+    ///         TextMark(text: "offset y: -50", anchor: .center)
+    ///             .offset(CGPoint(x: 0, y: -50))
+    ///
+    ///         TextMark(text: "offset x: -50, y: 50", anchor: .center)
+    ///             .offset(CGPoint(x: -50, y: 50))
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// 콘텐츠의 X/Y 방향을 이동합니다.
+    ///
+    /// ![An image of WatchContent offset](offset.png)
     func offset(_ offset: CGPoint) -> some WatchContent {
         OffsetContent(offset: offset, content: { self })
     }
@@ -42,6 +60,24 @@ public extension WatchContent {
     ///   - x: 가로축 이동 변위
     ///   - y: 세로축 이동 변위
     /// - Returns: 이동된 원점에서 그려지는 콘텐츠
+    ///
+    /// ```swift
+    /// Watchface {
+    ///     Layer(anchor: .center) {
+    ///         TextMark(text: "center", anchor: .center)
+    ///
+    ///         TextMark(text: "offset y: -50", anchor: .center)
+    ///             .offset(y: -50)
+    ///
+    ///         TextMark(text: "offset x: -50, y: 50", anchor: .center)
+    ///             .offset(x: -150, y: 50)
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// 콘텐츠의 X/Y 방향을 이동합니다.
+    ///
+    /// ![An image of WatchContent offset](offset.png)
     func offset(x: CGFloat = 0.0, y: CGFloat = 0.0) -> some WatchContent {
         OffsetContent(offset: CGPoint(x: x, y: y), content: { self })
     }
@@ -49,6 +85,27 @@ public extension WatchContent {
     /// 콘텐츠 크기에 균일 배율 적용
     /// - Parameter s: 크기 배율
     /// - Returns: 배율이 적용되어 그려지는 콘텐츠
+    ///
+    /// ```swift
+    /// Watchface {
+    ///     Layer {
+    ///         ShapeMark(Circle())
+    ///             .style(with: .color(.red))
+    ///
+    ///         ShapeMark(Circle())
+    ///             .style(with: .color(.yellow))
+    ///             .scale(0.8)
+    ///
+    ///         ShapeMark(Circle())
+    ///             .style(with: .color(.blue))
+    ///             .scale(0.6)
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// 콘텐츠 사이즈 크기를 X/Y 독립적으로 배율 변환합니다.
+    ///
+    /// ![An image of WatchContent scaled out by single value](scale_2.png)
     func scale(_ s: CGFloat) -> some WatchContent {
         ScaleContent(CGSize(width: s, height: s), content: { self })
     }
@@ -56,6 +113,24 @@ public extension WatchContent {
     /// 콘텐츠 크기에 균일 배율 적용
     /// - Parameter scale: 가로, 세로 크기 배율
     /// - Returns: 배율이 적용되어 그려지는 콘텐츠
+    ///
+    /// ```swift
+    /// Watchface {
+    ///     Layer {
+    ///         ShapeMark(Rectangle())
+    ///             .frame(width: 100, height: 50)
+    ///
+    ///         ShapeMark(Rectangle())
+    ///             .style(with: .color(.brown))
+    ///             .scale(CGSize(width: 2, height: 0.5))
+    ///             .frame(width: 100, height: 50)
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// 콘텐츠 사이즈 크기를 X/Y 독립적으로 배율 변환합니다.
+    ///
+    /// ![An image of WatchContent scaled out by CGSize](scale_1.png)
     func scale(_ scale: CGSize) -> some WatchContent {
         ScaleContent(scale, content: { self })
     }
