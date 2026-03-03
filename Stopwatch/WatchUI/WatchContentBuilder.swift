@@ -28,6 +28,14 @@ public struct WatchContentBuilder {
         return TupleContent(contents: (repeat each content))
     }
     
+    public static func buildEither<TrueContent, FalseContent>(first content: TrueContent) -> _ConditionalWatchContent<TrueContent, FalseContent> where TrueContent: WatchContent, FalseContent: WatchContent {
+        return _ConditionalWatchContent(trueContent: { content }, falseContent: nil)
+    }
+    
+    public static func buildEither<TrueContent, FalseContent>(second content: FalseContent) -> _ConditionalWatchContent<TrueContent, FalseContent> where TrueContent: WatchContent, FalseContent: WatchContent {
+        return _ConditionalWatchContent(trueContent: nil, falseContent: { content })
+    }
+
     /// 표현식
     public static func buildExpression<Content>(_ content: Content) -> Content where Content: WatchContent {
         return content

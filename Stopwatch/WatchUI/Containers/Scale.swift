@@ -72,21 +72,6 @@ public extension Scale where Content == AnyWatchContent {
     }
 }
 
-#Preview("scale demo 0") {
-    @Previewable @State var isOn: Bool = false
-    
-    Watchface {
-        let foo = Layer(anchor: .center) {
-            ShapeMark(Circle(), anchor: .center)
-            
-//            if isOn {
-//                TextMark(text: "is on")
-//            }
-        }
-        
-        return foo
-    }
-}
 
 #Preview("scale demo 1") {
     Watchface {
