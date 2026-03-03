@@ -1,13 +1,61 @@
 # ``WatchUI``
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+시계 페이스(Watchface)를 선언적으로 구성하기 위한 SwiftUI Canvas 기반 커스텀 렌더링 프레임워크
 
 ## Overview
 
-<!--@START_MENU_TOKEN@-->Text<!--@END_MENU_TOKEN@-->
+WatchUI는 SwiftUI의 `Canvas`를 기반으로 동작하는 **트리 기반 렌더링 시스템**입니다. 모든 구성 요소는 ``WatchContent`` 프로토콜을 구현하며, ``WatchContent/render(_:rect:)`` 메서드를 통해 `GraphicsContext`에 직접 그림을 그립니다.
+
+---
+
+**렌더링 흐름:**
+1. ``Watchface``가 `Canvas`를 생성하고, 전체 크기의 `CGRect`를 루트 `rect`로 전달
+2. 각 ``WatchContent``는 ``WatchContent/render(_:rect:)`` 에서 `rect`를 변환하거나 자식에게 전달
+3. Marks는 최종적으로 `GraphicsContext`에 실제 드로잉을 수행
+
+@Links(visualStyle: detailedGrid) {
+    - <doc:GettingStarted>
+}
 
 ## Topics
 
-### <!--@START_MENU_TOKEN@-->Group<!--@END_MENU_TOKEN@-->
+### Essentials
 
-- <!--@START_MENU_TOKEN@-->``Symbol``<!--@END_MENU_TOKEN@-->
+- <doc:GettingStarted>
+
+### Core
+
+- ``WatchContent``
+- ``WatchContentBuilder``
+- ``Watchface``
+
+### Containers
+
+- ``Layer``
+- ``Scale``
+- ``Index``
+- ``Hand``
+- ``Loop``
+- ``AnyWatchContent``
+- ``EmptyContent``
+- ``TupleContent``
+
+### Marks
+
+- ``ShapeMark``
+- ``TextMark``
+- ``ImageMark``
+
+### Size
+
+- ``SizeRule``
+- ``Size``
+- ``FixedSizeRule``
+- ``EqualSizeRule``
+- ``IdentitySizeRule``
+- ``PropotionalSizeRule``
+- ``AnySizeRule``
+
+### Scale/Tick
+
+- ``Tick``

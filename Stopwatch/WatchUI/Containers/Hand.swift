@@ -8,11 +8,11 @@
 import Foundation
 import SwiftUI
 
-public struct Hand<T: WatchContent>: WatchContent {
+public struct Hand<Content: WatchContent>: WatchContent {
     let size: Size
-    let content: () -> T
+    let content: () -> Content
     
-    public init(size: Size, content: @escaping () -> T) {
+    public init(size: Size, content: @escaping () -> Content) {
         self.size = size
         self.content = content
     }
