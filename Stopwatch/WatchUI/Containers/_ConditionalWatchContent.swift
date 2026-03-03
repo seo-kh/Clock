@@ -23,7 +23,7 @@ public struct _ConditionalWatchContent<TrueContent, FalseContent>: WatchContent 
     }
 }
 
-#Preview("if-else condition demo 1") {
+#Preview("if-else") {
     @Previewable @State var isOn: Bool = false
     
     VStack {
@@ -43,5 +43,33 @@ public struct _ConditionalWatchContent<TrueContent, FalseContent>: WatchContent 
             
             return foo
         }
+    }
+}
+
+
+
+#Preview("switch") {
+    @Previewable @State var _foo: Int = 1
+    Watchface {
+        let foo = Layer {
+            switch _foo {
+            case 1:
+                TextMark(anchor: .center) {
+                    Text("bottom")
+                        .font(.headline)
+                }
+            case 2:
+                TextMark(anchor: .center) {
+                    Text("center")
+                        .font(.title)
+                }
+            default:
+                TextMark(anchor: .center) {
+                    Text("top")
+                        .font(.largeTitle)
+                }
+            }
+        }
+        return foo
     }
 }

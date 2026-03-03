@@ -57,21 +57,18 @@ public extension Scale where Content == AnyWatchContent {
 }
 
 #Preview("scale demo 0") {
-    @Previewable @State var isOn: Bool = true
-    
-    Group {
-        let foo = VStack {
-            Text("example of buildIf")
-            
-            if isOn {
-                Text("is on state")
+    Watchface {
+        Layer(anchor: .center) {
+            Scale(0..<6, times: 4, period: 2) { tick in
+                ShapeMark(Circle(), anchor: .center)
+                    .style(with: .color(Color(hue: tick.mark / 6.0, saturation: 1.0, brightness: 1.0)))
+                    .aspectRatio(1.0)
+                    .scale(tick.isBase ? 1.2 : 0.7)
             }
+            .scale(0.9)
         }
-        
-        return foo
     }
 }
-
 
 #Preview("scale demo 1") {
     Watchface {

@@ -33,3 +33,26 @@ public struct TupleContent<T>: WatchContent {
         _render?(&context, rect)
     }
 }
+
+#Preview("default") {
+    Watchface {
+        let foo = Layer {                   // foo의 타입은  Layer<TupleContent<(TextMark, TextMark, TextMark)>> 이다.
+            TextMark(anchor: .center) {
+                Text("top")
+                    .font(.largeTitle)
+            }
+            
+            TextMark(anchor: .center) {
+                Text("center")
+                    .font(.title)
+            }
+            
+            TextMark(anchor: .center) {
+                Text("bottom")
+                    .font(.headline)
+            }
+        }
+        return foo
+    }
+}
+
