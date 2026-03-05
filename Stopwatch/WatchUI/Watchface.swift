@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// WatchUI 프레임워크의 진입점.
+/// WatchUI 프레임워크의 진입점
 ///
 /// ``WatchContent`` 트리를 SwiftUI `Canvas`로 렌더링합니다.
 public struct Watchface<Content: WatchContent>: View {

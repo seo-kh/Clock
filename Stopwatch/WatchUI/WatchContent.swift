@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// 프레임워크의 핵심 프로토콜.
+/// 프레임워크의 핵심 프로토콜
 ///
 /// 모든 렌더링 가능한 요소가 구현해야 합니다.
 public protocol WatchContent {
