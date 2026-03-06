@@ -2,7 +2,7 @@
 //  AnyTransition+DelayAppear.swift
 //  Stopwatch
 //
-//  Created by alphacircle on 1/23/26.
+//  Created by james seo on 1/23/26.
 //
 
 import SwiftUI

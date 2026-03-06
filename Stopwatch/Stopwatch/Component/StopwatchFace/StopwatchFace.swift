@@ -2,7 +2,7 @@
 //  StopwatchFace.swift
 //  Stopwatch
 //
-//  Created by alphacircle on 1/9/26.
+//  Created by james seo on 1/9/26.
 //
 
 import SwiftUI

@@ -2,7 +2,7 @@
 //  Stopwatch+Combine.swift
 //  Stopwatch
 //
-//  Created by alphacircle on 1/19/26.
+//  Created by james seo on 1/19/26.
 //
 
 import Foundation

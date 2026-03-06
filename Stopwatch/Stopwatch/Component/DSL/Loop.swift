@@ -2,7 +2,7 @@
 //  Loop.swift
 //  Stopwatch
 //
-//  Created by alphacircle on 2/3/26.
+//  Created by james seo on 2/3/26.
 //
 
 import SwiftUI

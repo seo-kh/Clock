@@ -68,7 +68,7 @@ public struct Hand<Content: WatchContent>: WatchContent {
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         let length = min(rect.width, rect.height)
         let radius = length / 2.0
-        let newRect = size.makeCGRect(length: radius)
+        let newRect = size.makeCGRect(from: radius)
         
         content()
             .render(&context, rect: newRect)

@@ -45,7 +45,7 @@ public struct Index<Content>: WatchContent where Content: WatchContent {
     public func render(_ context: inout GraphicsContext, rect: CGRect) {
         let length: CGFloat = min(rect.width, rect.height)
         let radius: CGFloat = length / 2.0
-        let newRect: CGRect = size.makeCGRect(length: radius)
+        let newRect: CGRect = size.makeCGRect(from: radius)
         
         content()
             .render(&context, rect: newRect)

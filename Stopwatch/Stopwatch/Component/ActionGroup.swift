@@ -2,7 +2,7 @@
 //  ActionGroup.swift
 //  Stopwatch
 //
-//  Created by alphacircle on 1/6/26.
+//  Created by james seo on 1/6/26.
 //
 
 import SwiftUI

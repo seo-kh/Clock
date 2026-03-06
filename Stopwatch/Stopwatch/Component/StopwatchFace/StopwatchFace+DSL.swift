@@ -2,7 +2,7 @@
 //  StopwatchFace+DSL.swift
 //  Stopwatch
 //
-//  Created by alphacircle on 2/24/26.
+//  Created by james seo on 2/24/26.
 //
 
 import SwiftUI
