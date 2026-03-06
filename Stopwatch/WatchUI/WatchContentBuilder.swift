@@ -13,7 +13,7 @@ import Foundation
 ///  SwiftUI의 `@ViewBuilder`와 동일한 역할입니다.
 @resultBuilder
 public struct WatchContentBuilder {
-    /// 빈 블록
+    /// 빈 콘텐츠
     public static func buildBlock() -> EmptyContent {
         return EmptyContent()
     }
@@ -38,7 +38,7 @@ public struct WatchContentBuilder {
         return _ConditionalWatchContent(trueContent: nil, falseContent: { content })
     }
 
-    /// 표현식
+    /// 단일 콘텐츠
     public static func buildExpression<Content>(_ content: Content) -> Content where Content: WatchContent {
         return content
     }

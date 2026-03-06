@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-/// 다중 콘텐츠 컨테이너
+/// 다중 콘텐츠
 ///
 /// 여러 ``WatchContent``를 하나로 묶습니다. \
 /// ``WatchContentBuilder``의 `buildBlock`이 다중 요소를 받을 때 생성됩니다.

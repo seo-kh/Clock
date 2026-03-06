@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-/// 프레임워크의 핵심 프로토콜
+/// 핵심 프레임워크 프로토콜
 ///
-/// 모든 렌더링 가능한 요소가 구현해야 합니다.
+/// 모든 커스텀 콘텐츠는 프로토콜을 구현해야 합니다.
 public protocol WatchContent {
     /// 주어진 `GraphicsContext`와 `CGRect` 내에 콘텐츠를 그림
     /// - Parameters:
@@ -45,7 +45,7 @@ public extension WatchContent {
         CoordinateRotatorContent(angle: angle, content: { self })
     }
     
-    /// 콘텐츠의 원점(rect.origin)을 축으로 회전
+    /// 콘텐츠의 원점을 축으로 회전
     /// - Parameter angle: 회전 각도
     /// - Returns: 회전된 원점에서 그려지는 콘텐츠
     ///
@@ -71,7 +71,7 @@ public extension WatchContent {
         AxisRotatorContent(angle: angle, content: { self })
     }
     
-    /// 콘텐츠의 origin을 이동
+    /// 콘텐츠 원점 이동
     /// - Parameter offset: 이동 변위
     /// - Returns: 이동된 원점에서 그려지는 콘텐츠
     ///
@@ -96,7 +96,7 @@ public extension WatchContent {
         OffsetContent(offset: offset, content: { self })
     }
     
-    /// 콘텐츠 origin을 이동
+    /// 콘텐츠 원점 이동
     /// - Parameters:
     ///   - x: 가로축 이동 변위
     ///   - y: 세로축 이동 변위
@@ -202,7 +202,7 @@ public extension WatchContent {
         FrameContent(width: width, height: height, content: { self })
     }
     
-    /// 콘텐츠 width 기준으로 height를 비율로 결정
+    /// 콘텐츠 너비를 기준으로 높이를 비율로 결정
     /// - Parameter aspectRatio: 너비 / 높이 비율
     /// - Returns: 비율이 적용되어 그려지는 콘텐츠
     ///

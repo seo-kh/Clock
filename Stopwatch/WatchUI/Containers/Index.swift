@@ -53,6 +53,8 @@ public struct Index<Content>: WatchContent where Content: WatchContent {
 }
 
 public extension Index {
+    /// 편의 이니셜라이저
+    ///
     /// `RandomAccessCollection`의 각 요소를 원형으로 균등 배치합니다.
     ///
     /// - Parameters:
