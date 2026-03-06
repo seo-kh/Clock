@@ -23,7 +23,7 @@ public struct Tick {
         base == 0 && offset == 0
     }
 
-    public init(base: Int, offset: Int = 0, delta: TimeInterval = 1) {
+    init(base: Int, offset: Int = 0, delta: TimeInterval = 1) {
         self.base = base
         self.offset = offset
         self.delta = delta
