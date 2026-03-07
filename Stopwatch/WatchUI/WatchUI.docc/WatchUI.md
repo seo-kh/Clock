@@ -4,14 +4,10 @@
 
 ## Overview
 
-**WatchUI**는 SwiftUI의 `Canvas`를 기반으로 동작하는 **트리 기반 렌더링 시스템**입니다. 모든 구성 요소는 ``WatchContent`` 프로토콜을 구현하며, ``WatchContent/render(_:rect:)`` 메서드를 통해 `GraphicsContext`에 직접 그림을 그립니다.
+**WatchUI**는 SwiftUI의 `Canvas`를 기반으로 동작하는 **트리 기반 렌더링 시스템**입니다. \
+모든 트리 구성 요소는 ``WatchContent`` 프로토콜을 구현하며, ``WatchContent/render(_:rect:)`` 메서드를 통해 콘텐츠를 그려냅니다.
 
----
-
-**렌더링 흐름:**
-1. ``Watchface``가 `Canvas`를 생성하고, 전체 크기의 `CGRect`를 루트 `rect`로 전달
-2. 각 ``WatchContent``는 ``WatchContent/render(_:rect:)`` 에서 `rect`를 변환하거나 자식에게 전달
-3. Marks는 최종적으로 `GraphicsContext`에 실제 드로잉을 수행
+WatchUI의 기본 콘텐츠들을 활용하여, 단순한 시계 페이스부터 복잡한 페이스까지 단순성과 가독성, 유지보수성 좋은 코드로 구현해 낼 수 있습니다.
 
 @Links(visualStyle: detailedGrid) {
     - <doc:GettingStarted>
@@ -35,7 +31,7 @@
 - ``EmptyContent``
 - ``TupleContent``
 
-### Containers
+### Container Contents
 
 - ``Layer``
 - ``Scale``
@@ -43,7 +39,7 @@
 - ``Hand``
 - ``Loop``
 
-### Marks
+### Mark Contents
 
 - ``ShapeMark``
 - ``TextMark``

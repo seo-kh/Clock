@@ -38,7 +38,7 @@ private extension StopwatchFace.DSL {
         Layer(anchor: .center) {
             TextMark(anchor: .center) {
                 Text(totalTimeFormat)
-                    .font(.system(size: 24))
+                    .font(.system(size: 20))
                     .foregroundStyle(CKColor.label)
                     .tracking(2.0)
             }
@@ -62,7 +62,7 @@ private extension StopwatchFace.DSL {
             Index(seconds) { second in
                 TextMark(anchor: .center) {
                     Text(second)
-                        .font(.system(size: 28))
+                        .font(.system(size: 24))
                         .foregroundStyle(CKColor.label)
                 }
             }
@@ -110,20 +110,20 @@ private extension StopwatchFace.DSL {
             }
             .scale(0.275)
         }
-        .offset(y: -70)
+        .offset(y: -55)
 
         // Minute Index
         Layer(anchor: .center) {
             Index(minutes) { minute in
                 TextMark(anchor: .center) {
                     Text(minute)
-                        .font(.system(size: 16))
+                        .font(.system(size: 14))
                         .foregroundStyle(CKColor.label)
                 }
             }
             .scale(0.15)
         }
-        .offset(y: -70)
+        .offset(y: -55)
         
         // Minute Hand
         Layer(anchor: .center) {
@@ -134,14 +134,14 @@ private extension StopwatchFace.DSL {
             }
             .scale(0.275)
         }
-        .offset(y: -70)
+        .offset(y: -55)
 
         // Minute Hand Center
         Layer(anchor: .center) {
             ShapeMark(Circle(), anchor: .center)
                 .style(with: .color(CKColor.orange))
                 .frame(width: 6, height: 6)
-                .offset(y: -70)
+                .offset(y: -55)
         }
     }
 }
@@ -210,7 +210,10 @@ extension StopwatchFace.DSL {
 }
 
 #Preview("watch face") {
-    StopwatchFace.DSL(total: 340, split: 402)
-        .frame(width: 370,height: 500)
-        .padding()
+    Group {
+        StopwatchFace.DSL(total: 340, split: 402)
+            .frame(width: 300)
+            .padding()
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
 }
