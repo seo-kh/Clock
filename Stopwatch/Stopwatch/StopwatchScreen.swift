@@ -20,6 +20,7 @@ struct StopwatchScreen: View {
     }
 }
 
+/// macOS Specific model
 struct WatchMode {
     var isActive: Bool
     var change: () -> Void

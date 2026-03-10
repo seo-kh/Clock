@@ -11,7 +11,7 @@ import Combine
 import SwiftData
 
 #if os(macOS)
-import Cocoa
+import AppKit
 #else
 import UIKit
 #endif
@@ -157,7 +157,7 @@ private extension Stopwatch {
         let inactiveNotification: Notification.Name
         
         #if os(macOS)
-        activeNotification = NSApplicaiton.didBecomeActiveNotification
+        activeNotification = NSApplication.didBecomeActiveNotification
         inactiveNotification = NSApplication.didResignActiveNotification
         #else
         activeNotification = UIApplication.didBecomeActiveNotification
