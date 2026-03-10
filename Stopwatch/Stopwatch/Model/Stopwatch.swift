@@ -8,8 +8,13 @@
 import Foundation
 import Observation
 import Combine
-import Cocoa
 import SwiftData
+
+#if os(macOS)
+import Cocoa
+#else
+import UIKit
+#endif
 
 @Observable
 final class Stopwatch {
@@ -147,15 +152,27 @@ extension Stopwatch {
 /// Focus Detection
 private extension Stopwatch {
     func subsribeActiveNotification() {
+        
+        let activeNotification: Notification.Name
+        let inactiveNotification: Notification.Name
+        
+        #if os(macOS)
+        activeNotification = NSApplicaiton.didBecomeActiveNotification
+        inactiveNotification = NSApplication.didResignActiveNotification
+        #else
+        activeNotification = UIApplication.didBecomeActiveNotification
+        inactiveNotification = UIApplication.didEnterBackgroundNotification
+        #endif
+        
         NotificationCenter.default
-            .publisher(for: NSApplication.didBecomeActiveNotification)
+            .publisher(for: activeNotification)
             .sink(receiveValue: { [weak self] _ in
                 self?.isActive = true
             })
             .store(in: &cancellables)
         
         NotificationCenter.default
-            .publisher(for: NSApplication.didResignActiveNotification)
+            .publisher(for: inactiveNotification)
             .sink(receiveValue: { [weak self] _ in
                 self?.isActive = false
             })
