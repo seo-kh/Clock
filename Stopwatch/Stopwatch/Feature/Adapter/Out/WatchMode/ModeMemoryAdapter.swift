@@ -14,8 +14,9 @@ final class ModeMemoryAdapter: LoadModePort, UpdateModePort {
         self.isActive = isActive
     }
     
-    func load() -> WatchMode {
-        WatchMode(isActive: isActive, change: { self.isActive.toggle() })
+    func load(callback: @escaping (WatchMode) -> Void) {
+        let mode = WatchMode(isActive: isActive, change: {})
+        callback(mode)
     }
     
     func update(_ mode: WatchMode) {

@@ -19,9 +19,10 @@ final class ModeDefaultsAdapter: LoadModePort, UpdateModePort {
         self.init(userDefaults: UserDefaults())
     }
     
-    func load() -> WatchMode {
+    func load(callback: @escaping (WatchMode) -> Void) {
         let value = self.userDefaults.bool(forKey: Self.defaultKey)
-        return WatchMode(isActive: value, change: {})
+        let mode = WatchMode(isActive: value, change: {})
+        callback(mode)
     }
     
     func update(_ mode: WatchMode) {

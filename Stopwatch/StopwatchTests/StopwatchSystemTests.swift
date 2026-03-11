@@ -9,8 +9,9 @@ import Testing
 @testable import Stopwatch
 
 final class MockModeAdapter: LoadModePort {
-    func load() -> WatchMode {
-        WatchMode(isActive: true, change: {})
+    func load(callback: @escaping (WatchMode) -> Void) {
+        let mode = WatchMode(isActive: true, change: {})
+        callback(mode)
     }
 }
 
@@ -27,38 +28,41 @@ final class MockLifecycleAdapter: ListenLifecyclePort {
     }
 }
 
-final class _Stopwatch {
+
+
+final class _Stopwatch: StopwatchBootControllerDelegate {
     private(set) var laps: [Lap] = []
     private(set) var components: [ActionComponent] = []
     private(set) var isActive: Bool = false
     private(set) var watchMode: WatchMode!
     
-    private(set) var loadModePort: LoadModePort!
-    private(set) var loadLapPort: LoadLapPort!
-    private(set) var lifecyclePort: ListenLifecyclePort!
+    private var bootController: StopwatchBootController
     
-    init() {
-        //
+    init(bootController: StopwatchBootController) {
+        self.bootController = bootController
+        self.boot()
     }
     
-    func boot() {
-        let loadModePort = MockModeAdapter()
-        self.loadModePort = loadModePort
-        self.watchMode = loadModePort.load()
-        
-        let loadLapPort = MockLapAdapter()
-        self.loadLapPort = loadLapPort
-        self.loadLapPort.load(callback: {
-            if case let .success(laps) = $0 {
-                self.laps = laps
-            }
-        })
-        
-        self.components = .start
-        self.lifecyclePort = MockLifecycleAdapter()
-        self.lifecyclePort.listen { isActive in
-            
+    private func boot() {
+        self.bootController.boot(target: self)
+        self.components = .idle
+    }
+    
+    func lap(_ target: Result<[Lap], any Error>) {
+        switch target {
+        case .success(let laps):
+            self.laps = laps
+        case .failure(let error):
+            print(error)
         }
+    }
+    
+    func lifecycle(_ target: Bool) {
+        self.isActive = target
+    }
+    
+    func mode(_ target: WatchMode) {
+        self.watchMode = target
     }
 }
 
@@ -69,22 +73,30 @@ struct StopwatchSystemTests {
         @Test("시스템 초기화 테스트")
         func test1() async throws {
             // Given
-            let watch = _Stopwatch()
+            let mode = MockModeAdapter()
+            let lap = MockLapAdapter()
+            let lifecycle = MockLifecycleAdapter()
+            let service = StopwatchBootService(loadModePort: mode, loadLapPort: lap, lifecyclePort: lifecycle)
+            let bootController = StopwatchBootController(useCase: service)
+            
             // When
-            watch.boot()
+            let watch = _Stopwatch(bootController: bootController)
+            
             // Then
             // UserDefaults 초기화 및 시작
-            #expect(watch.loadModePort != nil)
+            // #expect(watch.loadModePort != nil)
             // watch mode 초기화
             #expect(watch.watchMode != nil)
             // Persistance 초기화
-            #expect(watch.loadLapPort != nil)
+            // #expect(watch.loadLapPort != nil)
             // Laps 초기화
             #expect(!watch.laps.isEmpty)
+            // isActive
+            #expect(watch.isActive)
             // Buttons 초기화
             #expect(!watch.components.isEmpty)
             // Notifications 초기화
-            #expect(watch.lifecyclePort != nil)
+            // #expect(watch.lifecyclePort != nil)
         }
     }
 

@@ -8,5 +8,5 @@
 import Foundation
 
 protocol LoadModePort {
-    func load() -> WatchMode
+    func load(callback: @escaping (WatchMode) -> Void)
 }
