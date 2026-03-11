@@ -14,8 +14,8 @@ struct LapUnitTests {
     @MainActor
     func test1() {
         // Given
-        let lap1 = _Lap(number: 1, split: .now.addingTimeInterval(3.0), total: .now, progress: .now)
-        let lap2 = _Lap(number: 1, split: .now.addingTimeInterval(6.0), total: .now, progress: .now)
+        let lap1 = Lap(number: 1, split: .now.addingTimeInterval(3.0), total: .now, progress: .now)
+        let lap2 = Lap(number: 1, split: .now.addingTimeInterval(6.0), total: .now, progress: .now)
         // When
         let result = lap1 > lap2
         // Then
@@ -25,7 +25,7 @@ struct LapUnitTests {
     @Test("Lap.next() 함수 테스트")
     func test2() {
         // Given
-        let lap1 = _Lap(number: 1, split: .now, total: .now, progress: .now + 40.0)
+        let lap1 = Lap(number: 1, split: .now, total: .now, progress: .now + 40.0)
         // When
         let lap2 = lap1.next()
         // Then

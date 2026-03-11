@@ -20,7 +20,11 @@ final class LocalTimer: ResumeTimerPort, CancelTimerPort {
     func resume(callback: @escaping (TimeInterval) -> Void) {
         self.callback = callback
         self.startData = Date.now
-        self.timer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(startTimer), userInfo: nil, repeats: true)
+        self.timer = Timer.scheduledTimer(timeInterval: interval,
+                                          target: self,
+                                          selector: #selector(startTimer),
+                                          userInfo: nil,
+                                          repeats: true)
         self.timer?.fire()
     }
     
