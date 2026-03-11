@@ -15,7 +15,7 @@ struct StopwatchSystemTests {
         @Test("시스템 초기화 테스트")
         func test1() async throws {
             // Given
-            let bootController = DIBootController.test1()
+            let bootController = DIBootController.bootTest1()
             
             // When
             let watch = _Stopwatch(bootController: bootController)
@@ -29,6 +29,59 @@ struct StopwatchSystemTests {
             #expect(watch.isActive)
             // Buttons 초기화
             #expect(!watch.components.isEmpty)
+        }
+    }
+    
+    /*
+     test 항목
+     1. Lap 추가
+     2. watchMode가 활성화 되어있을때, 모드 전환하기
+     
+     * 상세
+     - Lap 추가
+     1. laps의 첫번째 요소를 이용해서 next()를 호출해서 다음 lap을 생성
+     2. laps의 첫번째 요소칸으로 insert
+     3. persistance 데이터에 추가
+     
+     만약, laps의 첫번째 요소가 없다면?
+     laps가 배열이 아닌 다른 자료구조라면?
+     */
+    @Suite("Start Lap Tests")
+    struct LapTests {
+        @Test("빈 laps에서, stopwatch가 lap()을 호출해도 크기는 변화없어야함")
+        func test1() {
+            // Given
+            let ctrl = DIBootController.lapTest1()
+            let stopwatch = _Stopwatch(bootController: ctrl)
+            // When
+            #expect(stopwatch.laps.isEmpty)
+            stopwatch.lap()
+            // Then
+            #expect(stopwatch.laps.isEmpty)
+        }
+        
+        @Test("비어있지 않은 laps에서, stopwatch가 lap()을 호출한 횟수만큼 laps가 증가함")
+        func test2() {
+            // Given
+            let ctrl = DIBootController.lapTest2()
+            let stopwatch = _Stopwatch(bootController: ctrl)
+            // When
+            #expect(stopwatch.laps.count == 1)
+            stopwatch.lap()
+            stopwatch.lap()
+            stopwatch.lap()
+            // Then
+            #expect(stopwatch.laps.count == 4)
+        }
+        
+        @Test("lap 추가시, persistance layer에도 lap update 시도해야함")
+        func test3() {
+            
+        }
+        
+        @Test("lap 추가시, watchMode가 true일때, off되어야함")
+        func test4() {
+            
         }
     }
 

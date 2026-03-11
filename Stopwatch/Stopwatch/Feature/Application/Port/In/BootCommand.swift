@@ -9,6 +9,6 @@ import Foundation
 
 struct BootCommand {
     let configLap: (Result<[Lap], Error>) -> Void
-    let configMode: (WatchMode) -> Void
+    let configStartFlag: (Bool) -> Void
     let configLifecycle: (Bool) -> Void
 }

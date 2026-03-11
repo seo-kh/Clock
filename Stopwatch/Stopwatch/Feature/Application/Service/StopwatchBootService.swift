@@ -8,14 +8,14 @@
 import Foundation
 
 final class StopwatchBootService: StopwatchBootUseCase {
-    private var loadModePort: LoadModePort!
-    private var loadLapPort: LoadLapPort!
-    private var lifecyclePort: ListenLifecyclePort!
+    private var loadStartFlagPort: LoadStartFlagPort
+    private var loadLapPort: LoadLapPort
+    private var lifecyclePort: ListenLifecyclePort
     
-    init(loadModePort: LoadModePort,
-         loadLapPort: LoadLapPort!,
+    init(loadStartFlagPort: LoadStartFlagPort,
+         loadLapPort: LoadLapPort,
          lifecyclePort: ListenLifecyclePort) {
-        self.loadModePort = loadModePort
+        self.loadStartFlagPort = loadStartFlagPort
         self.loadLapPort = loadLapPort
         self.lifecyclePort = lifecyclePort
     }
@@ -29,8 +29,8 @@ final class StopwatchBootService: StopwatchBootUseCase {
             command.configLifecycle(result)
         }
         
-        self.loadModePort.load { result in
-            command.configMode(result)
+        self.loadStartFlagPort.load { result in
+            command.configStartFlag(result)
         }
     }
 }
