@@ -8,6 +8,6 @@
 import Foundation
 
 struct LapCommand {
-    let source: Lap
+    let source: [Lap]
     let configNewLap: (Lap) -> Void
 }

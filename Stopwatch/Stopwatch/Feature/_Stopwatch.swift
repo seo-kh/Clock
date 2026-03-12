@@ -30,8 +30,7 @@ final class _Stopwatch {
     }
     
     func lap() {
-        guard let firstLap: Lap = self.laps.first else { return }
-        self.lapController?.lap(firstLap, target: self)
+        self.lapController?.lap(at: laps, target: self)
     }
     
     func start() {

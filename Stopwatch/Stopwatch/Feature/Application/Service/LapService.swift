@@ -15,8 +15,13 @@ final class LapService: LapUseCase {
     }
     
     func lap(command: LapCommand) {
+        let laps = command.source
+        
+        // lap이 없으면 그냥 종료
+        guard let firstLap = laps.first else { return }
+        
         // new lap 생성
-        let newLap: Lap = command.source.next()
+        let newLap: Lap = firstLap.next()
         
         // 새로운 lap 알림
         command.configNewLap(newLap)
