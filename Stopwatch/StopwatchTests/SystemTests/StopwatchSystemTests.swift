@@ -11,18 +11,17 @@ import Testing
 struct StopwatchSystemTests {
 
     @Suite("System Boot Tests")
+    @MainActor
     struct SystemBootTests {
         @Test("시스템 초기화 테스트")
         func test1() async throws {
             // Given
-            let bootController = DIBootController.bootTest1()
+            let bootController = DIController.bootTest1()
             
             // When
-            let watch = _Stopwatch(bootController: bootController)
+            let watch = _Stopwatch(bootController: bootController, lapController: nil)
             
             // Then
-            // watch mode 초기화
-            #expect(watch.watchMode != nil)
             // Laps 초기화
             #expect(!watch.laps.isEmpty)
             // isActive 초기화
@@ -46,13 +45,14 @@ struct StopwatchSystemTests {
      만약, laps의 첫번째 요소가 없다면?
      laps가 배열이 아닌 다른 자료구조라면?
      */
+    @MainActor
     @Suite("Start Lap Tests")
     struct LapTests {
         @Test("빈 laps에서, stopwatch가 lap()을 호출해도 크기는 변화없어야함")
         func test1() {
             // Given
-            let ctrl = DIBootController.lapTest1()
-            let stopwatch = _Stopwatch(bootController: ctrl)
+            let ctrl = DIController.lapTest1()
+            let stopwatch = _Stopwatch(bootController: ctrl, lapController: nil)
             // When
             #expect(stopwatch.laps.isEmpty)
             stopwatch.lap()
@@ -63,25 +63,39 @@ struct StopwatchSystemTests {
         @Test("비어있지 않은 laps에서, stopwatch가 lap()을 호출한 횟수만큼 laps가 증가함")
         func test2() {
             // Given
-            let ctrl = DIBootController.lapTest2()
-            let stopwatch = _Stopwatch(bootController: ctrl)
+            let (boot, lap) = DIController.lapTest2()
+            let stopwatch = _Stopwatch(bootController: boot, lapController: lap)
+            let count = stopwatch.laps.count
             // When
-            #expect(stopwatch.laps.count == 1)
-            stopwatch.lap()
-            stopwatch.lap()
-            stopwatch.lap()
-            // Then
-            #expect(stopwatch.laps.count == 4)
+            let iter = 3
+            for _ in 0..<iter { stopwatch.lap() }
+            let newCount = stopwatch.laps.count
+            // then
+            #expect(newCount - count == iter)
         }
         
-        @Test("lap 추가시, persistance layer에도 lap update 시도해야함")
+        @Test("lap 추가시, persistance layer에 lap update 시도해야함")
         func test3() {
-            
+            // Given
+            let lap = MockLapAdapter(laps: [Lap.empty])
+            let stopwatch = DIController.lapTest3(lap: lap)
+            // When
+            let iter = 5
+            for _ in 0..<iter { stopwatch.lap() }
+            // then
+            #expect(lap.laps.count - iter == 1)
         }
         
         @Test("lap 추가시, watchMode가 true일때, off되어야함")
         func test4() {
-            
+            // Given
+            let stopwatch = DIController.lapTest4()
+            stopwatch.watchMode.change() // true
+            #expect(stopwatch.watchMode.isActive)
+            // When
+            stopwatch.lap()
+            // Then
+            #expect(stopwatch.watchMode.isActive == false)
         }
     }
 
@@ -97,11 +111,6 @@ struct StopwatchSystemTests {
     
     @Test("시스템 취소 테스트")
     func test4() async throws {
-        
-    }
-    
-    @Test("시스템 취소 테스트")
-    func test5() async throws {
         
     }
 }

@@ -7,40 +7,30 @@
 
 import Foundation
 
-protocol UpdateLapPort {
-    func update(_ target: Lap)
-}
-
 final class _Stopwatch {
     private(set) var laps: [Lap] = []
-    private(set) var components: [ActionComponent] = []
+    private(set) var components: [ActionComponent] = .idle
     private(set) var isActive: Bool = false
-    private(set) var watchMode: WatchMode!
+    private(set) var watchMode: WatchMode = WatchMode(isActive: false, change: {})
     
-    private var bootController: BootController
+    private var bootController: BootController?
+    private var lapController: LapController?
     
-    private var updateLapPort: UpdateLapPort!
-    
-    init(bootController: BootController) {
+    init(bootController: BootController?,
+         lapController: LapController?) {
         self.bootController = bootController
+        self.lapController = lapController
         self.boot()
     }
     
     private func boot() {
-        self.bootController.boot(target: self)
-        self.components = .idle
+        self.bootController?.boot(target: self)
+        self.watchMode.change = { self.watchMode.isActive.toggle() }
     }
     
     func lap() {
-        guard let newLap: Lap = self.laps.first?.next() else { return }
-        // self.laps.insert(newLap, at: 0)
-        // self.context?.insert(newLap)
-        self.updateLapPort.update(newLap)
-        
-        // 상태처리코드라서 Stopwatch에 존재하는게 맞음
-         if watchMode.isActive {
-             watchMode.change()
-         }
+        guard let firstLap: Lap = self.laps.first else { return }
+        self.lapController?.lap(firstLap, target: self)
     }
 }
 
@@ -55,7 +45,13 @@ extension _Stopwatch: StopwatchControllerDelegate {
     }
     
     func didAddLap(_ target: Lap) {
+        // lap 추가
         self.laps.insert(target, at: 0)
+        
+        // watchMode가 on이면, off
+        if watchMode.isActive {
+            watchMode.change()
+        }
     }
     
     func didChangeLifecycle(_ target: Bool) {

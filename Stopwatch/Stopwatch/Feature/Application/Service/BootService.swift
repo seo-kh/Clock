@@ -1,5 +1,5 @@
 //
-//  StopwatchBootService.swift
+//  BootService.swift
 //  Stopwatch
 //
 //  Created by alphacircle on 3/11/26.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class StopwatchBootService: StopwatchBootUseCase {
+final class BootService: BootUseCase {
     private var loadStartFlagPort: LoadStartFlagPort
     private var loadLapPort: LoadLapPort
     private var lifecyclePort: ListenLifecyclePort

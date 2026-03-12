@@ -8,9 +8,9 @@
 import Foundation
 
 final class BootController {
-    private var useCase: StopwatchBootUseCase
+    private var useCase: BootUseCase
     
-    init(useCase: StopwatchBootUseCase) {
+    init(useCase: BootUseCase) {
         self.useCase = useCase
     }
 

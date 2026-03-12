@@ -7,9 +7,18 @@
 
 import Foundation
 
-final class LapMemoryAdapter: LoadLapPort {
+final class LapMemoryAdapter {
     private var laps: [Lap] = []
     
+}
+
+extension LapMemoryAdapter: UpdateLapPort {
+    func update(_ target: Lap) {
+        self.laps.insert(target, at: 0)
+    }
+}
+
+extension LapMemoryAdapter: LoadLapPort {
     func load(callback: @escaping (Result<[Lap], Error>) -> Void) {
         callback(.success(laps))
     }

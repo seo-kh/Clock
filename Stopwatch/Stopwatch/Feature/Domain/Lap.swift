@@ -6,11 +6,8 @@
 //
 
 import Foundation
-import SwiftData
 
-@Model
-final class Lap {
-    @Attribute(.unique)
+struct Lap: Identifiable {
     var id: Int
     
     var number: String {
@@ -38,7 +35,7 @@ extension Lap: Comparable {
 
 extension Lap {
     /// Lap의 기록을 현재 날짜 기준으로 재조정
-    func adjust() {
+    mutating func adjust() {
         let now: Date = Date.now
         let splitInterval: TimeInterval = progress - split
         let totalInterval: TimeInterval = progress - total

@@ -123,12 +123,12 @@ extension Stopwatch {
     private func addLap() {
         let newLap: Lap = self.laps[0].next()
         self.laps.insert(newLap, at: 0)
-        self.context?.insert(newLap)
+        // self.context?.insert(newLap)
     }
     
     private func resetLaps() {
         self.laps.removeAll()
-        try? self.context?.delete(model: Lap.self)
+        // try? self.context?.delete(model: Lap.self)
     }
     
     private func configureLaps() {
@@ -136,7 +136,7 @@ extension Stopwatch {
             let now: Date = Date.now
             let newLap = Lap(number: 1, split: now, total: now, progress: now)
             laps.append(newLap)
-            context?.insert(newLap)
+            // context?.insert(newLap)
         } else {
             laps[0].adjust()
         }
@@ -144,8 +144,8 @@ extension Stopwatch {
     
     /// id를 기준으로 역방향으로 정렬해서 Lap 데이터 가져오기
     private func readLaps() {
-        let descriptor = FetchDescriptor<Lap>(sortBy: [SortDescriptor(\.id, order: SortOrder.reverse)])
-        self.laps = (try? context?.fetch(descriptor)) ?? []
+//        let descriptor = FetchDescriptor<Lap>(sortBy: [SortDescriptor(\.id, order: SortOrder.reverse)])
+//        self.laps = (try? context?.fetch(descriptor)) ?? []
     }
 }
 
@@ -212,8 +212,8 @@ extension Stopwatch {
             self.context = nil
             self.userDefaults = nil
         case .release:
-            let container = try! ModelContainer(for: Lap.self)
-            self.context = ModelContext(container)
+            // let container = try! ModelContainer(for: Lap.self)
+            // self.context = ModelContext(container)
             self.userDefaults = UserDefaults()
         case .custom(let modelContext):
             self.context = modelContext
