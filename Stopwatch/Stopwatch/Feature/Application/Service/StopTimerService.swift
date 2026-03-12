@@ -8,7 +8,7 @@
 import Foundation
 
 final class StopTimerService: StopTimerUseCase {
-    var cancelTimerPort: CancelTimerPort
+    private var cancelTimerPort: CancelTimerPort
     
     init(cancelTimerPort: CancelTimerPort) {
         self.cancelTimerPort = cancelTimerPort

@@ -8,16 +8,32 @@
 import Foundation
 
 final class BootController {
-    private var useCase: BootUseCase
+    private var loadLapUseCase: LoadLapUseCase
+    private var loadStartFlagUseCase: LoadStartFlagUseCase
+    private var updateLifecycleUseCase: UpdateLifecycleUseCase
     
-    init(useCase: BootUseCase) {
-        self.useCase = useCase
+    init(
+         loadLapUseCase: LoadLapUseCase,
+         loadStartFlagUseCase: LoadStartFlagUseCase,
+         updateLifecycleUseCase: UpdateLifecycleUseCase
+    ) {
+        self.loadLapUseCase = loadLapUseCase
+        self.loadStartFlagUseCase = loadStartFlagUseCase
+        self.updateLifecycleUseCase = updateLifecycleUseCase
     }
-
-    func boot(target: StopwatchControllerDelegate) {
-        let command = BootCommand(configLap: target.didLoadLaps(_:),
-                                  configStartFlag: target.didChangeStartFlag(_:),
-                                  configLifecycle: target.didChangeLifecycle(_:))
-        useCase.boot(command)
+    
+    func loadLaps(callback: @escaping (Result<[Lap], Error>) -> Void) {
+        let command = LoadLapCommand(configureLaps: callback)
+        loadLapUseCase.loadLap(command: command)
+    }
+    
+    func loadStartFlag(callback: @escaping (Bool) -> Void) {
+        let command = LoadStartFlagCommand(configureStartFlag: callback)
+        loadStartFlagUseCase.loadStartFlag(command: command)
+    }
+    
+    func updateLifecycle(callback: @escaping (Bool) -> Void) {
+        let command = UpdateLifecycleCommand(configureLifecycle: callback)
+        updateLifecycleUseCase.updateLifecycle(command: command)
     }
 }

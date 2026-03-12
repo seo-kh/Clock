@@ -14,8 +14,8 @@ final class LapController {
         self.lapUseCase = lapUseCase
     }
     
-    func lap(at source: [Lap], target: StopwatchControllerDelegate) {
-        let command = LapCommand(source: source, configNewLap: target.didAddLap(_:))
+    func lap(at source: [Lap], callback: @escaping (Lap) -> Void) {
+        let command = LapCommand(source: source, configNewLap: callback)
         self.lapUseCase.lap(command: command)
     }
 }

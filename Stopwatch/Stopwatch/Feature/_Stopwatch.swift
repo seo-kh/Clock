@@ -30,17 +30,50 @@ final class _Stopwatch {
     }
     
     private func boot() {
-        self.bootController?.boot(target: self)
+        self.bootController?.loadLaps { [weak self] result in
+            switch result {
+            case .success(let laps):
+                self?.laps = laps
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
+        self.bootController?.loadStartFlag { [weak self] result in
+            if result {
+                self?.start()
+            }
+        }
+        
+        self.bootController?.updateLifecycle { [weak self] isActive in
+            self?.isActive = isActive
+        }
+        
         self.watchMode.change = { self.watchMode.isActive.toggle() }
     }
     
     func lap() {
-        self.lapController?.lap(at: laps, target: self)
+        self.lapController?.lap(at: laps) { [weak self] newLap in
+            self?.laps.insert(newLap, at: 0)
+        }
+        
+        if watchMode.isActive {
+            watchMode.change()
+        }
     }
     
     func start() {
-        self.startController?.configureLaps(laps, target: self)
-        self.startController?.startTimer(target: self)
+        self.startController?.configureLaps(laps) { [weak self] result in
+            switch result {
+            case .success(let laps):
+                self?.laps = laps
+            case .failure(let error):
+                print(error)
+            }
+        }
+        self.startController?.startTimer { [weak self] progress in
+            self?.laps[0].progress = progress
+        }
         self.startController?.enableStartFlag()
         
         // state
@@ -56,35 +89,35 @@ final class _Stopwatch {
     }
 }
 
-extension _Stopwatch: StopwatchControllerDelegate {
-    func didLoadLaps(_ target: Result<[Lap], any Error>) {
-        switch target {
-        case .success(let laps):
-            self.laps = laps
-        case .failure(let error):
-            print(error)
-        }
-    }
-    
-    func didAddLap(_ target: Lap) {
-        // lap 추가
-        self.laps.insert(target, at: 0)
-        
-        // watchMode가 on이면, off
-        if watchMode.isActive {
-            watchMode.change()
-        }
-    }
-    
-    func didChangeLifecycle(_ target: Bool) {
-        self.isActive = target
-    }
-    
-    func didChangeStartFlag(_ target: Bool) {
-        start()
-    }
-    
-    func didChangeProgress(_ target: Date) {
-        self.laps[0].progress = target
-    }
-}
+//extension _Stopwatch: StopwatchControllerDelegate {
+//    func didLoadLaps(_ target: Result<[Lap], any Error>) {
+//        switch target {
+//        case .success(let laps):
+//            self.laps = laps
+//        case .failure(let error):
+//            print(error)
+//        }
+//    }
+//    
+//    func didAddLap(_ target: Lap) {
+//        // lap 추가
+//        self.laps.insert(target, at: 0)
+//        
+//        // watchMode가 on이면, off
+//        if watchMode.isActive {
+//            watchMode.change()
+//        }
+//    }
+//    
+//    func didChangeLifecycle(_ target: Bool) {
+//        self.isActive = target
+//    }
+//    
+//    func didChangeStartFlag(_ target: Bool) {
+//        start()
+//    }
+//    
+//    func didChangeProgress(_ target: Date) {
+//        self.laps[0].progress = target
+//    }
+//}

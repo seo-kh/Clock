@@ -18,13 +18,13 @@ final class StartController {
         self.setStartFlagUseCase = setStartFlagUseCase
     }
     
-    func configureLaps(_ current: [Lap], target: StopwatchControllerDelegate) {
-        let command = ConfigureLapCommand(laps: current, configLap: target.didLoadLaps(_:))
+    func configureLaps(_ current: [Lap], callback: @escaping (Result<[Lap], Error>) -> Void) {
+        let command = ConfigureLapCommand(laps: current, configLap: callback)
         configureLapUseCase?.configureLaps(command: command)
     }
     
-    func startTimer(target: StopwatchControllerDelegate) {
-        let command = StartTimerCommand(configureProgress: target.didChangeProgress(_:))
+    func startTimer(callback: @escaping (Date) -> Void) {
+        let command = StartTimerCommand(configureProgress: callback)
         startTimerUseCase?.startTimer(command: command)
     }
     

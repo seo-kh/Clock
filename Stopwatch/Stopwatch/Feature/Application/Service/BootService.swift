@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class BootService: BootUseCase {
+final class BootService: LoadLapUseCase, LoadStartFlagUseCase, UpdateLifecycleUseCase {
     private var loadStartFlagPort: LoadStartFlagPort
     private var loadLapPort: LoadLapPort
     private var lifecyclePort: ListenLifecyclePort
@@ -20,17 +20,21 @@ final class BootService: BootUseCase {
         self.lifecyclePort = lifecyclePort
     }
     
-    func boot(_ command: BootCommand) {
+    func loadLap(command: LoadLapCommand) {
         self.loadLapPort.load { result in
-            command.configLap(result)
+            command.configureLaps(result)
         }
-        
-        self.lifecyclePort.listen { result in
-            command.configLifecycle(result)
-        }
-        
+    }
+    
+    func loadStartFlag(command: LoadStartFlagCommand) {
         self.loadStartFlagPort.load { result in
-            command.configStartFlag(result)
+            command.configureStartFlag(result)
+        }
+    }
+    
+    func updateLifecycle(command: UpdateLifecycleCommand) {
+        self.lifecyclePort.listen { result in
+            command.configureLifecycle(result)
         }
     }
 }

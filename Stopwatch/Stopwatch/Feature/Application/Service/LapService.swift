@@ -7,13 +7,15 @@
 
 import Foundation
 
-final class LapService: LapUseCase {
+final class LapService {
     private let updateLapPort: UpdateLapPort
     
     init(updateLapPort: UpdateLapPort) {
         self.updateLapPort = updateLapPort
     }
-    
+}
+
+extension LapService: LapUseCase {
     func lap(command: LapCommand) {
         let laps = command.source
         
@@ -28,5 +30,22 @@ final class LapService: LapUseCase {
         
         // persistance에 전달
         updateLapPort.update(newLap)
+    }
+}
+
+extension LapService: ConfigureLapUseCase {
+    func configureLaps(command: ConfigureLapCommand) {
+        var laps = command.laps
+        if laps.isEmpty {
+            let now: Date = Date.now
+            let newLap = Lap(number: 1, split: now, total: now, progress: now)
+            laps.append(newLap)
+            
+            updateLapPort.update(newLap)
+        } else {
+            laps[0].adjust()
+        }
+        
+        command.configLap(Result.success(laps))
     }
 }
