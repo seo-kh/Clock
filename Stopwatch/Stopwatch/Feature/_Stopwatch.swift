@@ -16,11 +16,16 @@ final class _Stopwatch {
     private var bootController: BootController?
     private var lapController: LapController?
     private var startController: StartController?
+    private var stopController: StopController?
     
-    init(bootController: BootController?, lapController: LapController?, startController: StartController?) {
+    init(bootController: BootController?,
+         lapController: LapController?,
+         startController: StartController?,
+         stopController: StopController?) {
         self.bootController = bootController
         self.lapController = lapController
         self.startController = startController
+        self.stopController = stopController
         self.boot()
     }
     
@@ -40,6 +45,14 @@ final class _Stopwatch {
         
         // state
         self.components = .start
+    }
+    
+    func stop() {
+        self.stopController?.stopTimer()
+        self.stopController?.disableStartFlag()
+        
+        // state
+        self.components = .stop
     }
 }
 

@@ -50,7 +50,7 @@ enum DIController {
         
         let bootController = BootController(useCase: bootService)
         let lapController = LapController(lapUseCase: lapService)
-        return _Stopwatch(bootController: bootController, lapController: lapController, startController: nil)
+        return _Stopwatch(bootController: bootController, lapController: lapController, startController: nil, stopController: nil)
     }
     
     static func lapTest4() -> _Stopwatch {
@@ -63,7 +63,7 @@ enum DIController {
         
         let bootController = BootController(useCase: bootService)
         let lapController = LapController(lapUseCase: lapService)
-        return _Stopwatch(bootController: bootController, lapController: lapController, startController: nil)
+        return _Stopwatch(bootController: bootController, lapController: lapController, startController: nil, stopController: nil)
     }
     
     static func startTest1() -> StartController {
@@ -115,6 +115,20 @@ enum DIController {
         let boot = BootController(useCase: bootService)
         
         return (boot, start)
+    }
+    
+    static func stopTest(flag: MockStartFlagAdapter) -> (StartController, StopController) {
+        let lapPort = MockLapAdapter(laps: [])
+        let timer = LocalTimer(0.03)
+        
+        let startFlagService = StartFlagService(updateStartFlagPort: flag)
+        let stopTimerService = StopTimerService(cancelTimerPort: timer)
+        let configureService = ConfigureLapService(updateLapPort: lapPort)
+        
+        let start = StartController(configureLapUseCase: configureService, startTimerUseCase: nil, setStartFlagUseCase: startFlagService)
+        let stop = StopController(stopTimerUseCase: stopTimerService, setStartFlagUseCase: startFlagService)
+        
+        return (start, stop)
     }
 }
 

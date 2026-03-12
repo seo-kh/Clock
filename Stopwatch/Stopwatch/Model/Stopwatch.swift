@@ -70,8 +70,9 @@ private extension Stopwatch {
     
     func stop() {
         stopTimer()
-        setStopButtons()
         setRunning(false)
+        // state
+        setStopButtons()
     }
     
     func reset() {
