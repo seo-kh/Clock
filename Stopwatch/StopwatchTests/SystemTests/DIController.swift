@@ -50,7 +50,7 @@ enum DIController {
         
         let bootController = BootController(useCase: bootService)
         let lapController = LapController(lapUseCase: lapService)
-        return _Stopwatch(bootController: bootController, lapController: lapController)
+        return _Stopwatch(bootController: bootController, lapController: lapController, startController: nil)
     }
     
     static func lapTest4() -> _Stopwatch {
@@ -63,8 +63,58 @@ enum DIController {
         
         let bootController = BootController(useCase: bootService)
         let lapController = LapController(lapUseCase: lapService)
-        return _Stopwatch(bootController: bootController, lapController: lapController)
+        return _Stopwatch(bootController: bootController, lapController: lapController, startController: nil)
+    }
+    
+    static func startTest1() -> StartController {
+        let updateLapPort = MockLapAdapter(laps: [])
+        let configureService = ConfigureLapService(updateLapPort: updateLapPort)
+        return StartController(configureLapUseCase: configureService, startTimerUseCase: nil, setStartFlagUseCase: nil)
     }
 
+    static func startTest2() -> (BootController, StartController) {
+        let pivot = Date(timeIntervalSince1970: 199)
+        let lap = Lap(number: 1, split: pivot.addingTimeInterval(30), total: pivot.addingTimeInterval(10), progress: pivot.addingTimeInterval(50))
+        let lapPort = MockLapAdapter(laps: [lap])
+        let flagPort = MockStartFlagAdapter(isActive: false)
+        let lifecycle = MockLifecycleAdapter(isActive: true)
+        
+        let configureService = ConfigureLapService(updateLapPort: lapPort)
+        let bootService = BootService(loadStartFlagPort: flagPort, loadLapPort: lapPort, lifecyclePort: lifecycle)
+        
+        let start = StartController(configureLapUseCase: configureService, startTimerUseCase: nil, setStartFlagUseCase: nil)
+        let boot = BootController(useCase: bootService)
+        
+        return (boot, start)
+    }
+    
+    static func startTest3() -> (BootController, StartController) {
+        let lapPort = MockLapAdapter(laps: [])
+        let flagPort = MockStartFlagAdapter(isActive: false)
+        let lifecycle = MockLifecycleAdapter(isActive: true)
+        
+        let configureService = ConfigureLapService(updateLapPort: lapPort)
+        let startTimerService = StartTimerService(resumeTimerPort: LocalTimer(0.03))
+        let bootService = BootService(loadStartFlagPort: flagPort, loadLapPort: lapPort, lifecyclePort: lifecycle)
+        
+        let start = StartController(configureLapUseCase: configureService, startTimerUseCase: startTimerService, setStartFlagUseCase: nil)
+        let boot = BootController(useCase: bootService)
+        
+        return (boot, start)
+    }
+    
+    static func startTest4(flagPort: MockStartFlagAdapter) -> (BootController, StartController) {
+        let lapPort = MockLapAdapter(laps: [])
+        let lifecycle = MockLifecycleAdapter(isActive: true)
+        
+        let configureService = ConfigureLapService(updateLapPort: lapPort)
+        let bootService = BootService(loadStartFlagPort: flagPort, loadLapPort: lapPort, lifecyclePort: lifecycle)
+        let flagService = StartFlagService(updateStartFlagPort: flagPort)
+        
+        let start = StartController(configureLapUseCase: configureService, startTimerUseCase: nil, setStartFlagUseCase: flagService)
+        let boot = BootController(useCase: bootService)
+        
+        return (boot, start)
+    }
 }
 

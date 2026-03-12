@@ -63,8 +63,9 @@ private extension Stopwatch {
     func start() {
         configureLaps()
         startTimer()
-        setStartButtons()
         setRunning(true)
+        // state
+        setStartButtons()
     }
     
     func stop() {

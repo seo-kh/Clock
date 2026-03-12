@@ -6,6 +6,7 @@
 //
 
 import Testing
+import Foundation
 @testable import Stopwatch
 
 struct StopwatchSystemTests {
@@ -19,7 +20,7 @@ struct StopwatchSystemTests {
             let bootController = DIController.bootTest1()
             
             // When
-            let watch = _Stopwatch(bootController: bootController, lapController: nil)
+            let watch = _Stopwatch(bootController: bootController, lapController: nil, startController: nil)
             
             // Then
             // Laps 초기화
@@ -52,7 +53,7 @@ struct StopwatchSystemTests {
         func test1() {
             // Given
             let ctrl = DIController.lapTest1()
-            let stopwatch = _Stopwatch(bootController: ctrl, lapController: nil)
+            let stopwatch = _Stopwatch(bootController: ctrl, lapController: nil, startController: nil)
             // When
             #expect(stopwatch.laps.isEmpty)
             stopwatch.lap()
@@ -64,7 +65,7 @@ struct StopwatchSystemTests {
         func test2() {
             // Given
             let (boot, lap) = DIController.lapTest2()
-            let stopwatch = _Stopwatch(bootController: boot, lapController: lap)
+            let stopwatch = _Stopwatch(bootController: boot, lapController: lap, startController: nil)
             let count = stopwatch.laps.count
             // When
             let iter = 3
@@ -99,9 +100,67 @@ struct StopwatchSystemTests {
         }
     }
 
-    @Test("시스템 시작 테스트")
-    func test2() async throws {
+    @MainActor
+    @Suite("Start Stopwatch Tests")
+    struct StartTests {
+        @Test("lap 구성하기: lap이 비었다면, 현재날짜 기준으로 Lap생성")
+        func test1() async throws {
+            // Given
+            let ctrl = DIController.startTest1()
+            let stopwatch = _Stopwatch(bootController: nil, lapController: nil, startController: ctrl)
+            #expect(stopwatch.laps.isEmpty)
+            // When
+            stopwatch.start()
+            // Then
+            #expect(stopwatch.laps.isEmpty == false)
+        }
         
+        @Test("lap 구성하기: lap이 비어있지않다면, 현재날짜 기준으로 첫번째 Lap을 시간조정")
+        func test2() async throws {
+            // Given
+            let (boot, start) = DIController.startTest2()
+            let stopwatch = _Stopwatch(bootController: boot, lapController: nil, startController: start)
+            #expect(stopwatch.laps.isEmpty == false)
+            let beforeStart = stopwatch.laps.first!
+            // When
+            stopwatch.start()
+            // Then
+            let afterStart = stopwatch.laps.first!
+            
+            #expect(beforeStart.split != afterStart.split)
+            #expect(beforeStart.total != afterStart.total)
+            #expect(beforeStart.progress != afterStart.progress)
+        }
+        
+        @Test("timer 시작: 5초후 중단 그리고 split기록 확인")
+        func test3() async throws {
+            // Given
+            let (boot, start) = DIController.startTest3()
+            let stopwatch = _Stopwatch(bootController: boot, lapController: nil, startController: start)
+            #expect(stopwatch.laps.isEmpty == false)
+            // When
+            stopwatch.start()
+            
+            try await Task.sleep(for: .seconds(5))
+            // Then
+            let afterStart = stopwatch.laps.first!
+            let interval = afterStart.progress - afterStart.total
+            #expect(interval > 5.0 - 0.5)
+        }
+        
+        @Test("start flag가 설정되었는지 확인")
+        func test4() async throws {
+            // Given
+            let flagPort = MockStartFlagAdapter(isActive: false)
+            let (boot, start) = DIController.startTest4(flagPort: flagPort)
+            let stopwatch = _Stopwatch(bootController: boot, lapController: nil, startController: start)
+            #expect(stopwatch.laps.isEmpty == false)
+            // When
+            stopwatch.start()
+            
+            // Then
+            #expect(flagPort.isActive)
+        }
     }
     
     @Test("시스템 중단 테스트")

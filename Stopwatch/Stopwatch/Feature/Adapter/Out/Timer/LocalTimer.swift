@@ -10,16 +10,14 @@ import Foundation
 final class LocalTimer: ResumeTimerPort, CancelTimerPort {
     let interval: TimeInterval
     private var timer: Timer? = nil
-    private var callback: ((TimeInterval) -> Void)?
-    private var startData: Date = Date.now
+    private var callback: ((Date) -> Void)?
     
     init(_ interval: TimeInterval) {
         self.interval = interval
     }
     
-    func resume(callback: @escaping (TimeInterval) -> Void) {
+    func resume(callback: @escaping (Date) -> Void) {
         self.callback = callback
-        self.startData = Date.now
         self.timer = Timer.scheduledTimer(timeInterval: interval,
                                           target: self,
                                           selector: #selector(startTimer),
@@ -29,7 +27,7 @@ final class LocalTimer: ResumeTimerPort, CancelTimerPort {
     }
     
     @objc private func startTimer(_ timer: Timer) {
-        self.callback?(timer.fireDate - startData)
+        self.callback?(timer.fireDate)
     }
     
     func cancel() {

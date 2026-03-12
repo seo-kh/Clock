@@ -8,5 +8,5 @@
 import Foundation
 
 protocol ResumeTimerPort {
-    func resume(callback: @escaping (TimeInterval) -> Void)
+    func resume(callback: @escaping (Date) -> Void)
 }

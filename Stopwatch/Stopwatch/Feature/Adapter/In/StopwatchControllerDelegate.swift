@@ -12,4 +12,5 @@ protocol StopwatchControllerDelegate {
     func didAddLap(_ target: Lap)
     func didChangeStartFlag(_ target: Bool)
     func didChangeLifecycle(_ target: Bool)
+    func didChangeProgress(_ target: Date)
 }

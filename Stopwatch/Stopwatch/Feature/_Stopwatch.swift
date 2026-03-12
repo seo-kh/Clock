@@ -15,11 +15,12 @@ final class _Stopwatch {
     
     private var bootController: BootController?
     private var lapController: LapController?
+    private var startController: StartController?
     
-    init(bootController: BootController?,
-         lapController: LapController?) {
+    init(bootController: BootController?, lapController: LapController?, startController: StartController?) {
         self.bootController = bootController
         self.lapController = lapController
+        self.startController = startController
         self.boot()
     }
     
@@ -31,6 +32,15 @@ final class _Stopwatch {
     func lap() {
         guard let firstLap: Lap = self.laps.first else { return }
         self.lapController?.lap(firstLap, target: self)
+    }
+    
+    func start() {
+        self.startController?.configureLaps(laps, target: self)
+        self.startController?.startTimer(target: self)
+        self.startController?.enableStartFlag()
+        
+        // state
+        self.components = .start
     }
 }
 
@@ -59,6 +69,10 @@ extension _Stopwatch: StopwatchControllerDelegate {
     }
     
     func didChangeStartFlag(_ target: Bool) {
-        // self.watchMode = target
+        start()
+    }
+    
+    func didChangeProgress(_ target: Date) {
+        self.laps[0].progress = target
     }
 }

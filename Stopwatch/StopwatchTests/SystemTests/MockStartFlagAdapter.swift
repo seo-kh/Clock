@@ -8,13 +8,22 @@
 import Foundation
 @testable import Stopwatch
 
-final class MockStartFlagAdapter: LoadStartFlagPort {
-    let isActive: Bool
+final class MockStartFlagAdapter {
+    var isActive: Bool
     
     init(isActive: Bool) {
         self.isActive = isActive
     }
     
+}
+
+extension MockStartFlagAdapter: UpdateStartFlagPort {
+    func update(_ flag: Bool) {
+        self.isActive = flag
+    }
+}
+
+extension MockStartFlagAdapter: LoadStartFlagPort {
     func load(callback: @escaping (Bool) -> Void) {
         callback(isActive)
     }
