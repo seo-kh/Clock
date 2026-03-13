@@ -8,21 +8,22 @@
 import Foundation
 
 final class StopController {
-    private var stopTimerUseCase: StopTimerUseCase
-    private var setStartFlagUseCase: SetStartFlagUseCase
+    private var stopTimerUseCase: StopTimerUseCase?
+    private var setStartFlagUseCase: SetStartFlagUseCase?
     
-    init(stopTimerUseCase: StopTimerUseCase, setStartFlagUseCase: SetStartFlagUseCase) {
+    init(stopTimerUseCase: StopTimerUseCase?,
+         setStartFlagUseCase: SetStartFlagUseCase?) {
         self.stopTimerUseCase = stopTimerUseCase
         self.setStartFlagUseCase = setStartFlagUseCase
     }
     
     func stopTimer() {
         let command = StopTimerCommand()
-        stopTimerUseCase.stopTimer(command: command)
+        stopTimerUseCase?.stopTimer(command: command)
     }
     
     func disableStartFlag() {
         let command = SetStartFlagCommand(flag: false)
-        self.setStartFlagUseCase.setFlag(command: command)
+        self.setStartFlagUseCase?.setFlag(command: command)
     }
 }

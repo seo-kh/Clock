@@ -77,8 +77,9 @@ private extension Stopwatch {
     
     func reset() {
         resetLaps()
-        setResetButtons()
         setRunning(false)
+        // state
+        setResetButtons()
     }
 }
 

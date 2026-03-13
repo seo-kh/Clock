@@ -9,5 +9,5 @@ import Foundation
 
 struct LapCommand {
     let source: [Lap]
-    let configNewLap: (Lap) -> Void
+    let configNewLap: (Lap?) -> Void
 }

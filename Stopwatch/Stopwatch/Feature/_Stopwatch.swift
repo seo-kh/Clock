@@ -17,15 +17,19 @@ final class _Stopwatch {
     private var lapController: LapController?
     private var startController: StartController?
     private var stopController: StopController?
+    private var resetController: ResetController?
     
     init(bootController: BootController?,
          lapController: LapController?,
          startController: StartController?,
-         stopController: StopController?) {
+         stopController: StopController?,
+         resetController: ResetController?
+    ) {
         self.bootController = bootController
         self.lapController = lapController
         self.startController = startController
         self.stopController = stopController
+        self.resetController = resetController
         self.boot()
     }
     
@@ -47,7 +51,9 @@ final class _Stopwatch {
     
     func lap() {
         self.lapController?.lap(at: laps) { [weak self] result in
-            self?.didAddLap(result)
+            if let _result = result {
+                self?.didAddLap(_result)
+            }
         }
     }
     
@@ -71,6 +77,15 @@ final class _Stopwatch {
         
         // state
         self.components = .stop
+    }
+    
+    func reset() {
+        do {
+            try self.resetController?.resetLaps()
+            self.laps.removeAll()
+        } catch {
+            print(error)
+        }
     }
 }
 

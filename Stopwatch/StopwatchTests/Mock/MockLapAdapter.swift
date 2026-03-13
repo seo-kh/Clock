@@ -18,6 +18,12 @@ final class MockLapAdapter {
     }
 }
 
+extension MockLapAdapter: ResetLapPort {
+    func reset() throws {
+        self.laps.removeAll()
+    }
+}
+
 extension MockLapAdapter: UpdateLapPort {
     func update(_ target: Lap) {
         self.laps.insert(target, at: 0)

@@ -14,7 +14,7 @@ final class LapController {
         self.lapUseCase = lapUseCase
     }
     
-    func lap(at source: [Lap], callback: @escaping (Lap) -> Void) {
+    func lap(at source: [Lap], callback: @escaping (Lap?) -> Void) {
         let command = LapCommand(source: source, configNewLap: callback)
         self.lapUseCase.lap(command: command)
     }

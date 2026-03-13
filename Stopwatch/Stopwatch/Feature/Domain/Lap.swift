@@ -61,6 +61,10 @@ extension Lap {
     }
     
     static let empty: Lap = Lap(number: 0, split: Date.now, total: Date.now, progress: Date.now)
+    static let old: Lap = Lap(number: 0,
+                              split: Date(timeIntervalSince1970: 20.0),
+                              total: Date(timeIntervalSince1970: 0.0),
+                              progress: Date(timeIntervalSince1970: 40.0))
 }
 
 extension Array where Element == Lap {

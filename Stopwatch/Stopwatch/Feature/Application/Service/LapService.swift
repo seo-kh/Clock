@@ -20,7 +20,10 @@ extension LapService: LapUseCase {
         let laps = command.source
         
         // lap이 없으면 그냥 종료
-        guard let firstLap = laps.first else { return }
+        guard let firstLap = laps.first else {
+            command.configNewLap(nil)
+            return
+        }
         
         // new lap 생성
         let newLap: Lap = firstLap.next()
@@ -33,19 +36,3 @@ extension LapService: LapUseCase {
     }
 }
 
-extension LapService: ConfigureLapUseCase {
-    func configureLaps(command: ConfigureLapCommand) {
-        var laps = command.laps
-        if laps.isEmpty {
-            let now: Date = Date.now
-            let newLap = Lap(number: 1, split: now, total: now, progress: now)
-            laps.append(newLap)
-            
-            updateLapPort.update(newLap)
-        } else {
-            laps[0].adjust()
-        }
-        
-        command.configLap(Result.success(laps))
-    }
-}

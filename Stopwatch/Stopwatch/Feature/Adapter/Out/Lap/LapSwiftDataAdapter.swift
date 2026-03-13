@@ -16,6 +16,12 @@ final class LapSwiftDataAdapter {
     }
 }
 
+extension LapSwiftDataAdapter: ResetLapPort {
+    func reset() throws {
+        try self.context?.delete(model: SDLap.self)
+    }
+}
+
 extension LapSwiftDataAdapter: UpdateLapPort {
     func update(_ target: Lap) {
         let sdLap = SDLapMapper.mapToSDLap(from: target)
