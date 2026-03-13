@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ClockButtonStyle: ButtonStyle {
+struct ClockButtonStyle: ButtonStyle, Equatable {
     let label: Color
     let background: Color
     

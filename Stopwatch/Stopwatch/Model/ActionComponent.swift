@@ -7,33 +7,82 @@
 
 import Foundation
 
-struct ActionComponent: Identifiable {
-    let title: String
-    let action: (() -> Void)?
-    let style: ClockButtonStyle
+struct ActionComponents: Equatable {
+    var leading: ActionComponent
+    var trailing: ActionComponent
     
-    var id: String { self.title }
+    init(leading: ActionComponent, trailing: ActionComponent) {
+        self.leading = leading
+        self.trailing = trailing
+    }
+    
+    init(@ActionBuilder _ builder: () -> ActionComponents) {
+        self = builder()
+    }
 }
 
-extension Array where Element == ActionComponent {
+@resultBuilder
+struct ActionBuilder {
+    static func buildBlock(_ leading: ActionComponent, _ trailing: ActionComponent) -> ActionComponents {
+        ActionComponents(leading: leading, trailing: trailing)
+    }
+}
+
+extension ActionComponents {
     static var idle: Self {
-        [
-            ActionComponent(title: "Lap", action: nil, style: .ckDisable),
-            ActionComponent(title: "Start", action: {}, style: .ckGreen),
-        ]
+        ActionComponents {
+            ActionComponent(title: "Lap", action: nil, style: .ckDisable)
+            ActionComponent(title: "Start", action: {}, style: .ckGreen)
+        }
     }
     
     static var start: Self {
-        [
-            ActionComponent(title: "Lap", action: {}, style: .ckGray),
-            ActionComponent(title: "Stop", action: {}, style: .ckRed),
-        ]
+        ActionComponents {
+            ActionComponent(title: "Lap", action: {}, style: .ckGray)
+            ActionComponent(title: "Stop", action: {}, style: .ckRed)
+        }
     }
     
     static var stop: Self {
-        [
-            ActionComponent(title: "Reset", action: {}, style: .ckGray),
-            ActionComponent(title: "Start", action: {}, style: .ckGreen),
-        ]
+        ActionComponents {
+            ActionComponent(title: "Reset", action: {}, style: .ckGray)
+            ActionComponent(title: "Start", action: {}, style: .ckGreen)
+        }
     }
 }
+
+struct ActionComponent: Identifiable, Equatable {
+    static func == (lhs: ActionComponent, rhs: ActionComponent) -> Bool {
+        return lhs.title == rhs.title &&
+        lhs.primitive == rhs.primitive &&
+        lhs.isActive == rhs.isActive &&
+        lhs.isDisable == rhs.isDisable
+    }
+    
+    let title: String
+    let action: (() -> Void)?
+    private let primitive: ClockButtonStyle
+    var isActive: Bool
+    var isDisable: Bool
+    
+    init(title: String, action: (() -> Void)?, style: ClockButtonStyle, isDisable: Bool = false) {
+        self.title = title
+        self.action = action
+        self.primitive = style
+        self.isDisable = isDisable
+        self.isActive = true
+    }
+    
+    var id: String { self.title }
+    
+    var style: ClockButtonStyle {
+        if isDisable {
+            return ClockButtonStyle.ckDisable
+        } else if isActive {
+            return primitive
+        } else {
+            return ClockButtonStyle.ckGray
+        }
+    }
+}
+

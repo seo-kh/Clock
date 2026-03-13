@@ -17,8 +17,7 @@ import Observation
 @Observable
 final class _Stopwatch {
     private(set) var laps: [Lap] = []
-    private(set) var components: [ActionComponent] = .idle
-    private(set) var isActive: Bool = false
+    private(set) var components: ActionComponents = .idle
     private(set) var watchMode: WatchMode = WatchMode(isActive: false, change: {})
     
     private var bootController: BootController?
@@ -110,22 +109,22 @@ final class _Stopwatch {
 /// Button Configure
 extension _Stopwatch {
     private func setResetButtons() {
-        self.components = [
-            ActionComponent(title: "Lap", action: nil, style: .ckDisable),
-            ActionComponent(title: "Start", action: self.start, style: .ckGreen),
-        ]
+        self.components = ActionComponents {
+            ActionComponent(title: "Lap", action: nil, style: .ckDisable, isDisable: true)
+            ActionComponent(title: "Start", action: self.start, style: .ckGreen)
+        }
     }
     private func setStartButtons() {
-        self.components = [
-            ActionComponent(title: "Lap", action: self.lap, style: .ckGray),
-            ActionComponent(title: "Stop", action: self.stop, style: .ckRed),
-        ]
+        self.components = ActionComponents {
+            ActionComponent(title: "Lap", action: self.lap, style: .ckGray)
+            ActionComponent(title: "Stop", action: self.stop, style: .ckRed)
+        }
     }
     private func setStopButtons() {
-        self.components = [
-            ActionComponent(title: "Reset", action: self.reset, style: .ckGray),
-            ActionComponent(title: "Start", action: self.start, style: .ckGreen),
-        ]
+        self.components = ActionComponents {
+            ActionComponent(title: "Reset", action: self.reset, style: .ckGray)
+            ActionComponent(title: "Start", action: self.start, style: .ckGreen)
+        }
     }
 }
 
@@ -150,7 +149,8 @@ private extension _Stopwatch {
     }
     
     func didChangeLifecycle(_ target: Bool) {
-        self.isActive = target
+        self.components.leading.isActive = target
+        self.components.trailing.isActive = target
     }
     
     func didChangeStartFlag(_ target: Bool) {
