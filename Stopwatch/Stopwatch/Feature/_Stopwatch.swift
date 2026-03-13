@@ -9,16 +9,14 @@ import Foundation
 import Observation
 
 // Stopwatch Module
-//
-// [fix table]
-// 1. isActive를 삭제하고, component가 isActive 가지도록 설정 <- state줄이기 위함
-// 2. watchMode를 삭제하고, 단일 Bool state 상태 설정
-
 @Observable
 final class _Stopwatch {
     private(set) var laps: [Lap] = []
     private(set) var components: ActionComponents = .idle
-    private(set) var watchMode: WatchMode = WatchMode(isActive: false, change: {})
+    private(set) var display: DisplayStyle = DisplayStyle.laplist
+    func setDisplay(_ display: DisplayStyle) {
+        self.display = display
+    }
     
     private var bootController: BootController?
     private var lapController: LapController?
@@ -61,7 +59,6 @@ final class _Stopwatch {
             self?.didChangeLifecycle(result)
         }
         
-        self.watchMode.change = { self.watchMode.isActive.toggle() }
         self.setResetButtons()
     }
     
@@ -139,12 +136,10 @@ private extension _Stopwatch {
     }
     
     func didAddLap(_ target: Lap) {
-        // lap 추가
         self.laps.insert(target, at: 0)
         
-        // watchMode가 on이면, off
-        if watchMode.isActive {
-            watchMode.change()
+        if self.display == .watchface {
+            self.display = .laplist
         }
     }
     
@@ -155,7 +150,7 @@ private extension _Stopwatch {
     
     func didChangeStartFlag(_ target: Bool) {
         if target {
-            start()
+            self.start()
         }
     }
     
