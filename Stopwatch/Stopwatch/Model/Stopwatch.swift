@@ -17,7 +17,7 @@ import UIKit
 #endif
 
 @Observable
-final class Stopwatch {
+final class __Stopwatch {
     private(set) var laps: [Lap] = []
     private(set) var components: [ActionComponent] = []
     private(set) var isActive: Bool = false
@@ -51,7 +51,7 @@ final class Stopwatch {
 }
 
 /// Button Actions: Feature + UI update
-private extension Stopwatch {
+private extension __Stopwatch {
     func lap() {
         addLap()
         
@@ -84,7 +84,7 @@ private extension Stopwatch {
 }
 
 /// Button Configure
-extension Stopwatch {
+extension __Stopwatch {
     private func setResetButtons() {
         self.components = [
             ActionComponent(title: "Lap", action: nil, style: .ckDisable),
@@ -106,7 +106,7 @@ extension Stopwatch {
 }
 
 /// Timer Control
-extension Stopwatch {
+extension __Stopwatch {
     private func startTimer() {
         cancellable = timer
             .autoconnect()
@@ -122,7 +122,7 @@ extension Stopwatch {
 }
 
 /// Lap Control
-extension Stopwatch {
+extension __Stopwatch {
     private func addLap() {
         let newLap: Lap = self.laps[0].next()
         self.laps.insert(newLap, at: 0)
@@ -153,7 +153,7 @@ extension Stopwatch {
 }
 
 /// Focus Detection
-private extension Stopwatch {
+private extension __Stopwatch {
     func subsribeActiveNotification() {
         
         let activeNotification: Notification.Name
@@ -183,7 +183,7 @@ private extension Stopwatch {
     }
 }
 
-private extension Stopwatch {
+private extension __Stopwatch {
     func setRunning(_ value: Bool) {
         self.userDefaults?.set(value, forKey: Self.defaultKey)
     }
@@ -196,13 +196,13 @@ private extension Stopwatch {
     }
 }
 
-private extension Stopwatch {
+private extension __Stopwatch {
     func changeWatchMode() {
         self.watchMode.isActive.toggle()
     }
 }
 
-extension Stopwatch {
+extension __Stopwatch {
     enum Configuration {
         case debug
         case release

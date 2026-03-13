@@ -63,6 +63,7 @@ final class _Stopwatch {
         }
         
         self.watchMode.change = { self.watchMode.isActive.toggle() }
+        self.setResetButtons()
     }
     
     func lap() {
@@ -84,7 +85,7 @@ final class _Stopwatch {
         self.startController?.enableStartFlag()
         
         // state
-        self.components = .start
+        self.setStartButtons()
     }
     
     func stop() {
@@ -92,16 +93,39 @@ final class _Stopwatch {
         self.stopController?.disableStartFlag()
         
         // state
-        self.components = .stop
+        self.setStopButtons()
     }
     
     func reset() {
         do {
             try self.resetController?.resetLaps()
             self.laps.removeAll()
+            self.setResetButtons()
         } catch {
             print(error)
         }
+    }
+}
+
+/// Button Configure
+extension _Stopwatch {
+    private func setResetButtons() {
+        self.components = [
+            ActionComponent(title: "Lap", action: nil, style: .ckDisable),
+            ActionComponent(title: "Start", action: self.start, style: .ckGreen),
+        ]
+    }
+    private func setStartButtons() {
+        self.components = [
+            ActionComponent(title: "Lap", action: self.lap, style: .ckGray),
+            ActionComponent(title: "Stop", action: self.stop, style: .ckRed),
+        ]
+    }
+    private func setStopButtons() {
+        self.components = [
+            ActionComponent(title: "Reset", action: self.reset, style: .ckGray),
+            ActionComponent(title: "Start", action: self.start, style: .ckGreen),
+        ]
     }
 }
 
@@ -130,7 +154,9 @@ private extension _Stopwatch {
     }
     
     func didChangeStartFlag(_ target: Bool) {
-        start()
+        if target {
+            start()
+        }
     }
     
     func didChangeProgress(_ target: Date) {
