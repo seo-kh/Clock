@@ -8,6 +8,12 @@
 import Foundation
 import Observation
 
+// TODO: - Stopwatch refactoring list
+// 1. _Stopwatch -> Stopwatch
+// 2. _Stopwatch 모듈 분리: 별도의 package화 할것, Stopwatch앱에서 이 package를 불러올것, 아래의 _Stopwatch는 상태처리와 delegate으로만 소통
+// 3. Stopwatch 앱용 데이터 모델과, Stopwatch package용 데이터 모델(도메인 모델) 구분하기
+// 4. macOS용 Stopwatch 기능 제작 마무리: -> Widget 개발 염두해보기
+
 // Stopwatch Module
 @Observable
 final class _Stopwatch {
