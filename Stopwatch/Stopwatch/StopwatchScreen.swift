@@ -10,7 +10,7 @@ import Foundation
 
 struct StopwatchScreen: View {
     @State
-    private var stopwatch = Stopwatch(configuration: .release)
+    private var stopwatch = _Stopwatch(configuration: .init())
     
     var body: some View {
         _StopwatchScreen(laps: stopwatch.laps,
