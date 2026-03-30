@@ -8,13 +8,43 @@
 import Foundation
 import Observation
 
-@Observable
-final class Stopwatch {
-    private(set) var laps: [Lap] = []
-    private(set) var components: [ActionComponent] = []
-    private(set) var isActive: Bool = false
-    private(set) var watchMode: WatchMode!
+protocol StopwatchControllerFactory {
+    func lapRepository() -> LapRepository
+    func flagRepository() -> FlagRepository
+    func timerSource() -> TimerSource
+    func activationSource() -> AppActivationSource
+}
+
+final class ProductionFactory: StopwatchControllerFactory {
+    func lapRepository() -> any LapRepository {
+        SDLapRepository()
+    }
     
+    func flagRepository() -> any FlagRepository {
+        UserDefaultsFlagRepository()
+    }
+    
+    func timerSource() -> any TimerSource {
+        CombineTimerSource(timeInterval: 0.003)
+    }
+    
+    func activationSource() -> any AppActivationSource {
+        NotificationAppActivationSource()
+    }
+}
+
+protocol StopwatchControllerDelegate: AnyObject {
+    func didUpdate(_ date: Result<Date, Error>)
+    func didStop(_ error: Error?)
+    func didAddLap(_ error: Error?)
+    func didResetLap(_ error: Error?)
+    func didRead(_ laps: Result<[Lap], Error>)
+    func didChange(_ activation: Result<Bool, Error>)
+    func getStartFlag(_ flag: Result<Bool, Error>)
+    func setStartFlag(_ error: Error?)
+}
+
+final class StopwatchController {
     /// 타이머
     private let timerSource: TimerSource
     /// 앱 현재 활성화 여부
@@ -23,6 +53,8 @@ final class Stopwatch {
     private let lapRepository: LapRepository
     /// 자동시작 데이터 영구 저장소
     private let flagRepository: FlagRepository
+    
+    private weak var delegate: StopwatchControllerDelegate?
 
     init(lapRepository: LapRepository,
          flagRepository: FlagRepository,
@@ -32,11 +64,150 @@ final class Stopwatch {
         self.flagRepository = flagRepository
         self.timerSource = timerSource
         self.activationSource = activationSource
+    }
+    
+    convenience init(factory: StopwatchControllerFactory) {
+        self.init(lapRepository: factory.lapRepository(),
+                  flagRepository: factory.flagRepository(),
+                  timerSource: factory.timerSource(),
+                  activationSource: factory.activationSource())
+    }
+    
+    func configure(delegate: StopwatchControllerDelegate?) {
+        self.delegate = delegate
+        
+        self.lapRepository.read(completion: { [weak self] result in
+            self?.delegate?.didRead(result)
+        })
+        
+        self.activationSource.start(onUpdate: { [weak self] result in
+            self?.delegate?.didChange(result)
+        })
+        
+        self.flagRepository.get(completion: { [weak self] result in
+            self?.delegate?.getStartFlag(result)
+        })
+    }
+    
+    func start() {
+        self.timerSource.start(onUpdate: { [weak self] result in
+            self?.delegate?.didUpdate(result)
+        })
+        
+        self.flagRepository.set(true, completion: { [weak self] result in
+            self?.delegate?.setStartFlag(result)
+        })
+    }
+    
+    func stop() {
+        self.timerSource.stop(onCompletion: { [weak self] error in
+            self?.delegate?.didStop(error)
+        })
+        
+        self.flagRepository.set(false, completion: { [weak self] result in
+            self?.delegate?.setStartFlag(result)
+        })
+    }
+    
+    func lap(_ lap: Lap) {
+        self.lapRepository.create(lap, completion: { [weak self] error in
+            self?.delegate?.didAddLap(error)
+        })
+    }
+    
+    func reset() {
+        self.lapRepository.delete(completion: { [weak self] error in
+            self?.delegate?.didResetLap(error)
+        })
+        
+        self.flagRepository.set(false, completion: { [weak self] result in
+            self?.delegate?.setStartFlag(result)
+        })
+    }
+}
+
+@Observable
+final class Stopwatch {
+    private(set) var laps: [Lap] = []
+    private(set) var components: [ActionComponent] = []
+    private(set) var isActive: Bool = false
+    private(set) var watchMode: WatchMode!
+    
+    private let controller: StopwatchController
+    
+    init() {
+        self.controller = StopwatchController(factory: ProductionFactory())
+        self.controller.configure(delegate: self)
         self.watchMode = WatchMode(isActive: false, change: self.changeWatchMode)
-        self.readLaps()
-        self.setResetButtons()
-        self.subsribeActiveNotification()
-        self.startWhenRunning()
+    }
+}
+
+extension Stopwatch: StopwatchControllerDelegate {
+    func didUpdate(_ date: Result<Date, any Error>) {
+        guard !laps.isEmpty else { return }
+        
+        switch date {
+        case .success(let _date):
+            self.laps[0].progress = _date
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func didStop(_ error: (any Error)?) {
+        if let error {
+            print(error)
+        }
+    }
+    
+    func didAddLap(_ error: (any Error)?) {
+        if let error {
+            print(error)
+        }
+    }
+    
+    func didResetLap(_ error: (any Error)?) {
+        if let error {
+            print(error)
+        }
+    }
+    
+    func didChange(_ activation: Result<Bool, any Error>) {
+        switch activation {
+        case .success(let isActive):
+            self.isActive = isActive
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func didRead(_ laps: Result<[Lap], any Error>) {
+        switch laps {
+        case .success(let _laps):
+            self.laps = _laps
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func getStartFlag(_ flag: Result<Bool, any Error>) {
+        switch flag {
+        case .success(let _flag):
+            if _flag {
+                self.start()
+                self.setStartButtons()
+            } else {
+                self.setResetButtons()
+            }
+        case .failure(let error):
+            print(error)
+        }
+    }
+    
+    func setStartFlag(_ error: (any Error)?) {
+        if let error {
+            print(error)
+        }
     }
 }
 
@@ -54,19 +225,16 @@ private extension Stopwatch {
         configureLaps()
         startTimer()
         setStartButtons()
-        setRunning(true)
     }
     
     func stop() {
         stopTimer()
         setStopButtons()
-        setRunning(false)
     }
     
     func reset() {
         resetLaps()
         setResetButtons()
-        setRunning(false)
     }
 }
 
@@ -95,20 +263,11 @@ extension Stopwatch {
 /// Timer Control
 extension Stopwatch {
     private func startTimer() {
-        self.timerSource.start(onUpdate: { [weak self] result in
-            switch result {
-            case .success(let date):
-                self?.laps[0].progress = date
-            case .failure(let error):
-                print(error)
-            }
-        })
+        self.controller.start()
     }
     
     private func stopTimer() {
-        self.timerSource.stop(onCompletion: { error in
-            if let error { print(error) }
-        })
+        self.controller.stop()
     }
 }
 
@@ -116,77 +275,25 @@ extension Stopwatch {
 extension Stopwatch {
     private func addLap() {
         let newLap: Lap = self.laps[0].next()
+        self.controller.lap(newLap)
         self.laps.insert(newLap, at: 0)
-        self.lapRepository.create(newLap, completion: { error in
-            if let error { print(error) }
-        })
     }
     
     private func resetLaps() {
+        self.controller.reset()
         self.laps.removeAll()
-        self.lapRepository.delete { error in
-            if let error { print(error) }
-        }
     }
     
     private func configureLaps() {
         if laps.isEmpty {
             let now: Date = Date.now
             let newLap = Lap(number: 1, split: now, total: now, progress: now)
-            laps.append(newLap)
-            self.lapRepository.create(newLap, completion: { error in
-                if let error { print(error) }
-            })
+            
+            self.controller.lap(newLap)
+            self.laps.append(newLap)
         } else {
             laps[0].adjust()
         }
-    }
-    
-    /// id를 기준으로 역방향으로 정렬해서 Lap 데이터 가져오기
-    private func readLaps() {
-        self.lapRepository.read(completion: { [weak self] result in
-            switch result {
-            case .success(let laps):
-                self?.laps = laps
-            case .failure(let error):
-                print(error)
-            }
-        })
-    }
-}
-
-/// Focus Detection
-private extension Stopwatch {
-    func subsribeActiveNotification() {
-        self.activationSource.start { [weak self] result in
-            switch result {
-            case .success(let isActive):
-                self?.isActive = isActive
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-}
-
-private extension Stopwatch {
-    func setRunning(_ value: Bool) {
-        self.flagRepository.set(value, completion: { error in
-            if let error { print(error) }
-        })
-    }
-    
-    func startWhenRunning() {
-        self.flagRepository.get(completion: { [weak self] result in
-            switch result {
-            case .success(let flag):
-                if flag {
-                    self?.start()
-                }
-            case .failure(let error):
-                print(error)
-            }
-        })
     }
 }
 

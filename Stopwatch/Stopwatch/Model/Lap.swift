@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Lap {
+struct Lap: Identifiable {
     var id: Int
     
     var number: String {
