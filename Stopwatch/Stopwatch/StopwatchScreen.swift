@@ -10,7 +10,10 @@ import Foundation
 
 struct StopwatchScreen: View {
     @State
-    private var stopwatch = Stopwatch(configuration: .release)
+    private var stopwatch = Stopwatch(lapRepository: SDLapRepository(),
+                                       flagRepository: UserDefaultsFlagRepository(),
+                                       timerSource: CombineTimerSource(timeInterval: 0.003),
+                                       activationSource: NotificationAppActivationSource())
     
     var body: some View {
         _StopwatchScreen(laps: stopwatch.laps,

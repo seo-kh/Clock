@@ -7,14 +7,6 @@
 
 import Foundation
 import Observation
-import Combine
-import SwiftData
-
-#if os(macOS)
-import Cocoa
-#else
-import UIKit
-#endif
 
 @Observable
 final class Stopwatch {
@@ -23,26 +15,24 @@ final class Stopwatch {
     private(set) var isActive: Bool = false
     private(set) var watchMode: WatchMode!
     
-    @ObservationIgnored
-    private var timer = Timer.publish(every: 0.03, on: .current, in: .common)
-    /// Timer 취소
-    @ObservationIgnored
-    private var cancellable: Cancellable? = nil
-    /// Activation 수신자
-    @ObservationIgnored
-    private var cancellables: Set<AnyCancellable> = []
+    /// 타이머
+    private let timerSource: TimerSource
+    /// 앱 현재 활성화 여부
+    private let activationSource: AppActivationSource
     /// Lap 데이터 영구 저장소
-    @ObservationIgnored
-    private var context: ModelContext? = nil
-    
-    @ObservationIgnored
-    private var userDefaults: UserDefaults? = nil
-    @ObservationIgnored
-    private static let defaultKey: String = "isRunning"
+    private let lapRepository: LapRepository
+    /// 자동시작 데이터 영구 저장소
+    private let flagRepository: FlagRepository
 
-    init(configuration: Configuration = .debug) {
+    init(lapRepository: LapRepository,
+         flagRepository: FlagRepository,
+         timerSource: TimerSource,
+         activationSource: AppActivationSource) {
+        self.lapRepository = lapRepository
+        self.flagRepository = flagRepository
+        self.timerSource = timerSource
+        self.activationSource = activationSource
         self.watchMode = WatchMode(isActive: false, change: self.changeWatchMode)
-        self.configure(configuration)
         self.readLaps()
         self.setResetButtons()
         self.subsribeActiveNotification()
@@ -105,16 +95,20 @@ extension Stopwatch {
 /// Timer Control
 extension Stopwatch {
     private func startTimer() {
-        cancellable = timer
-            .autoconnect()
-            .sink(receiveValue: { [weak self] date in
+        self.timerSource.start(onUpdate: { [weak self] result in
+            switch result {
+            case .success(let date):
                 self?.laps[0].progress = date
-            })
+            case .failure(let error):
+                print(error)
+            }
+        })
     }
     
     private func stopTimer() {
-        cancellable?.cancel()
-        cancellable = nil
+        self.timerSource.stop(onCompletion: { error in
+            if let error { print(error) }
+        })
     }
 }
 
@@ -123,12 +117,16 @@ extension Stopwatch {
     private func addLap() {
         let newLap: Lap = self.laps[0].next()
         self.laps.insert(newLap, at: 0)
-        self.context?.insert(newLap)
+        self.lapRepository.create(newLap, completion: { error in
+            if let error { print(error) }
+        })
     }
     
     private func resetLaps() {
         self.laps.removeAll()
-        try? self.context?.delete(model: Lap.self)
+        self.lapRepository.delete { error in
+            if let error { print(error) }
+        }
     }
     
     private func configureLaps() {
@@ -136,7 +134,9 @@ extension Stopwatch {
             let now: Date = Date.now
             let newLap = Lap(number: 1, split: now, total: now, progress: now)
             laps.append(newLap)
-            context?.insert(newLap)
+            self.lapRepository.create(newLap, completion: { error in
+                if let error { print(error) }
+            })
         } else {
             laps[0].adjust()
         }
@@ -144,80 +144,54 @@ extension Stopwatch {
     
     /// id를 기준으로 역방향으로 정렬해서 Lap 데이터 가져오기
     private func readLaps() {
-        let descriptor = FetchDescriptor<Lap>(sortBy: [SortDescriptor(\.id, order: SortOrder.reverse)])
-        self.laps = (try? context?.fetch(descriptor)) ?? []
+        self.lapRepository.read(completion: { [weak self] result in
+            switch result {
+            case .success(let laps):
+                self?.laps = laps
+            case .failure(let error):
+                print(error)
+            }
+        })
     }
 }
 
 /// Focus Detection
 private extension Stopwatch {
     func subsribeActiveNotification() {
-        
-        let activeNotification: Notification.Name
-        let inactiveNotification: Notification.Name
-        
-        #if os(macOS)
-        activeNotification = NSApplicaiton.didBecomeActiveNotification
-        inactiveNotification = NSApplication.didResignActiveNotification
-        #else
-        activeNotification = UIApplication.didBecomeActiveNotification
-        inactiveNotification = UIApplication.didEnterBackgroundNotification
-        #endif
-        
-        NotificationCenter.default
-            .publisher(for: activeNotification)
-            .sink(receiveValue: { [weak self] _ in
-                self?.isActive = true
-            })
-            .store(in: &cancellables)
-        
-        NotificationCenter.default
-            .publisher(for: inactiveNotification)
-            .sink(receiveValue: { [weak self] _ in
-                self?.isActive = false
-            })
-            .store(in: &cancellables)
+        self.activationSource.start { [weak self] result in
+            switch result {
+            case .success(let isActive):
+                self?.isActive = isActive
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
 
 private extension Stopwatch {
     func setRunning(_ value: Bool) {
-        self.userDefaults?.set(value, forKey: Self.defaultKey)
+        self.flagRepository.set(value, completion: { error in
+            if let error { print(error) }
+        })
     }
     
     func startWhenRunning() {
-        switch self.userDefaults?.bool(forKey: Self.defaultKey) {
-        case .some(true): start()
-        default: break
-        }
+        self.flagRepository.get(completion: { [weak self] result in
+            switch result {
+            case .success(let flag):
+                if flag {
+                    self?.start()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        })
     }
 }
 
 private extension Stopwatch {
     func changeWatchMode() {
         self.watchMode.isActive.toggle()
-    }
-}
-
-extension Stopwatch {
-    enum Configuration {
-        case debug
-        case release
-        case custom(ModelContext)
-    }
-    
-    private func configure(_ configuration: Configuration) {
-        switch configuration {
-        case .debug:
-            self.context = nil
-            self.userDefaults = nil
-        case .release:
-            let container = try! ModelContainer(for: Lap.self)
-            self.context = ModelContext(container)
-            self.userDefaults = UserDefaults()
-        case .custom(let modelContext):
-            self.context = modelContext
-            self.userDefaults = UserDefaults()
-        }
     }
 }
