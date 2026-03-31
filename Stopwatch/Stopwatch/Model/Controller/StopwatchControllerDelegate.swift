@@ -8,6 +8,7 @@
 import Foundation
 
 protocol StopwatchControllerDelegate: AnyObject {
+    func didAdd(_ lap: Lap)
     func didGet(_ laps: [Lap])
     func didGet(_ flag: Bool)
     func didUpdate(_ date: Date)

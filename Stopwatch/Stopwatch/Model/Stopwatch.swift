@@ -20,11 +20,13 @@ final class Stopwatch {
     
     @ObservationIgnored
     private lazy var controller: StopwatchController = {
-        let controller = StopwatchController(configuration: .production, delegate: self)
+        let controller = StopwatchController(configuration: .production,
+                                             delegate: self)
         return controller
     }()
     
     init() {
+        self.setResetButtons()
         self.controller.configure()
     }
 }
@@ -41,6 +43,10 @@ extension Stopwatch: StopwatchControllerDelegate {
         self.isActive = activation
     }
     
+    func didAdd(_ lap: Lap) {
+        self.laps.insert(lap, at: 0)
+    }
+    
     func didGet(_ laps: [Lap]) {
         self.laps = laps
     }
@@ -48,9 +54,6 @@ extension Stopwatch: StopwatchControllerDelegate {
     func didGet(_ flag: Bool) {
         if flag {
             self.start()
-            self.setStartButtons()
-        } else {
-            self.setResetButtons()
         }
     }
     
@@ -62,7 +65,7 @@ extension Stopwatch: StopwatchControllerDelegate {
 /// Button Actions: Feature + UI update
 private extension Stopwatch {
     func lap() {
-        controller.lap(in: &laps)
+        controller.lap(from: laps)
         
         if displayMode == .watch {
             displayMode.toggle()
@@ -70,7 +73,7 @@ private extension Stopwatch {
     }
     
     func start() {
-        controller.start(in: &laps)
+        controller.start(from: laps)
         setStartButtons()
     }
     

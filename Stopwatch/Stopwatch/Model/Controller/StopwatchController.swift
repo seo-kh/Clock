@@ -68,41 +68,27 @@ final class StopwatchController {
         })
     }
     
-    func start(in laps: inout [Lap]) {
+    func start(from laps: [Lap]) {
         // configure
         if laps.isEmpty {
             let now: Date = Date.now
             let newLap = Lap(number: 1, split: now, total: now, progress: now)
             
-            self.lapRepository.create(newLap, completion: { [weak self] error in
+            self.lapRepository.create(newLap, completion: { [weak self, newLap] error in
                 if let error {
                     self?.delegate?.didCompleteWithError(error)
+                } else {
+                    self?._start()
+                    self?.delegate?.didAdd(newLap)
                 }
             })
-            
-            laps.append(newLap)
         } else {
-            laps[0].adjust()
+            self._start()
+            // laps[0].adjust()
         }
-        
-        // start
-        self.timerSource.start(onUpdate: { [weak self] result in
-            switch result {
-            case .success(let date):
-                self?.delegate?.didUpdate(date)
-            case .failure(let error):
-                self?.delegate?.didCompleteWithError(error)
-            }
-        })
-        
-        self.flagRepository.set(true, completion: { [weak self] error in
-            if let error {
-                self?.delegate?.didCompleteWithError(error)
-            }
-        })
     }
     
-    func start() {
+    private func _start() {
         self.timerSource.start(onUpdate: { [weak self] result in
             switch result {
             case .success(let date):
@@ -133,24 +119,16 @@ final class StopwatchController {
         })
     }
     
-    func lap(in laps: inout [Lap]) {
+    func lap(from laps: [Lap]) {
         guard let firstLap: Lap = laps.first else { return }
         
         let newLap: Lap = firstLap.next()
         
-        self.lapRepository.create(newLap, completion: { [weak self] error in
+        self.lapRepository.create(newLap, completion: { [weak self, newLap] error in
             if let error {
                 self?.delegate?.didCompleteWithError(error)
-            }
-        })
-        
-        laps.insert(newLap, at: 0)
-    }
-    
-    func lap(_ lap: Lap) {
-        self.lapRepository.create(lap, completion: { [weak self] error in
-            if let error {
-                self?.delegate?.didCompleteWithError(error)
+            } else {
+                self?.delegate?.didAdd(newLap)
             }
         })
     }
