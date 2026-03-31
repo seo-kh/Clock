@@ -13,14 +13,19 @@ final class Stopwatch {
     private(set) var laps: [Lap] = []
     private(set) var components: [ActionComponent] = []
     private(set) var isActive: Bool = false
-    private(set) var watchMode: WatchMode!
+    private(set) var displayMode: DisplayMode = .list
+    func setDisplayMode(displayMode: DisplayMode) {
+        self.displayMode = displayMode
+    }
     
-    private let controller: StopwatchController
+    @ObservationIgnored
+    private lazy var controller: StopwatchController = {
+        let controller = StopwatchController(configuration: .production, delegate: self)
+        return controller
+    }()
     
     init() {
-        self.controller = StopwatchController(factory: ProductionFactory())
-        self.controller.configure(delegate: self)
-        self.watchMode = WatchMode(isActive: false, change: self.changeWatchMode)
+        self.controller.configure()
     }
 }
 
@@ -59,8 +64,8 @@ private extension Stopwatch {
     func lap() {
         controller.lap(in: &laps)
         
-        if watchMode.isActive {
-            changeWatchMode()
+        if displayMode == .watch {
+            displayMode.toggle()
         }
     }
     
@@ -100,11 +105,5 @@ extension Stopwatch {
             ActionComponent(title: "Reset", action: self.reset, style: .ckGray),
             ActionComponent(title: "Start", action: self.start, style: .ckGreen),
         ]
-    }
-}
-
-private extension Stopwatch {
-    func changeWatchMode() {
-        self.watchMode.isActive.toggle()
     }
 }

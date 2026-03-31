@@ -16,17 +16,22 @@ struct StopwatchScreen: View {
         _StopwatchScreen(laps: stopwatch.laps,
                          components: stopwatch.components,
                          isActive: stopwatch.isActive,
-                         watchMode: stopwatch.watchMode)
+                         displayMode: Binding(get: { stopwatch.displayMode },
+                                              set: stopwatch.setDisplayMode(displayMode:)))
     }
 }
 
-struct WatchMode {
-    var isActive: Bool
-    var change: () -> Void
+enum DisplayMode {
+    case list
+    case watch
     
-    init(isActive: Bool = false, change: @escaping () -> Void = {}) {
-        self.isActive = isActive
-        self.change = change
+    mutating func toggle() {
+        switch self {
+        case .list:
+            self = .watch
+        case .watch:
+            self = .list
+        }
     }
 }
 
@@ -36,7 +41,7 @@ extension StopwatchScreen {
         let laps: [Lap]
         let components: [ActionComponent]
         let isActive: Bool
-        let watchMode: WatchMode
+        @Binding var displayMode: DisplayMode
         
         private var currentLap: Lap {
             switch laps.first {
@@ -48,14 +53,14 @@ extension StopwatchScreen {
         var body: some View {
             VStack(alignment: .center, spacing: 0.0) {
                 Group {
-                    if watchMode.isActive {
+                    if DisplayMode.watch == displayMode {
                         Spacer()
                         
                         StopwatchFace(lap: laps.first ?? .empty, engine: .dsl)
                             .aspectRatio(1.0 / 1.0, contentMode: .fit)
                             .frame(width: 370)
                             .onTapGesture {
-                                watchMode.change()
+                                self.displayMode = .list
                             }
                             .transition(.delayAppear(for: 0.20))
                         
@@ -64,7 +69,7 @@ extension StopwatchScreen {
                         TimeLabel(lap: currentLap)
                             .padding(.vertical, 20.0)
                             .onTapGesture {
-                                watchMode.change()
+                                self.displayMode = .watch
                             }
                             .transition(.downUp(y: 200))
 
@@ -72,7 +77,7 @@ extension StopwatchScreen {
                             .transition(.up(y: 280))
                     }
                 }
-                .animation(.easeOut(duration: 0.20), value: watchMode.isActive)
+                .animation(.easeOut(duration: 0.20), value: self.displayMode == .watch)
 
                 ActionGroup(components: components, isActive: isActive)
                     .padding(.vertical, 40.0)
@@ -84,7 +89,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Start") {
-    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init())
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, displayMode: Binding.constant(DisplayMode.list))
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -96,7 +101,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Empty") {
-    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init())
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, displayMode: Binding.constant(DisplayMode.list))
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -108,7 +113,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Stopwatch") {
-    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init())
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, displayMode: Binding.constant(DisplayMode.list))
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -120,7 +125,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Start - watch") {
-    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init(isActive: true))
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, displayMode: Binding.constant(DisplayMode.list))
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -132,7 +137,7 @@ extension StopwatchScreen {
 }
 
 #Preview("Empty - watch") {
-    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init(isActive: true))
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, displayMode: Binding.constant(DisplayMode.list))
         .frame(
             minWidth: 600,
             idealWidth: 600,
@@ -145,7 +150,7 @@ extension StopwatchScreen {
 
 
 #Preview("Stopwatch - watch") {
-    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, watchMode: .init(isActive: true))
+    StopwatchScreen._StopwatchScreen(laps: .dummy, components: [], isActive: true, displayMode: Binding.constant(DisplayMode.list))
         .frame(
             minWidth: 600,
             idealWidth: 600,

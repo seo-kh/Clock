@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ProductionFactory: StopwatchControllerFactory {
+struct ProductionConfiguration: StopwatchControllerConfiguration {
     func lapRepository() -> any LapRepository {
         SDLapRepository()
     }
@@ -25,3 +25,8 @@ final class ProductionFactory: StopwatchControllerFactory {
     }
 }
 
+extension StopwatchControllerConfiguration where Self == ProductionConfiguration {
+    static var production: Self {
+        Self()
+    }
+}

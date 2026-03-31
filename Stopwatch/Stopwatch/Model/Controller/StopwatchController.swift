@@ -22,23 +22,24 @@ final class StopwatchController {
     init(lapRepository: LapRepository,
          flagRepository: FlagRepository,
          timerSource: TimerSource,
-         activationSource: AppActivationSource) {
+         activationSource: AppActivationSource,
+         delegate: StopwatchControllerDelegate?) {
         self.lapRepository = lapRepository
         self.flagRepository = flagRepository
         self.timerSource = timerSource
         self.activationSource = activationSource
-    }
-    
-    convenience init(factory: StopwatchControllerFactory) {
-        self.init(lapRepository: factory.lapRepository(),
-                  flagRepository: factory.flagRepository(),
-                  timerSource: factory.timerSource(),
-                  activationSource: factory.activationSource())
-    }
-    
-    func configure(delegate: StopwatchControllerDelegate?) {
         self.delegate = delegate
-        
+    }
+    
+    convenience init(configuration: StopwatchControllerConfiguration, delegate: StopwatchControllerDelegate? = nil) {
+        self.init(lapRepository: configuration.lapRepository(),
+                  flagRepository: configuration.flagRepository(),
+                  timerSource: configuration.timerSource(),
+                  activationSource: configuration.activationSource(),
+                  delegate: delegate)
+    }
+    
+    func configure() {
         self.lapRepository.read(completion: { [weak self] result in
             switch result {
             case .success(let laps):

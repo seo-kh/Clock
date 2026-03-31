@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol StopwatchControllerFactory {
+protocol StopwatchControllerConfiguration {
     func lapRepository() -> LapRepository
     func flagRepository() -> FlagRepository
     func timerSource() -> TimerSource
