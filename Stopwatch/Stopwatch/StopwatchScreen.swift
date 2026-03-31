@@ -21,20 +21,6 @@ struct StopwatchScreen: View {
     }
 }
 
-enum DisplayMode {
-    case list
-    case watch
-    
-    mutating func toggle() {
-        switch self {
-        case .list:
-            self = .watch
-        case .watch:
-            self = .list
-        }
-    }
-}
-
 extension StopwatchScreen {
     /// Stateless Stopwatch UI Screen
     struct _StopwatchScreen: View {
